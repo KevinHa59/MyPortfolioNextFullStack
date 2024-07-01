@@ -13,7 +13,9 @@ export default async function handler(req, res) {
   if (method === "GET") {
     getUserTypes(req, res);
   } else if (method === "POST") {
-    createUserTypes(req, res);
+    createUserType(req, res);
+  } else if (method === "PUT") {
+    updateUserType(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
@@ -40,7 +42,7 @@ async function getUserTypes(req, res) {
 
 // [POST] handle create user type
 // input: type, description
-async function createUserTypes(req, res) {
+async function createUserType(req, res) {
   try {
     const body = req.body;
     // input validation
@@ -52,6 +54,30 @@ async function createUserTypes(req, res) {
       data: {
         type: body.type,
         description: body.description,
+      },
+    });
+    res.status(201).json(userType);
+  } catch (err) {
+    res.status(500).json({ err: "Internal server error" });
+  }
+}
+
+// [PUT] handle create user type
+// input: type, description
+async function updateUserType(req, res) {
+  try {
+    const body = req.body;
+    // input validation
+    if (!body.id || !body.type || !body.description) {
+      res.status(400).json({ error: "Incomplete data" });
+    }
+
+    const userType = await prisma.userTypes.update({
+      where: { id: body.id },
+      data: {
+        type: body.type,
+        description: body.description,
+        color: body.color,
       },
     });
     res.status(201).json(userType);

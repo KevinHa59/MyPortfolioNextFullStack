@@ -96,7 +96,7 @@ function LoginSection({ isActive }) {
           InputProps={{
             startAdornment: <People sx={{ paddingRight: 1 }} />,
           }}
-          label="Username"
+          label="Email"
         />
         <TextField
           fullWidth
@@ -148,7 +148,49 @@ function ForgotPasswordSection({ isActive }) {
 }
 
 function CreateAccountSection({ isActive }) {
-  const [input, setInput] = useState({});
+  const [input, setInput] = useState({
+    email: "",
+    confirmEmail: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    dob: "",
+  });
+  const [inputErrors, setInputErrors] = useState([]);
+
+  const handleInputChange = (newValue) => {
+    setInput((prev) => {
+      return {
+        ...prev,
+        ...newValue,
+      };
+    });
+  };
+
+  const handleCreateAccount = () => {
+    const errors = verifyNewUser(
+      input.email,
+      input.confirmEmail,
+      input.password,
+      input.confirmPassword,
+      input.firstName,
+      input.lastName,
+      input.dob
+    );
+    setInputErrors(errors);
+    if (errors.length === 0) {
+      createUser(
+        input.email,
+        input.firstName,
+        input.lastName,
+        input.dob,
+        input.password,
+        2
+      );
+    } else {
+    }
+  };
 
   return (
     isActive && (
@@ -162,50 +204,78 @@ function CreateAccountSection({ isActive }) {
           Create Account
         </Typography>
         <TextField
+          value={input.email}
           fullWidth
           size="small"
           InputProps={{
             startAdornment: <Email sx={{ paddingRight: 1 }} />,
           }}
           label="Email"
+          onChange={(e) => handleInputChange({ email: e.target.value })}
         />
         <TextField
+          value={input.confirmEmail}
           fullWidth
           size="small"
           InputProps={{
             startAdornment: <Email sx={{ paddingRight: 1 }} />,
           }}
           label="Confirm Email"
+          onChange={(e) => handleInputChange({ confirmEmail: e.target.value })}
         />
         <Stack width={"100%"}>
           <Divider />
         </Stack>
         <TextField
+          value={input.password}
           fullWidth
           size="small"
+          type="password"
           InputProps={{
             startAdornment: <Password sx={{ paddingRight: 1 }} />,
           }}
           label="Password"
+          onChange={(e) => handleInputChange({ password: e.target.value })}
         />
         <TextField
+          value={input.confirmPassword}
           fullWidth
           size="small"
+          type="password"
           InputProps={{
             startAdornment: <Password sx={{ paddingRight: 1 }} />,
           }}
           label="Confirm Password"
+          onChange={(e) =>
+            handleInputChange({ confirmPassword: e.target.value })
+          }
         />
         <Stack width={"100%"}>
           <Divider />
         </Stack>
         <TextField
+          value={input.firstName}
+          fullWidth
+          size="small"
+          label="First Name"
+          onChange={(e) => handleInputChange({ firstName: e.target.value })}
+        />
+        <TextField
+          value={input.lastName}
+          fullWidth
+          size="small"
+          label="Last Name"
+          onChange={(e) => handleInputChange({ lastName: e.target.value })}
+        />
+        <TextField
+          value={input.dob}
           type="date"
           size="small"
           fullWidth
           InputProps={{
             startAdornment: <DateRange sx={{ paddingRight: 1 }} />,
           }}
+          onChange={(e) => handleInputChange({ dob: e.target.value })}
         />
         <Stack width={"100%"}>
           <Divider />
@@ -216,6 +286,45 @@ function CreateAccountSection({ isActive }) {
       </Stack>
     )
   );
+}
+
+function verifyNewUser(
+  email,
+  confirmEmail,
+  password,
+  confirmPassword,
+  firstName,
+  lastName,
+  dob
+) {
+  const errors = [];
+  if (email.length === 0) {
+    errors.push("Email is missing");
+  } else {
+    if (email !== confirmEmail) {
+      errors.push("Email is mismatched");
+    }
+  }
+
+  if (password.length === 0) {
+    errors.push("Password is missing");
+  } else {
+    if (password !== confirmPassword) {
+      errors.push("Password is mismatched");
+    }
+  }
+
+  if (firstName.length === 0) {
+    errors.push("Fist Name is missing");
+  }
+  if (lastName.length === 0) {
+    errors.push("Last Name is missing");
+  }
+  if (dob.length === 0) {
+    errors.push("Date of Birth is missing");
+  }
+
+  return errors;
 }
 
 async function createUser(

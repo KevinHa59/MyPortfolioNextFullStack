@@ -12,6 +12,8 @@ export default async function handler(req, res) {
   const method = req.method;
   if (method === "GET") {
     getUserByID(req, res);
+  } else if (method === "DELETE") {
+    removeUserByID(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
@@ -28,6 +30,26 @@ async function getUserByID(req, res) {
     const user = await prisma.users.findUnique({ where: { id: id } });
     res.status(200).json(user);
   } catch (error) {
+    res.status(500).json({ err: "Internal server error" });
+  }
+}
+
+// [DELETE] handle remove user
+async function removeUserByID(req, res) {
+  try {
+    const { id } = req.query;
+    // input validation
+    if (!id) {
+      res.status(400).json({ error: "Incomplete data" });
+    }
+
+    const user = await prisma.users.delete({
+      where: {
+        id: id,
+      },
+    });
+    res.status(201).json(user);
+  } catch (err) {
     res.status(500).json({ err: "Internal server error" });
   }
 }

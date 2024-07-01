@@ -1,0 +1,104 @@
+import { Button, Dialog, IconButton, Stack } from "@mui/material";
+import React, { useState } from "react";
+
+export default function ButtonDialog({
+  isIconButton = false,
+  button_label = "Button",
+  isStartIcon = true,
+  isEndIcon = false,
+  fullWidth = false,
+  sx_button,
+  sx_dialog,
+  paperProps,
+  icon,
+  children,
+  size = "large",
+  color,
+  variant,
+  open,
+  onClick,
+  onClose,
+  isCloseOnClickOut = true,
+  disabled = false,
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = (value) => {
+    setIsOpen(value);
+  };
+
+  return (
+    <Stack width={fullWidth ? "100%" : "max-content"}>
+      {isIconButton ? (
+        <IconButton
+          disabled={disabled}
+          sx={sx_button}
+          size={size}
+          color={color}
+          variant={variant}
+          onClick={(event) =>
+            !isCloseOnClickOut ? onClick(event) : handleOpen(true)
+          }
+        >
+          {icon}
+        </IconButton>
+      ) : (
+        <Button
+          disabled={disabled}
+          startIcon={isStartIcon && icon}
+          endIcon={isEndIcon && icon}
+          sx={sx_button}
+          size={size}
+          color={color}
+          variant={variant}
+          onClick={(event) =>
+            !isCloseOnClickOut ? onClick(event) : handleOpen(true)
+          }
+        >
+          {button_label}
+        </Button>
+      )}
+      <Dialog
+        sx={sx_dialog}
+        PaperProps={paperProps}
+        open={!isCloseOnClickOut ? open : isOpen}
+        onClose={() => (isCloseOnClickOut ? handleOpen(false) : null)}
+      >
+        {children}
+      </Dialog>
+    </Stack>
+  );
+}
+
+// use
+//1. Button Dialog with Close button to close dialog
+{
+  /*  
+const [open, setOpen] = useState(false)
+<ButtonDialog
+      open={open}
+      onClick={() => setOpen(true)}
+      button_label="Re-Bake"
+      isCloseOnClickOut={false}
+    >
+      // dialog content here
+
+      // close button
+      <Button onClick={() => { setOpen((prev) => !prev);}}>
+        Close
+      </Button>
+</ButtonDialog> 
+*/
+}
+
+// 2. Button Dialog without Close button, but click outside to close dialog
+{
+  /*  
+<ButtonDialog
+      button_label="Re-Bake"
+      isCloseOnClickOut={false}
+    >
+      // dialog content here
+</ButtonDialog> 
+*/
+}

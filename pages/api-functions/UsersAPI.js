@@ -29,8 +29,34 @@ class UsersAPI {
       },
     });
   }
-  async getUserTypes() {
-    return await axios.get(API.userTypes);
+  async deleteUserByID(id) {
+    return await axios.delete(API.users_user, {
+      params: {
+        id,
+      },
+    });
+  }
+  async getUserTypes(isUserIncluding = false) {
+    return await axios.get(API.userTypes, {
+      params: {
+        userIncluding: isUserIncluding ? "true" : "false",
+      },
+    });
+  }
+
+  async createUserType(type, description) {
+    return await axios.post(API.userTypes, {
+      type,
+      description,
+    });
+  }
+  async updateUserType(id, type, description, color) {
+    return await axios.put(API.userTypes, {
+      id,
+      type,
+      description,
+      color,
+    });
   }
 }
 

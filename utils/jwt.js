@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
-
+import sign from "jwt-encode";
 const secret = process.env.NEXT_PUBLIC_TOKEN_KEY;
 
 class JwtUtils {
   generateToken(payload) {
-    return jwt.sign(payload, secret);
+    return sign(payload, secret);
   }
   verifyToken(token) {
     try {

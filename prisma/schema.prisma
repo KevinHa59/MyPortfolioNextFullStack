@@ -30,6 +30,7 @@ model UserTypes {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   type String @unique
   description String? @default("")
+  color String?
   users Users[]
   @@map("user_types")
 }

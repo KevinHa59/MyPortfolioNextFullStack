@@ -20,6 +20,7 @@
     "eslint-config-next": "13.4.13",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "jwt-encode": "^1.0.1",
     "mongodb": "^6.7.0",
     "next": "13.4.13",
     "prisma": "^5.16.1",

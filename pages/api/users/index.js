@@ -22,7 +22,11 @@ export default async function handler(req, res) {
 // [GET] handle get users
 async function getUsers(req, res) {
   try {
-    const users = await prisma.users.findMany();
+    const users = await prisma.users.findMany({
+      include: {
+        userType: true,
+      },
+    });
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ err: "Internal server error" });
@@ -37,6 +41,7 @@ async function createUser(req, res) {
     // input validation
     if (
       !body.email ||
+      !body.password ||
       !body.firstName ||
       !body.lastName ||
       !body.dob ||
@@ -48,6 +53,7 @@ async function createUser(req, res) {
     const user = await prisma.users.create({
       data: {
         email: body.email,
+        password: body.password,
         firstName: body.firstName,
         lastName: body.lastName,
         dob: new Date(body.dob),
