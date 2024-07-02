@@ -28,6 +28,7 @@ import FormHeader from "../widgets/texts/form-header";
 import ErrorRenderer from "../widgets/texts/error-renderer";
 import LoadingComponent from "../widgets/loading/loading-component";
 import SelectCustom from "../widgets/select/select-custom";
+import Table from "../widgets/tables/table";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -42,7 +43,15 @@ export default function Users() {
 
   async function initData() {
     setIsGettingData(true);
-    const data = await getUsers();
+    let data = await getUsers();
+    data = data.map((user) => {
+      const _userType = { ...user.userType };
+      return {
+        ...user,
+        userType: _userType.type,
+        userTypeColor: _userType.color,
+      };
+    });
     setUsers(data);
     setIsGettingData(false);
   }
@@ -54,7 +63,7 @@ export default function Users() {
 
   return (
     <Stack width={"100%"}>
-      <Stack direction={"row"} gap={1}>
+      <Stack direction={"row"} gap={1} paddingX={1}>
         <ButtonDialog
           open={isNewUserOpen}
           isCloseOnClickOut={false}
@@ -78,110 +87,101 @@ export default function Users() {
       {isGettingData && <LinearProgress />}
       {!isGettingData && (
         <Stack gap={"1px"} padding={1}>
-          {users.map((user, index) => {
-            return (
-              <Slide
-                direction="right"
-                key={index}
-                in={true}
-                timeout={400}
-                style={{ transitionDelay: index * 50 }}
-              >
-                <Stack>
-                  <UserCard
-                    user={user}
-                    index={index}
-                    onRemoveSuccess={initData}
-                  />
-                </Stack>
-              </Slide>
-            );
-          })}
+          <Table
+            data={users}
+            headers={headers}
+            callback_cell={(row, key) => <Cell row={row} header={key} />}
+          />
         </Stack>
       )}
     </Stack>
   );
 }
-
-function UserCard({ user, index, onRemoveSuccess }) {
-  const theme = useTheme();
-  const palette = theme.palette;
-  const handleRemoveUser = async () => {
-    const res = await removeUsers(user.id);
-    onRemoveSuccess && onRemoveSuccess();
-  };
-  return (
-    <Fade in={true} timeout={500} style={{ transitionDelay: index * 50 }}>
-      <Paper
-        sx={{
-          paddingX: 1,
-          borderRadius: 0,
-          ":hover": {
-            background: "rgba(230,230,230,1)",
-          },
-        }}
+function Cell({ row, header }) {
+  if (header === "userType") {
+    return (
+      <Chip
+        size="small"
+        label={`${row[header]}`}
+        sx={{ background: row["userTypeColor"], fontWeight: "bold" }}
+      />
+    );
+  } else if (header === "dob") {
+    return new Date(
+      row["dob"].split("T")[0] + "T05:00:00.000Z"
+    ).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } else if (header === "actions") {
+    const handleRemoveUser = async () => {
+      const res = await removeUsers(row["id"]);
+      onRemoveSuccess && onRemoveSuccess();
+    };
+    return (
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"flex-end"}
+        gap={"1px"}
       >
-        <Grid container>
-          <Grid
-            item
-            xs={2}
-            sx={{ fontWeight: "bold" }}
-          >{`${user.firstName} ${user.lastName}`}</Grid>
-          <Grid item xs={4}>{`${user.email}`}</Grid>
-          <Grid item xs={2}>{`${new Date(
-            user.dob.split("T")[0] + "T05:00:00.000Z"
-          ).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}`}</Grid>
-          <Grid item xs={2}>
-            <Stack
-              alignItems={"center"}
-              justifyContent={"center"}
-              height={"100%"}
-            >
-              <Chip
-                variant="outlined"
-                size="small"
-                label={`${user.userType.type}`}
-                sx={{ background: user.userType.color, fontWeight: "bold" }}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={2}>
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              justifyContent={"flex-end"}
-              gap={"1px"}
-            >
-              <Button
-                sx={{ borderRadius: 0 }}
-                // variant="contained"
-                startIcon={<Edit />}
-                size="small"
-                color="warning"
-              >
-                Edit
-              </Button>
-              <Button
-                sx={{ borderRadius: 0 }}
-                // variant="contained"
-                startIcon={<Delete />}
-                size="small"
-                color="error"
-                onClick={() => handleRemoveUser()}
-              >
-                Remove
-              </Button>
-            </Stack>
-          </Grid>
-        </Grid>
-      </Paper>
-    </Fade>
-  );
+        <IconButton
+          sx={{ borderRadius: "20px", paddingY: 0 }}
+          variant="contained"
+          size="small"
+          color="warning"
+        >
+          <Edit />
+        </IconButton>
+        <IconButton
+          sx={{ borderRadius: "20px", paddingY: 0 }}
+          variant="contained"
+          size="small"
+          color="error"
+          onClick={() => handleRemoveUser()}
+        >
+          <Delete />
+        </IconButton>
+      </Stack>
+    );
+  } else return row[header];
 }
+
+const headers = [
+  {
+    name: "First Name",
+    key: "firstName",
+    xs: 1,
+  },
+  {
+    name: "Last Name",
+    key: "lastName",
+    xs: 1,
+  },
+  {
+    name: "Email",
+    key: "email",
+    xs: 4,
+  },
+  {
+    name: "Date of Birth",
+    key: "dob",
+    xs: 2,
+  },
+  {
+    name: "User Type",
+    key: "userType",
+    xs: 2,
+    align: "center",
+  },
+  {
+    name: "Actions",
+    key: "actions",
+    xs: 2,
+    align: "right",
+  },
+];
 
 function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
   const [input, setInput] = useState({

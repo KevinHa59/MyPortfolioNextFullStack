@@ -37,7 +37,7 @@ export default function UserTypes() {
 
   return (
     <Stack width={"100%"}>
-      <Stack direction={"row"} gap={1}>
+      <Stack direction={"row"} gap={1} paddingX={1}>
         <ButtonDialog
           open={isNewUserTypeOpen}
           isCloseOnClickOut={false}

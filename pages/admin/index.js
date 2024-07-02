@@ -1,4 +1,4 @@
-import { Button, Divider, Link, Stack } from "@mui/material";
+import { Button, Divider, Link, Paper, Stack, useTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import UserTypes from "../../components/admin/user-types";
 import { useRouter } from "next/router";
@@ -30,8 +30,10 @@ export default function Index() {
 
   return (
     <Stack direction={"row"} height={"100vh"}>
-      <Stack height={"100%"} minWidth={"300px"} sx={{ overflowY: "auto" }}>
-        <Menu />
+      <Stack height={"100%"} minWidth={"200px"}>
+        <Paper sx={{ height: "100%", borderRadius: 0, overflowY: "auto" }}>
+          <Menu />
+        </Paper>
       </Stack>
       <Stack height={"100vh"} width={"100%"} sx={{ overflowY: "auto" }}>
         {menu_data.find((menu) => menu.param === section)?.Comp}
@@ -41,9 +43,13 @@ export default function Index() {
 }
 
 function Menu() {
+  const theme = useTheme();
+
+  const [menuParam, setMenuParam] = useState(null);
   const router = useRouter();
 
   const handleRoute = (section) => {
+    setMenuParam(section);
     router.push({
       pathname: router.pathname,
       query: {
@@ -53,13 +59,24 @@ function Menu() {
   };
 
   return (
-    <Stack padding={2}>
+    <Stack paddingY={2}>
       {menu_data.map((menu, index) => {
         return (
           <Button
             key={index}
             size="small"
-            sx={{ width: "max-content", padding: 0, minWidth: 0 }}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-start",
+              transition: "ease 0.1s",
+              // padding: 0,
+              minWidth: 0,
+              borderRadius: 0,
+              borderLeft:
+                menuParam === menu.param
+                  ? `10px solid ${theme.palette.primary.main}`
+                  : "0px solid transparent",
+            }}
             onClick={() => handleRoute(menu.param)}
           >
             {menu.title}
