@@ -22,7 +22,7 @@ model Users {
   password String?
   userTypeID String
   userType UserTypes @relation(fields: [userTypeID], references: [id])
-
+  resumes Resume[]
   @@map("users")
 }
 
@@ -33,4 +33,153 @@ model UserTypes {
   color String?
   users Users[]
   @@map("user_types")
+}
+
+model Resume {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userID   String @db.ObjectId
+  title    String
+  summary  Summary?
+  workExperience  WorkExperience[]
+  education       Education[]
+  skills          Skill[]
+  certifications  Certification[]
+  projects        Project[]
+  awards          Award[]
+  volunteerExperience VolunteerExperience[]
+  languages       Language[]
+  publications    Publication[]
+  professionalMemberships ProfessionalMembership[]
+  hobbies         Hobby[]
+
+  user     Users   @relation(fields: [userID], references: [id])
+  @@map("resume")
+}
+
+model Summary {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID String @db.ObjectId @unique
+  text     String
+
+  resume   Resume  @relation(fields: [resumeID], references: [id])
+  @@map("summary")
+}
+
+model WorkExperience {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID       String @db.ObjectId
+  jobTitle       String
+  companyName    String
+  location       String
+  startDate      DateTime
+  endDate        DateTime?
+  responsibilities String[]
+
+  resume         Resume @relation(fields: [resumeID], references: [id])
+}
+
+model Education {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID     String @db.ObjectId
+  degree       String
+  schoolName   String
+  location     String
+  startDate    DateTime
+  endDate      DateTime?
+  fieldOfStudy String
+  gpa          Float?
+
+  resume       Resume @relation(fields: [resumeID], references: [id])
+}
+
+model Skill {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID String @db.ObjectId
+  name     String
+  type     String
+
+  resume   Resume @relation(fields: [resumeID], references: [id])
+}
+
+model Certification {
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID           String @db.ObjectId
+  certificationName  String
+  issuingOrganization String
+  dateObtained       DateTime
+
+  resume             Resume @relation(fields: [resumeID], references: [id])
+}
+
+model Project {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID      String @db.ObjectId
+  title         String
+  role          String
+  description   String
+  technologies  String[]
+  achievements  String
+
+  resume        Resume @relation(fields: [resumeID], references: [id])
+}
+
+model Award {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID          String @db.ObjectId
+  awardName         String
+  issuingOrganization String
+  dateReceived      DateTime
+
+  resume            Resume @relation(fields: [resumeID], references: [id])
+}
+
+model VolunteerExperience {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID         String @db.ObjectId
+  role             String
+  organizationName String
+  location         String
+  startDate        DateTime
+  endDate          DateTime?
+  responsibilities String[]
+
+  resume           Resume @relation(fields: [resumeID], references: [id])
+}
+
+model Language {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID        String @db.ObjectId
+  language        String
+  proficiencyLevel String
+
+  resume          Resume @relation(fields: [resumeID], references: [id])
+}
+
+model Publication {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID        String @db.ObjectId
+  title           String
+  publicationName String
+  datePublished   DateTime
+
+  resume          Resume @relation(fields: [resumeID], references: [id])
+}
+
+model ProfessionalMembership {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID         String @db.ObjectId
+  organizationName String
+  role             String
+  startDate        DateTime
+  endDate          DateTime?
+
+  resume           Resume @relation(fields: [resumeID], references: [id])
+}
+
+model Hobby {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID String @db.ObjectId
+  name     String
+
+  resume   Resume @relation(fields: [resumeID], references: [id])
 }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import UserTypes from "../../components/admin/user-types";
 import { useRouter } from "next/router";
 import Users from "../../components/admin/users";
+import Resumes from "../../components/admin/resumes";
 
 const menu_data = [
   {
@@ -14,6 +15,11 @@ const menu_data = [
     title: "Users",
     param: "users",
     Comp: <Users />,
+  },
+  {
+    title: "Resumes",
+    param: "resumes",
+    Comp: <Resumes />,
   },
 ];
 

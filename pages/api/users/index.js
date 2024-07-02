@@ -24,6 +24,7 @@ async function getUsers(req, res) {
   try {
     const users = await prisma.users.findMany({
       include: {
+        resumes: true,
         userType: true,
       },
     });

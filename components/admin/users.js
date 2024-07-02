@@ -10,6 +10,7 @@ import {
   Slide,
   Stack,
   TextField,
+  Typography,
   useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -21,6 +22,7 @@ import {
   Delete,
   Edit,
   Email,
+  Label,
   Password,
   Remove,
 } from "@mui/icons-material";
@@ -63,30 +65,43 @@ export default function Users() {
 
   return (
     <Stack width={"100%"}>
-      <Stack direction={"row"} gap={1} paddingX={1}>
-        <ButtonDialog
-          open={isNewUserOpen}
-          isCloseOnClickOut={false}
-          onClick={() => setIsNewUserOpen(true)}
-          sx_button={{ borderRadius: 0 }}
-          variant={"contained"}
-          button_label="Create New User"
-          size="small"
-        >
-          <NewUser
-            userTypes={userTypes}
-            onClose={() => setIsNewUserOpen(false)}
-            onCreateUserSuccess={() => {
-              initData();
-              setIsNewUserOpen(false);
-            }}
-          />
-        </ButtonDialog>
+      <Stack
+        direction={"row"}
+        gap={1}
+        paddingX={1}
+        justifyContent={"space-between"}
+      >
+        <Stack direction={"row"} gap={1} alignItems={"center"}>
+          <Label />
+          <Typography variant="h6" fontWeight={"bold"}>
+            Users
+          </Typography>
+        </Stack>
+        <Stack direction={"row"} gap={1}>
+          <ButtonDialog
+            open={isNewUserOpen}
+            isCloseOnClickOut={false}
+            onClick={() => setIsNewUserOpen(true)}
+            sx_button={{ borderRadius: 0 }}
+            variant={"contained"}
+            button_label="Create New User"
+            size="small"
+          >
+            <NewUser
+              userTypes={userTypes}
+              onClose={() => setIsNewUserOpen(false)}
+              onCreateUserSuccess={() => {
+                initData();
+                setIsNewUserOpen(false);
+              }}
+            />
+          </ButtonDialog>
+        </Stack>
       </Stack>
       <Divider sx={{ background: "rgba(100,100,100,1)" }} />
       {isGettingData && <LinearProgress />}
       {!isGettingData && (
-        <Stack gap={"1px"} padding={1}>
+        <Stack gap={"1px"} padding={1} paddingX={10}>
           <Table
             data={users}
             headers={headers}
@@ -152,17 +167,17 @@ const headers = [
   {
     name: "First Name",
     key: "firstName",
-    xs: 1,
+    xs: 2,
   },
   {
     name: "Last Name",
     key: "lastName",
-    xs: 1,
+    xs: 2,
   },
   {
     name: "Email",
     key: "email",
-    xs: 4,
+    xs: 3,
   },
   {
     name: "Date of Birth",
@@ -172,11 +187,11 @@ const headers = [
   {
     name: "User Type",
     key: "userType",
-    xs: 2,
+    xs: 1,
     align: "center",
   },
   {
-    name: "Actions",
+    name: "",
     key: "actions",
     xs: 2,
     align: "right",

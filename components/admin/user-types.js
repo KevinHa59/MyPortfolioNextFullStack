@@ -17,7 +17,7 @@ import ButtonDialog from "../widgets/buttons/button_dialog";
 import FormHeader from "../widgets/texts/form-header";
 import ErrorRenderer from "../widgets/texts/error-renderer";
 import LoadingComponent from "../widgets/loading/loading-component";
-import { Circle, Clear, Delete, Edit } from "@mui/icons-material";
+import { Circle, Clear, Delete, Edit, Label } from "@mui/icons-material";
 
 export default function UserTypes() {
   const [userTypes, setUserTypes] = useState([]);
@@ -37,32 +37,45 @@ export default function UserTypes() {
 
   return (
     <Stack width={"100%"}>
-      <Stack direction={"row"} gap={1} paddingX={1}>
-        <ButtonDialog
-          open={isNewUserTypeOpen}
-          isCloseOnClickOut={false}
-          onClick={() => setIsNewUserTypeOpen(true)}
-          sx_button={{ borderRadius: 0 }}
-          variant={"contained"}
-          button_label="Create New type"
-          size="small"
-        >
-          <NewUserType
-            types={userTypes}
-            updateType={updateType}
-            onCreateSuccess={() => {
-              initData();
-              setIsNewUserTypeOpen(false);
-              setUpdateType(null);
-            }}
-            onClose={() => setIsNewUserTypeOpen(false)}
-          />
-        </ButtonDialog>
+      <Stack
+        direction={"row"}
+        gap={1}
+        paddingX={1}
+        justifyContent={"space-between"}
+      >
+        <Stack direction={"row"} gap={1} alignItems={"center"}>
+          <Label />
+          <Typography variant="h6" fontWeight={"bold"}>
+            User Types
+          </Typography>
+        </Stack>
+        <Stack direction={"row"} gap={1}>
+          <ButtonDialog
+            open={isNewUserTypeOpen}
+            isCloseOnClickOut={false}
+            onClick={() => setIsNewUserTypeOpen(true)}
+            sx_button={{ borderRadius: 0 }}
+            variant={"contained"}
+            button_label="Create New type"
+            size="small"
+          >
+            <NewUserType
+              types={userTypes}
+              updateType={updateType}
+              onCreateSuccess={() => {
+                initData();
+                setIsNewUserTypeOpen(false);
+                setUpdateType(null);
+              }}
+              onClose={() => setIsNewUserTypeOpen(false)}
+            />
+          </ButtonDialog>
+        </Stack>
       </Stack>
       <Divider sx={{ background: "rgba(100,100,100,1)" }} />
       {isGettingData && <LinearProgress />}
       {!isGettingData && (
-        <Stack padding={1} gap={1}>
+        <Stack padding={1} gap={1} paddingX={10}>
           {userTypes.length === 0
             ? "No Data"
             : userTypes.map((type, index) => {
