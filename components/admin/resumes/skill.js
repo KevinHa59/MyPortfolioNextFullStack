@@ -1,6 +1,7 @@
 import { Check } from "@mui/icons-material";
 import { Button, Divider, IconButton, Stack, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import Input from "../../widgets/input/Input";
 
 export default function Skill({ data, onChange }) {
   const [input, setInput] = useState("");
@@ -16,13 +17,12 @@ export default function Skill({ data, onChange }) {
         gap={1}
         padding={5}
       >
-        <TextField
+        <Input
           autoComplete="off"
           value={input}
           label="Search Skills"
-          fullWidth
+          sx={{ width: "100%" }}
           size="small"
-          InputProps={{ style: { borderRadius: "50px" } }}
           onChange={(event) => onChange && onChange(event.target.value)}
         />
       </Stack>

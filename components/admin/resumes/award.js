@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
+import Input from "../../widgets/input/Input";
 
 const award_template = {
   awardName: "",
@@ -93,18 +94,16 @@ export default function Award({ data, onChange }) {
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
                 <Stack direction={"row"} gap={1}>
-                  <TextField
-                    variant="filled"
-                    fullWidth
+                  <Input
+                    sx={{ width: "100%" }}
                     value={project.awardName}
                     label="Award Name"
                     onChange={(e) =>
                       handleInputChange({ awardName: e.target.value }, index)
                     }
                   />
-                  <TextField
-                    variant="filled"
-                    focused
+                  <Input
+                    type={"date"}
                     value={project.dateReceived}
                     label="Date Received"
                     sx={{ minWidth: "200px" }}
@@ -114,8 +113,7 @@ export default function Award({ data, onChange }) {
                   />
                 </Stack>
 
-                <TextField
-                  variant="filled"
+                <Input
                   value={project.issuingOrganization}
                   label="Issuing Organization"
                   onChange={(e) =>

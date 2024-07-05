@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
+import Input from "../../widgets/input/Input";
 
 const project_template = {
   title: "",
@@ -95,18 +96,15 @@ export default function Project({ data, onChange }) {
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
                 <Stack direction={"row"} gap={1}>
-                  <TextField
-                    variant="filled"
-                    fullWidth
+                  <Input
+                    sx={{ width: "100%" }}
                     value={project.title}
                     label="Title"
                     onChange={(e) =>
                       handleInputChange({ title: e.target.value }, index)
                     }
                   />
-                  <TextField
-                    variant="filled"
-                    focused
+                  <Input
                     value={project.role}
                     label="Role"
                     sx={{ minWidth: "200px" }}
@@ -116,27 +114,24 @@ export default function Project({ data, onChange }) {
                   />
                 </Stack>
 
-                <TextField
-                  variant="filled"
+                <Input
                   value={project.technologies}
                   label="Technologies"
                   onChange={(e) =>
                     handleInputChange({ technologies: e.target.value }, index)
                   }
                 />
-                <TextField
-                  variant="filled"
+                <Input
                   value={project.achievements}
                   label="Achievements"
                   onChange={(e) =>
                     handleInputChange({ achievements: e.target.value }, index)
                   }
                 />
-                <TextField
-                  variant="filled"
+                <Input
                   value={project.description}
                   label="Description"
-                  multiline
+                  multiline={true}
                   rows={5}
                   onChange={(e) =>
                     handleInputChange({ description: e.target.value }, index)

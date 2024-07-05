@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import SelectCustom from "../../widgets/select/select-custom";
+import Input from "../../widgets/input/Input";
 
 export default function Language({ data, onChange }) {
   const [input, setInput] = useState([]);
@@ -44,11 +45,11 @@ export default function Language({ data, onChange }) {
         gap={1}
         padding={5}
       >
-        <Stack direction={"row"} gap={1}>
-          <TextField
+        <Stack direction={"row"} gap={1} alignItems={"flex-end"}>
+          <Input
             value={language.language}
             label="Search Language"
-            fullWidth
+            sx={{ width: "100%" }}
             size="small"
             onChange={(event) =>
               handleLanguageChange({ language: event.target.value })
@@ -56,6 +57,7 @@ export default function Language({ data, onChange }) {
           />
           <SelectCustom
             size="small"
+            sx={{ width: "200px" }}
             label={"Proficiency"}
             selected_value={language.proficiencyLevel}
             data={["Native", "Fluent", "Advanced", "Intermediate"]}
@@ -67,7 +69,7 @@ export default function Language({ data, onChange }) {
             variant="outlined"
             startIcon={<Add />}
             color="info"
-            sx={{ borderRadius: "50px" }}
+            sx={{ borderRadius: "50px", height: "max-content" }}
             onClick={() => handleAddLanguage()}
           >
             Add

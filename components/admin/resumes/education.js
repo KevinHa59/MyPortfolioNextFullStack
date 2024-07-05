@@ -19,6 +19,9 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import PublicAPI from "../../../pages/api-functions/PublicAPI";
 import AutocompleteCustom from "../../widgets/autocomplete/autocomplete";
+import Input from "../../widgets/input/Input";
+import MyAPIs from "../../../pages/api-functions/MyAPIs";
+import ButtonLoading from "../../widgets/buttons/button-loading";
 
 const edu_template = {
   degree: "",
@@ -33,6 +36,7 @@ const edu_template = {
 export default function Education({ data, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([edu_template]);
+  const [isSaving, setIsSaving] = useState(false);
   const [universitySearch, setUniversitySearch] = useState({
     search: "",
     data: [],
@@ -41,9 +45,15 @@ export default function Education({ data, onChange }) {
     initData();
   }, []);
 
+  useEffect(() => {
+    if (data.education?.length > 0) {
+      console.log(data.education);
+      setInput(data.education);
+    }
+  }, [data]);
+
   const initData = async () => {
-    const data = await getUniversity("Houston");
-    console.log(data);
+    const universities = await getUniversity("Houston");
   };
 
   const handleAddEducation = () => {
@@ -65,6 +75,13 @@ export default function Education({ data, onChange }) {
       ...newValue,
     };
     setInput(copy);
+  };
+
+  const handleUpdateEducation = async () => {
+    setIsSaving(true);
+    const res = await MyAPIs.Resume().updateResumeEducation(data.id, input);
+    console.log(res);
+    setIsSaving(false);
   };
 
   return (
@@ -106,73 +123,68 @@ export default function Education({ data, onChange }) {
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
                 <Stack direction={"row"} gap={1}>
-                  <TextField
-                    variant="filled"
-                    fullWidth
+                  <Input
+                    label={"School"}
+                    fullWidth={true}
                     value={edu.schoolName}
-                    label="School"
+                    sx={{ width: "100%" }}
                     onChange={(e) =>
                       handleInputChange({ schoolName: e.target.value }, index)
                     }
                   />
-                  <TextField
-                    variant="filled"
-                    focused
-                    type="date"
+                  <Input
+                    label={"From"}
+                    type={"date"}
                     value={edu.startDate}
-                    label="From"
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
                       handleInputChange({ startDate: e.target.value }, index)
                     }
                   />
-                  <TextField
-                    variant="filled"
-                    focused
-                    type="date"
+                  <Input
+                    label={"To"}
+                    type={"date"}
                     value={edu.endDate}
-                    label="To"
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
                       handleInputChange({ endDate: e.target.value }, index)
                     }
                   />
                 </Stack>
-
-                <TextField
-                  variant="filled"
+                <Input
+                  label={"Location"}
+                  fullWidth={true}
                   value={edu.location}
-                  label="Location"
+                  sx={{ width: "100%" }}
                   onChange={(e) =>
                     handleInputChange({ location: e.target.value }, index)
                   }
                 />
                 <Stack direction={"row"} gap={1}>
-                  <TextField
-                    variant="filled"
+                  <Input
                     fullWidth
                     value={edu.degree}
                     label="Degree"
+                    sx={{ width: "100%" }}
                     onChange={(e) =>
                       handleInputChange({ degree: e.target.value }, index)
                     }
                   />
-                  <TextField
-                    variant="filled"
+                  <Input
                     fullWidth
                     value={edu.fieldOfStudy}
                     label="Field"
+                    sx={{ width: "100%" }}
                     onChange={(e) =>
                       handleInputChange({ fieldOfStudy: e.target.value }, index)
                     }
                   />
-                  <TextField
-                    variant="filled"
+                  <Input
                     value={edu.gpa}
                     label="GPA"
                     sx={{ minWidth: "100px" }}
-                    onChange={
-                      ((e) => handleInputChange({ gpa: e.target.value }), index)
+                    onChange={(e) =>
+                      handleInputChange({ gpa: e.target.value }, index)
                     }
                   />
                 </Stack>
@@ -195,9 +207,14 @@ export default function Education({ data, onChange }) {
         >
           Add Education
         </Button>
-        <Button startIcon={<Check />} color="success">
+        <ButtonLoading
+          isLoading={isSaving}
+          onClick={handleUpdateEducation}
+          startIcon={<Check />}
+          color="success"
+        >
           Save
-        </Button>
+        </ButtonLoading>
       </Stack>
     </Stack>
   );

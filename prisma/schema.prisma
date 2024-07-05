@@ -39,7 +39,7 @@ model Resume {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   userID   String @db.ObjectId
   title    String
-  summary  Summary?
+  summary  String?
   workExperience  WorkExperience[]
   education       Education[]
   skills          Skill[]
@@ -53,16 +53,7 @@ model Resume {
   hobbies         Hobby[]
 
   user     Users   @relation(fields: [userID], references: [id])
-  @@map("resume")
-}
-
-model Summary {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID String @db.ObjectId @unique
-  text     String
-
-  resume   Resume  @relation(fields: [resumeID], references: [id])
-  @@map("summary")
+  @@map("Resume")
 }
 
 model WorkExperience {

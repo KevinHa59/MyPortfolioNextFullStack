@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
+import Input from "../../widgets/input/Input";
 
 const edu_template = {
   certificationName: "",
@@ -93,10 +94,10 @@ export default function Certification({ data, onChange }) {
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
                 <Stack direction={"row"} gap={1}>
-                  <TextField
-                    variant="filled"
+                  <Input
                     fullWidth
                     value={cer.certificationName}
+                    sx={{ width: "100%" }}
                     label="Certification Name"
                     onChange={(e) =>
                       handleInputChange(
@@ -105,9 +106,7 @@ export default function Certification({ data, onChange }) {
                       )
                     }
                   />
-                  <TextField
-                    variant="filled"
-                    focused
+                  <Input
                     type="date"
                     value={cer.dateObtained}
                     label="Obtained Date"
@@ -118,10 +117,10 @@ export default function Certification({ data, onChange }) {
                   />
                 </Stack>
 
-                <TextField
-                  variant="filled"
+                <Input
                   value={cer.issuingOrganization}
                   label="Issuing Organization"
+                  sx={{ width: "100%" }}
                   onChange={(e) =>
                     handleInputChange(
                       { issuingOrganization: e.target.value },

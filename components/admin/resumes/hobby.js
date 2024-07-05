@@ -8,6 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import Input from "../../widgets/input/Input";
 
 export default function Hobby({ data, onChange }) {
   const [input, setInput] = useState([]);
@@ -27,11 +28,11 @@ export default function Hobby({ data, onChange }) {
         gap={3}
         padding={5}
       >
-        <Stack direction={"row"} gap={1}>
-          <TextField
+        <Stack direction={"row"} gap={1} alignItems={"flex-end"}>
+          <Input
             value={hobby}
             label="Enter Hobby"
-            fullWidth
+            sx={{ width: "100%" }}
             size="small"
             onChange={(event) => setHobby(event.target.value)}
             onKeyPress={(e) => {
@@ -45,7 +46,7 @@ export default function Hobby({ data, onChange }) {
             variant="outlined"
             startIcon={<Add />}
             color="info"
-            sx={{ borderRadius: "50px" }}
+            sx={{ borderRadius: "50px", height: "max-content" }}
             onClick={handleAddHobby}
           >
             Add

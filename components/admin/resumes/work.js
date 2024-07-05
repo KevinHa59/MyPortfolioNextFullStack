@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
+import Input from "../../widgets/input/Input";
 
 const work_template = {
   jobTitle: "",
@@ -96,18 +97,15 @@ export default function WorkExperience({ data, onChange }) {
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
                 <Stack direction={"row"} gap={1}>
-                  <TextField
-                    variant="filled"
-                    fullWidth
+                  <Input
+                    sx={{ width: "100%" }}
                     value={edu.jobTitle}
                     label="Job Title"
                     onChange={(e) =>
                       handleInputChange({ jobTitle: e.target.value }, index)
                     }
                   />
-                  <TextField
-                    variant="filled"
-                    focused
+                  <Input
                     type="date"
                     value={edu.startDate}
                     label="From"
@@ -116,9 +114,7 @@ export default function WorkExperience({ data, onChange }) {
                       handleInputChange({ startDate: e.target.value }, index)
                     }
                   />
-                  <TextField
-                    variant="filled"
-                    focused
+                  <Input
                     type="date"
                     value={edu.endDate}
                     label="To"
@@ -129,25 +125,24 @@ export default function WorkExperience({ data, onChange }) {
                   />
                 </Stack>
 
-                <TextField
-                  variant="filled"
+                <Input
                   value={edu.companyName}
                   label="Company"
                   onChange={(e) =>
                     handleInputChange({ companyName: e.target.value }, index)
                   }
                 />
-                <TextField
-                  variant="filled"
+                <Input
                   value={edu.location}
                   label="Location"
                   onChange={(e) =>
                     handleInputChange({ location: e.target.value }, index)
                   }
                 />
-                <TextField
-                  variant="filled"
+                <Input
                   value={edu.responsibilities}
+                  multiline={true}
+                  rows={5}
                   label="Responsibilities"
                   onChange={(e) =>
                     handleInputChange(
