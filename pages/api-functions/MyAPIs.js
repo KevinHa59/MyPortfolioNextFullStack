@@ -51,6 +51,22 @@ class MyAPIs {
           console.error(error);
         }
       },
+      updateResumeProject: async (id, data) => {
+        try {
+          const res = await ResumesAPI.updateResumeProject(id, data);
+          return res.data;
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      updateResumeWork: async (id, data) => {
+        try {
+          const res = await ResumesAPI.updateResumeWork(id, data);
+          return res.data;
+        } catch (error) {
+          console.error(error);
+        }
+      },
       deleteResumeByID: async (id) => {
         try {
           const res = await ResumesAPI.deleteResumeByID(id);

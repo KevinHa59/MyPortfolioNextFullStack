@@ -1,11 +1,4 @@
-import {
-  Add,
-  CastForEducation,
-  Check,
-  Clear,
-  Engineering,
-  School,
-} from "@mui/icons-material";
+import { Add, Check, Clear, Engineering, School } from "@mui/icons-material";
 import {
   Button,
   Divider,
@@ -19,6 +12,8 @@ import {
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
+import ButtonLoading from "../../widgets/buttons/button-loading";
+import MyAPIs from "../../../pages/api-functions/MyAPIs";
 
 const work_template = {
   jobTitle: "",
@@ -32,10 +27,19 @@ const work_template = {
 export default function WorkExperience({ data, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([work_template]);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // useEffect(() => {
-  //   setInput(data);
-  // }, [data]);
+  useEffect(() => {
+    if (data?.workExperience?.length > 0) {
+      const _works = data.workExperience.map((work) => {
+        return {
+          ...work,
+          responsibilities: work.responsibilities.join(". "),
+        };
+      });
+      setInput(_works);
+    }
+  }, [data]);
 
   const handleAddWork = () => {
     setInput((prev) => {
@@ -58,6 +62,12 @@ export default function WorkExperience({ data, onChange }) {
     setInput(copy);
   };
 
+  const handleSave = () => {
+    setIsSaving(true);
+    const res = MyAPIs.Resume().updateResumeWork(data.id, input);
+    setIsSaving(false);
+  };
+
   return (
     <Stack height={"100%"}>
       <Stack
@@ -66,7 +76,7 @@ export default function WorkExperience({ data, onChange }) {
         gap={3}
         padding={5}
       >
-        {input.map((edu, index) => {
+        {input.map((work, index) => {
           return (
             <Paper key={index} variant="outlined">
               <Stack
@@ -83,7 +93,7 @@ export default function WorkExperience({ data, onChange }) {
                     fontStyle={"italic"}
                     variant="body1"
                   >
-                    {edu.jobTitle}
+                    {work.jobTitle}
                   </Typography>
                 </Stack>
                 <IconButton
@@ -99,7 +109,7 @@ export default function WorkExperience({ data, onChange }) {
                 <Stack direction={"row"} gap={1}>
                   <Input
                     sx={{ width: "100%" }}
-                    value={edu.jobTitle}
+                    value={work.jobTitle}
                     label="Job Title"
                     onChange={(e) =>
                       handleInputChange({ jobTitle: e.target.value }, index)
@@ -107,7 +117,7 @@ export default function WorkExperience({ data, onChange }) {
                   />
                   <Input
                     type="date"
-                    value={edu.startDate}
+                    value={work.startDate ? work.startDate.split("T")[0] : null}
                     label="From"
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
@@ -116,7 +126,7 @@ export default function WorkExperience({ data, onChange }) {
                   />
                   <Input
                     type="date"
-                    value={edu.endDate}
+                    value={work.endDate ? work.endDate.split("T")[0] : null}
                     label="To"
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
@@ -126,21 +136,21 @@ export default function WorkExperience({ data, onChange }) {
                 </Stack>
 
                 <Input
-                  value={edu.companyName}
+                  value={work.companyName}
                   label="Company"
                   onChange={(e) =>
                     handleInputChange({ companyName: e.target.value }, index)
                   }
                 />
                 <Input
-                  value={edu.location}
+                  value={work.location}
                   label="Location"
                   onChange={(e) =>
                     handleInputChange({ location: e.target.value }, index)
                   }
                 />
                 <Input
-                  value={edu.responsibilities}
+                  value={work.responsibilities}
                   multiline={true}
                   rows={5}
                   label="Responsibilities"
@@ -164,11 +174,16 @@ export default function WorkExperience({ data, onChange }) {
         height={"37px"}
       >
         <Button startIcon={<Add />} color="primary" onClick={handleAddWork}>
-          Add Education
+          Add workcation
         </Button>
-        <Button startIcon={<Check />} color="success">
+        <ButtonLoading
+          isLoading={isSaving}
+          onClick={handleSave}
+          startIcon={<Check />}
+          color="success"
+        >
           Save
-        </Button>
+        </ButtonLoading>
       </Stack>
     </Stack>
   );

@@ -42,23 +42,12 @@ export default function Education({ data, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([edu_template]);
   const [isSaving, setIsSaving] = useState(false);
-  const [universitySearch, setUniversitySearch] = useState({
-    search: "",
-    data: [],
-  });
-  useEffect(() => {
-    initData();
-  }, []);
 
   useEffect(() => {
     if (data.education?.length > 0) {
       setInput(data.education);
     }
   }, [data]);
-
-  const initData = async () => {
-    // const universities = await getUniversity("Houston");
-  };
 
   const handleAddEducation = () => {
     setInput((prev) => {

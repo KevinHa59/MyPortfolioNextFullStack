@@ -3,6 +3,8 @@ import {
   CastForEducation,
   Check,
   Clear,
+  DeleteForever,
+  Remove,
   School,
   TipsAndUpdates,
 } from "@mui/icons-material";
@@ -19,6 +21,8 @@ import {
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
+import MyAPIs from "../../../pages/api-functions/MyAPIs";
+import ButtonLoading from "../../widgets/buttons/button-loading";
 
 const project_template = {
   title: "",
@@ -31,10 +35,18 @@ const project_template = {
 export default function Project({ data, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([project_template]);
-
-  // useEffect(() => {
-  //   setInput(data);
-  // }, [data]);
+  const [isSaving, setIsSaving] = useState(false);
+  useEffect(() => {
+    if (data.projects?.length > 0) {
+      const _projects = data.projects.map((pro) => {
+        return {
+          ...pro,
+          technologies: pro.technologies.join(", "),
+        };
+      });
+      setInput(_projects);
+    }
+  }, [data]);
 
   const handleAddProject = () => {
     setInput((prev) => {
@@ -57,6 +69,12 @@ export default function Project({ data, onChange }) {
     setInput(copy);
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    const res = await MyAPIs.Resume().updateResumeProject(data.id, input);
+    setIsSaving(false);
+  };
+
   return (
     <Stack height={"100%"}>
       <Stack
@@ -73,7 +91,6 @@ export default function Project({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
-                sx={{ background: theme.palette.grey[200] }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
                   <TipsAndUpdates />{" "}
@@ -81,6 +98,11 @@ export default function Project({ data, onChange }) {
                     fontWeight={"bold"}
                     fontStyle={"italic"}
                     variant="body1"
+                    color={
+                      project.id
+                        ? theme.palette.info.main
+                        : theme.palette.text.primary
+                    }
                   >
                     {project.title}
                   </Typography>
@@ -90,7 +112,7 @@ export default function Project({ data, onChange }) {
                   color="error"
                   onClick={() => handleRemoveProject(index)}
                 >
-                  <Clear />
+                  {project.id ? <DeleteForever /> : <Remove />}
                 </IconButton>
               </Stack>
               <Divider />
@@ -152,9 +174,14 @@ export default function Project({ data, onChange }) {
         <Button startIcon={<Add />} color="primary" onClick={handleAddProject}>
           Add Project
         </Button>
-        <Button startIcon={<Check />} color="success">
+        <ButtonLoading
+          isLoading={isSaving}
+          onClick={handleSave}
+          startIcon={<Check />}
+          color="success"
+        >
           Save
-        </Button>
+        </ButtonLoading>
       </Stack>
     </Stack>
   );
