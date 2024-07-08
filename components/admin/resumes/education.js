@@ -3,6 +3,11 @@ import {
   CastForEducation,
   Check,
   Clear,
+  DeleteForever,
+  DeleteForeverRounded,
+  DeleteForeverSharp,
+  DeleteForeverTwoTone,
+  Remove,
   School,
 } from "@mui/icons-material";
 import {
@@ -47,13 +52,12 @@ export default function Education({ data, onChange }) {
 
   useEffect(() => {
     if (data.education?.length > 0) {
-      console.log(data.education);
       setInput(data.education);
     }
   }, [data]);
 
   const initData = async () => {
-    const universities = await getUniversity("Houston");
+    // const universities = await getUniversity("Houston");
   };
 
   const handleAddEducation = () => {
@@ -80,7 +84,6 @@ export default function Education({ data, onChange }) {
   const handleUpdateEducation = async () => {
     setIsSaving(true);
     const res = await MyAPIs.Resume().updateResumeEducation(data.id, input);
-    console.log(res);
     setIsSaving(false);
   };
 
@@ -100,7 +103,6 @@ export default function Education({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
-                sx={{ background: theme.palette.grey[200] }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
                   <School />{" "}
@@ -108,6 +110,11 @@ export default function Education({ data, onChange }) {
                     fontWeight={"bold"}
                     fontStyle={"italic"}
                     variant="body1"
+                    color={
+                      edu.id
+                        ? theme.palette.info.main
+                        : theme.palette.text.primary
+                    }
                   >
                     {edu.schoolName}
                   </Typography>
@@ -117,7 +124,7 @@ export default function Education({ data, onChange }) {
                   color="error"
                   onClick={() => handleRemoveEducation(index)}
                 >
-                  <Clear />
+                  {edu.id ? <DeleteForever /> : <Remove />}
                 </IconButton>
               </Stack>
               <Divider />
@@ -135,7 +142,7 @@ export default function Education({ data, onChange }) {
                   <Input
                     label={"From"}
                     type={"date"}
-                    value={edu.startDate}
+                    value={edu.startDate ? edu.startDate.split("T")[0] : null}
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
                       handleInputChange({ startDate: e.target.value }, index)
@@ -144,7 +151,7 @@ export default function Education({ data, onChange }) {
                   <Input
                     label={"To"}
                     type={"date"}
-                    value={edu.endDate}
+                    value={edu.endDate ? edu.endDate.split("T")[0] : null}
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
                       handleInputChange({ endDate: e.target.value }, index)

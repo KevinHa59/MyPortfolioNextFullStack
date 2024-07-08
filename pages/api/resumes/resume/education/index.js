@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { ObjectId } from "mongodb";
 
 const prisma = new PrismaClient();
 /**
@@ -27,35 +28,44 @@ async function updateResumeEducation(req, res) {
     if (!id || !education) {
       res.status(400).json({ error: "Incomplete data" });
     }
-    const resume = await prisma.$transaction(
-      education.map((edu) =>
-        prisma.education.upsert({
-          where: { id: edu.id || "" }, // Ensure edu.id is a valid unique identifier or handle missing id
-          create: {
-            resumeID: id,
-            degree: edu.degree,
-            schoolName: edu.schoolName,
-            location: edu.location,
-            startDate: new Date(edu.startDate),
-            endDate: new Date(edu.endDate),
-            fieldOfStudy: edu.fieldOfStudy,
-            gpa: parseFloat(edu.gpa),
-          },
-          update: {
-            resumeID: id,
-            degree: edu.degree,
-            schoolName: edu.schoolName,
-            location: edu.location,
-            startDate: new Date(edu.startDate),
-            endDate: new Date(edu.endDate),
-            fieldOfStudy: edu.fieldOfStudy,
-            gpa: parseFloat(edu.gpa),
-          },
-        })
-      )
-    );
+
+    const _educations = education.map((education) => ({
+      where: { id: education.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
+      create: {
+        degree: education.degree,
+        schoolName: education.schoolName,
+        location: education.location,
+        startDate: new Date(education.startDate).toISOString(),
+        endDate: education.endDate
+          ? new Date(education.endDate).toISOString()
+          : null,
+        fieldOfStudy: education.fieldOfStudy,
+        gpa: education.gpa ? parseFloat(education.gpa) : null,
+      },
+      update: {
+        degree: education.degree,
+        schoolName: education.schoolName,
+        location: education.location,
+        startDate: new Date(education.startDate).toISOString(),
+        endDate: education.endDate
+          ? new Date(education.endDate).toISOString()
+          : null,
+        fieldOfStudy: education.fieldOfStudy,
+        gpa: education.gpa ? parseFloat(education.gpa) : null,
+      },
+    }));
+
+    const resume = await prisma.resume.update({
+      where: { id: id },
+      data: {
+        education: {
+          upsert: _educations,
+        },
+      },
+    });
     res.status(201).json(resume);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    console.log(err);
+    res.status(500).json({ err: "Internal server error", error: err });
   }
 }

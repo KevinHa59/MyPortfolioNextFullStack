@@ -3,7 +3,9 @@ import {
   CastForEducation,
   Check,
   Clear,
+  DeleteForever,
   HistoryEdu,
+  Remove,
   School,
 } from "@mui/icons-material";
 import {
@@ -19,6 +21,8 @@ import {
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
+import ButtonLoading from "../../widgets/buttons/button-loading";
+import MyAPIs from "../../../pages/api-functions/MyAPIs";
 
 const edu_template = {
   certificationName: "",
@@ -29,10 +33,13 @@ const edu_template = {
 export default function Certification({ data, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([edu_template]);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // useEffect(() => {
-  //   setInput(data);
-  // }, [data]);
+  useEffect(() => {
+    if (data.certifications?.length > 0) {
+      setInput(data.certifications);
+    }
+  }, [data]);
 
   const handleAddEducation = () => {
     setInput((prev) => {
@@ -55,6 +62,12 @@ export default function Certification({ data, onChange }) {
     setInput(copy);
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    const res = await MyAPIs.Resume().updateResumeCertification(data.id, input);
+    setIsSaving(false);
+  };
+
   return (
     <Stack height={"100%"}>
       <Stack
@@ -71,7 +84,6 @@ export default function Certification({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
-                sx={{ background: theme.palette.grey[200] }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
                   <HistoryEdu />{" "}
@@ -79,6 +91,11 @@ export default function Certification({ data, onChange }) {
                     fontWeight={"bold"}
                     fontStyle={"italic"}
                     variant="body1"
+                    color={
+                      cer.id
+                        ? theme.palette.info.main
+                        : theme.palette.text.primary
+                    }
                   >
                     {cer.certificationName}
                   </Typography>
@@ -88,7 +105,7 @@ export default function Certification({ data, onChange }) {
                   color="error"
                   onClick={() => handleRemoveEducation(index)}
                 >
-                  <Clear />
+                  {cer.id ? <DeleteForever /> : <Remove />}
                 </IconButton>
               </Stack>
               <Divider />
@@ -147,9 +164,14 @@ export default function Certification({ data, onChange }) {
         >
           Add Certification
         </Button>
-        <Button startIcon={<Check />} color="success">
+        <ButtonLoading
+          isLoading={isSaving}
+          onClick={handleSave}
+          startIcon={<Check />}
+          color="success"
+        >
           Save
-        </Button>
+        </ButtonLoading>
       </Stack>
     </Stack>
   );
