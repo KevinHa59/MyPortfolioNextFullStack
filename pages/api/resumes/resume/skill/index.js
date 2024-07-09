@@ -13,6 +13,8 @@ export default async function handler(req, res) {
   const method = req.method;
   if (method === "PUT") {
     updateResumeSkill(req, res);
+  } else if (method === "DELETE") {
+    removeResumeSkill(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
@@ -47,6 +49,27 @@ async function updateResumeSkill(req, res) {
           upsert: _skills,
         },
       },
+    });
+    res.status(201).json(resume);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ err: "Internal server error", error: err });
+  }
+}
+
+// [DELETE] handle delete resume skill
+// input: id
+async function removeResumeSkill(req, res) {
+  try {
+    const { id } = req.query;
+
+    // input validation
+    if (!id) {
+      res.status(400).json({ error: "Incomplete data" });
+    }
+
+    const resume = await prisma.skill.delete({
+      where: { id: id },
     });
     res.status(201).json(resume);
   } catch (err) {

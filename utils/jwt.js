@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 import sign from "jwt-encode";
+import { jwtDecode } from "jwt-decode";
 const secret = process.env.NEXT_PUBLIC_TOKEN_KEY;
 
 class JwtUtils {
@@ -8,7 +8,7 @@ class JwtUtils {
   }
   verifyToken(token) {
     try {
-      return jwt.verify(token, secret);
+      return jwtDecode(token);
     } catch (error) {
       return null;
     }

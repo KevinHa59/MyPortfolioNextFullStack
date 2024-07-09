@@ -7,57 +7,48 @@ const prisma = new PrismaClient();
  * @param {import('next').NextApiResponse} res The HTTP response object.
  */
 
-// api/resume/project
+// api/resume/award
 // api handler
 export default async function handler(req, res) {
   const method = req.method;
   if (method === "PUT") {
-    updateResumeProject(req, res);
+    updateResumeAward(req, res);
   } else if (method === "DELETE") {
-    removeResumeProject(req, res);
+    removeResumeAward(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
 }
 
-// [PUT] handle update resume project
+// [PUT] handle update resume award
 // input: id, update data
-async function updateResumeProject(req, res) {
+async function updateResumeAward(req, res) {
   try {
-    const { id, projects } = req.body;
+    const { id, awards } = req.body;
 
     // input validation
-    if (!id || !projects) {
+    if (!id || !awards) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const _projects = projects.map((project) => ({
-      where: { id: project.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
+    const _awards = awards.map((award) => ({
+      where: { id: award.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
       create: {
-        title: project.title,
-        role: project.role,
-        description: project.description,
-        technologies: project.technologies
-          .split(",")
-          .map((tech) => tech.trim()),
-        achievements: project.achievements,
+        awardName: award.awardName,
+        issuingOrganization: award.issuingOrganization,
+        dateReceived: new Date(award.dateReceived).toISOString(),
       },
       update: {
-        title: project.title,
-        role: project.role,
-        description: project.description,
-        technologies: project.technologies
-          .split(",")
-          .map((tech) => tech.trim()),
-        achievements: project.achievements,
+        awardName: award.awardName,
+        issuingOrganization: award.issuingOrganization,
+        dateReceived: new Date(award.dateReceived).toISOString(),
       },
     }));
-
     const resume = await prisma.resume.update({
       where: { id: id },
       data: {
-        projects: {
-          upsert: _projects,
+        awards: {
+          upsert: _awards,
         },
       },
     });
@@ -68,9 +59,9 @@ async function updateResumeProject(req, res) {
   }
 }
 
-// [DELETE] handle delete resume product
+// [DELETE] handle delete resume award
 // input: id
-async function removeResumeProject(req, res) {
+async function removeResumeAward(req, res) {
   try {
     const { id } = req.query;
 
@@ -79,7 +70,7 @@ async function removeResumeProject(req, res) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const resume = await prisma.project.delete({
+    const resume = await prisma.award.delete({
       where: { id: id },
     });
     res.status(201).json(resume);

@@ -110,7 +110,7 @@ export default function Skill({ data, onChange }) {
                   </Stack>
                 ),
               }}
-              label="Search Param"
+              label="Search Skill"
               onChange={handleSearchChange}
             />
           )}

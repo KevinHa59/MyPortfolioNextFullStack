@@ -3,8 +3,10 @@ import {
   CastForEducation,
   Check,
   Clear,
+  DeleteForever,
   Diversity1,
   Engineering,
+  Remove,
   School,
 } from "@mui/icons-material";
 import {
@@ -20,8 +22,11 @@ import {
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
+import MyAPIs from "../../../pages/api-functions/MyAPIs";
+import ButtonLoading from "../../widgets/buttons/button-loading";
+import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
 
-const work_template = {
+const volunteer_template = {
   role: "",
   organizationName: "",
   location: "",
@@ -32,19 +37,25 @@ const work_template = {
 
 export default function VolunteerExperience({ data, onChange }) {
   const theme = useTheme();
-  const [input, setInput] = useState([work_template]);
-
-  // useEffect(() => {
-  //   setInput(data);
-  // }, [data]);
+  const [input, setInput] = useState([volunteer_template]);
+  const [isSaving, setIsSaving] = useState(false);
+  useEffect(() => {
+    if (data?.volunteerExperience?.length > 0) {
+      setInput(data?.volunteerExperience);
+    }
+  }, [data]);
 
   const handleAddVolunteer = () => {
     setInput((prev) => {
-      return [...prev, { ...work_template }];
+      return [...prev, { ...volunteer_template }];
     });
   };
 
-  const handleRemoveVolunteer = (index) => {
+  const handleRemoveVolunteer = async (index, id, setOpen) => {
+    if (id !== undefined) {
+      const res = await MyAPIs.Resume().deleteResumeVolunteer(id);
+      setOpen(false);
+    }
     const copy = _.cloneDeep(input);
     copy.splice(index, 1);
     setInput(copy);
@@ -59,6 +70,12 @@ export default function VolunteerExperience({ data, onChange }) {
     setInput(copy);
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    const res = await MyAPIs.Resume().updateResumeVolunteer(data.id, input);
+    setIsSaving(false);
+  };
+
   return (
     <Stack height={"100%"}>
       <Stack
@@ -67,7 +84,7 @@ export default function VolunteerExperience({ data, onChange }) {
         gap={3}
         padding={5}
       >
-        {input.map((edu, index) => {
+        {input.map((volunteer, index) => {
           return (
             <Paper key={index} variant="outlined">
               <Stack
@@ -75,7 +92,6 @@ export default function VolunteerExperience({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
-                sx={{ background: theme.palette.grey[200] }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
                   <Diversity1 />{" "}
@@ -83,24 +99,36 @@ export default function VolunteerExperience({ data, onChange }) {
                     fontWeight={"bold"}
                     fontStyle={"italic"}
                     variant="body1"
+                    color={
+                      volunteer.id
+                        ? theme.palette.info.main
+                        : theme.palette.text.primary
+                    }
                   >
-                    {edu.role}
+                    {volunteer.role}
                   </Typography>
                 </Stack>
-                <IconButton
+                <ButtonDialogConfirm
                   size="small"
-                  color="error"
-                  onClick={() => handleRemoveVolunteer(index)}
+                  color={"error"}
+                  dialog_color="error"
+                  dialog_title={"Delete Volunteer"}
+                  dialog_message={"Are You Sure?"}
+                  onConfirm={(setOpen) =>
+                    handleRemoveVolunteer(index, volunteer.id, setOpen)
+                  }
+                  startIcon={volunteer.id ? <DeleteForever /> : <Remove />}
+                  isConfirmRequired={volunteer.id !== undefined}
                 >
-                  <Clear />
-                </IconButton>
+                  Delete
+                </ButtonDialogConfirm>
               </Stack>
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
                 <Stack direction={"row"} gap={1}>
                   <Input
                     sx={{ width: "100%" }}
-                    value={edu.role}
+                    value={volunteer.role}
                     label="Role"
                     onChange={(e) =>
                       handleInputChange({ role: e.target.value }, index)
@@ -108,7 +136,7 @@ export default function VolunteerExperience({ data, onChange }) {
                   />
                   <Input
                     type="date"
-                    value={edu.startDate}
+                    value={volunteer.startDate.split("T")[0]}
                     label="From"
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
@@ -117,7 +145,7 @@ export default function VolunteerExperience({ data, onChange }) {
                   />
                   <Input
                     type="date"
-                    value={edu.endDate}
+                    value={volunteer.endDate?.split("T")[0] || null}
                     label="To"
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
@@ -127,7 +155,7 @@ export default function VolunteerExperience({ data, onChange }) {
                 </Stack>
 
                 <Input
-                  value={edu.organizationName}
+                  value={volunteer.organizationName}
                   label="Organization Name"
                   onChange={(e) =>
                     handleInputChange(
@@ -137,7 +165,7 @@ export default function VolunteerExperience({ data, onChange }) {
                   }
                 />
                 <Input
-                  value={edu.location}
+                  value={volunteer.location}
                   label="Location"
                   onChange={(e) =>
                     handleInputChange({ location: e.target.value }, index)
@@ -145,8 +173,8 @@ export default function VolunteerExperience({ data, onChange }) {
                 />
                 <Input
                   multiline={true}
-                  rows={5}
-                  value={edu.responsibilities}
+                  rows={10}
+                  value={volunteer.responsibilities}
                   label="Responsibilities"
                   onChange={(e) =>
                     handleInputChange(
@@ -174,9 +202,14 @@ export default function VolunteerExperience({ data, onChange }) {
         >
           Add Volunteer
         </Button>
-        <Button startIcon={<Check />} color="success">
+        <ButtonLoading
+          isLoading={isSaving}
+          onClick={handleSave}
+          startIcon={<Check />}
+          color="success"
+        >
           Save
-        </Button>
+        </ButtonLoading>
       </Stack>
     </Stack>
   );

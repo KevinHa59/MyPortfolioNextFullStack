@@ -125,7 +125,7 @@ export default function Certification({ data, onChange }) {
                   />
                   <Input
                     type="date"
-                    value={cer.dateObtained}
+                    value={cer.dateObtained.split("T")[0]}
                     label="Obtained Date"
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>

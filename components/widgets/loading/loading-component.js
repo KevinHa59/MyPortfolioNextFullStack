@@ -5,6 +5,7 @@ export default function LoadingComponent({
   isLoading = false,
   loadingMessage = "",
   children,
+  sx,
 }) {
   return (
     <Stack
@@ -12,6 +13,7 @@ export default function LoadingComponent({
       height={"100%"}
       alignItems={"center"}
       justifyContent={"center"}
+      sx={sx}
     >
       {isLoading ? (
         <Stack alignItems={"center"} gap={1}>

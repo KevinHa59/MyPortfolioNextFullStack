@@ -7,57 +7,44 @@ const prisma = new PrismaClient();
  * @param {import('next').NextApiResponse} res The HTTP response object.
  */
 
-// api/resume/project
+// api/resume/hobby
 // api handler
 export default async function handler(req, res) {
   const method = req.method;
   if (method === "PUT") {
-    updateResumeProject(req, res);
-  } else if (method === "DELETE") {
-    removeResumeProject(req, res);
+    updateResumeHobby(req, res);
+  } else if (method === "PUT") {
+    removeResumeHobby(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
 }
 
-// [PUT] handle update resume project
+// [PUT] handle update resume hobby
 // input: id, update data
-async function updateResumeProject(req, res) {
+async function updateResumeHobby(req, res) {
   try {
-    const { id, projects } = req.body;
+    const { id, hobbies } = req.body;
 
     // input validation
-    if (!id || !projects) {
+    if (!id || !hobbies) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const _projects = projects.map((project) => ({
-      where: { id: project.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
+    const _hobbies = hobbies.map((hobby) => ({
+      where: { id: hobby.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
       create: {
-        title: project.title,
-        role: project.role,
-        description: project.description,
-        technologies: project.technologies
-          .split(",")
-          .map((tech) => tech.trim()),
-        achievements: project.achievements,
+        name: hobby.name || null,
       },
       update: {
-        title: project.title,
-        role: project.role,
-        description: project.description,
-        technologies: project.technologies
-          .split(",")
-          .map((tech) => tech.trim()),
-        achievements: project.achievements,
+        name: hobby.name || null,
       },
     }));
-
     const resume = await prisma.resume.update({
       where: { id: id },
       data: {
-        projects: {
-          upsert: _projects,
+        hobbies: {
+          upsert: _hobbies,
         },
       },
     });
@@ -68,9 +55,9 @@ async function updateResumeProject(req, res) {
   }
 }
 
-// [DELETE] handle delete resume product
+// [DELETE] handle delete resume hobby
 // input: id
-async function removeResumeProject(req, res) {
+async function removeResumeHobby(req, res) {
   try {
     const { id } = req.query;
 
@@ -79,7 +66,7 @@ async function removeResumeProject(req, res) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const resume = await prisma.project.delete({
+    const resume = await prisma.hobby.delete({
       where: { id: id },
     });
     res.status(201).json(resume);

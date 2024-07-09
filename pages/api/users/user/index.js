@@ -34,6 +34,39 @@ async function getUserByID(req, res) {
   }
 }
 
+// [PUT] handle update user
+// input: email, firstName, lastName, dob, userTypeID
+async function UpdateUser(req, res) {
+  try {
+    const body = req.body;
+    // input validation
+    if (
+      !body.email ||
+      !body.password ||
+      !body.firstName ||
+      !body.lastName ||
+      !body.dob ||
+      !body.userTypeID
+    ) {
+      res.status(400).json({ error: "Incomplete data" });
+    }
+
+    const user = await prisma.users.create({
+      data: {
+        email: body.email,
+        password: body.password,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        dob: new Date(body.dob),
+        userTypeID: body.userTypeID,
+      },
+    });
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(500).json({ err: "Internal server error" });
+  }
+}
+
 // [DELETE] handle remove user
 async function removeUserByID(req, res) {
   try {

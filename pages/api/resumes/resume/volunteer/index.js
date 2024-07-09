@@ -7,57 +7,55 @@ const prisma = new PrismaClient();
  * @param {import('next').NextApiResponse} res The HTTP response object.
  */
 
-// api/resume/project
+// api/resume/volunteer
 // api handler
 export default async function handler(req, res) {
   const method = req.method;
   if (method === "PUT") {
-    updateResumeProject(req, res);
+    updateResumeVolunteer(req, res);
   } else if (method === "DELETE") {
-    removeResumeProject(req, res);
+    removeResumeVolunteer(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
 }
 
-// [PUT] handle update resume project
+// [PUT] handle update resume volunteer
 // input: id, update data
-async function updateResumeProject(req, res) {
+async function updateResumeVolunteer(req, res) {
   try {
-    const { id, projects } = req.body;
+    const { id, volunteers } = req.body;
 
     // input validation
-    if (!id || !projects) {
+    if (!id || !volunteers) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const _projects = projects.map((project) => ({
-      where: { id: project.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
+    const _volunteer = volunteers.map((volunteer) => ({
+      where: { id: volunteer.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
       create: {
-        title: project.title,
-        role: project.role,
-        description: project.description,
-        technologies: project.technologies
-          .split(",")
-          .map((tech) => tech.trim()),
-        achievements: project.achievements,
+        role: volunteer.role,
+        organizationName: volunteer.organizationName,
+        location: volunteer.location,
+        startDate: new Date(volunteer.startDate).toISOString(),
+        endDate: new Date(volunteer.endDate).toISOString() || null,
+        responsibilities: volunteer.responsibilities,
       },
       update: {
-        title: project.title,
-        role: project.role,
-        description: project.description,
-        technologies: project.technologies
-          .split(",")
-          .map((tech) => tech.trim()),
-        achievements: project.achievements,
+        role: volunteer.role,
+        organizationName: volunteer.organizationName,
+        location: volunteer.location,
+        startDate: new Date(volunteer.startDate).toISOString(),
+        endDate: new Date(volunteer.endDate).toISOString() || null,
+        responsibilities: volunteer.responsibilities,
       },
     }));
 
     const resume = await prisma.resume.update({
       where: { id: id },
       data: {
-        projects: {
-          upsert: _projects,
+        volunteerExperience: {
+          upsert: _volunteer,
         },
       },
     });
@@ -68,9 +66,9 @@ async function updateResumeProject(req, res) {
   }
 }
 
-// [DELETE] handle delete resume product
+// [DELETE] handle delete resume volunteer
 // input: id
-async function removeResumeProject(req, res) {
+async function removeResumeVolunteer(req, res) {
   try {
     const { id } = req.query;
 
@@ -79,7 +77,7 @@ async function removeResumeProject(req, res) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const resume = await prisma.project.delete({
+    const resume = await prisma.volunteerExperience.delete({
       where: { id: id },
     });
     res.status(201).json(resume);

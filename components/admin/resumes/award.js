@@ -3,6 +3,8 @@ import {
   CastForEducation,
   Check,
   Clear,
+  DeleteForever,
+  Remove,
   School,
   TipsAndUpdates,
 } from "@mui/icons-material";
@@ -19,6 +21,9 @@ import {
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
+import MyAPIs from "../../../pages/api-functions/MyAPIs";
+import ButtonLoading from "../../widgets/buttons/button-loading";
+import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
 
 const award_template = {
   awardName: "",
@@ -29,10 +34,12 @@ const award_template = {
 export default function Award({ data, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([award_template]);
-
-  // useEffect(() => {
-  //   setInput(data);
-  // }, [data]);
+  const [isSaving, setIsSaving] = useState(false);
+  useEffect(() => {
+    if (data?.awards?.length > 0) {
+      setInput(data?.awards);
+    }
+  }, [data]);
 
   const handleAddAward = () => {
     setInput((prev) => {
@@ -40,7 +47,11 @@ export default function Award({ data, onChange }) {
     });
   };
 
-  const handleRemoveAward = (index) => {
+  const handleRemoveAward = async (index, id, setOpen) => {
+    if (id !== undefined) {
+      const res = await MyAPIs.Resume().deleteResumeAward(id);
+      setOpen(false);
+    }
     const copy = _.cloneDeep(input);
     copy.splice(index, 1);
     setInput(copy);
@@ -55,6 +66,12 @@ export default function Award({ data, onChange }) {
     setInput(copy);
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    const res = await MyAPIs.Resume().updateResumeAward(data.id, input);
+    setIsSaving(false);
+  };
+
   return (
     <Stack height={"100%"}>
       <Stack
@@ -63,7 +80,7 @@ export default function Award({ data, onChange }) {
         gap={3}
         padding={5}
       >
-        {input.map((project, index) => {
+        {input.map((award, index) => {
           return (
             <Paper key={index} variant="outlined">
               <Stack
@@ -71,7 +88,6 @@ export default function Award({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
-                sx={{ background: theme.palette.grey[200] }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
                   <TipsAndUpdates />{" "}
@@ -79,24 +95,36 @@ export default function Award({ data, onChange }) {
                     fontWeight={"bold"}
                     fontStyle={"italic"}
                     variant="body1"
+                    color={
+                      award.id
+                        ? theme.palette.info.main
+                        : theme.palette.text.primary
+                    }
                   >
-                    {project.awardName}
+                    {award.awardName}
                   </Typography>
                 </Stack>
-                <IconButton
+                <ButtonDialogConfirm
                   size="small"
-                  color="error"
-                  onClick={() => handleRemoveAward(index)}
+                  color={"error"}
+                  dialog_color="error"
+                  dialog_title={"Delete Award"}
+                  dialog_message={"Are You Sure?"}
+                  onConfirm={(setOpen) =>
+                    handleRemoveAward(index, award.id, setOpen)
+                  }
+                  startIcon={award.id ? <DeleteForever /> : <Remove />}
+                  isConfirmRequired={award.id !== undefined}
                 >
-                  <Clear />
-                </IconButton>
+                  Delete
+                </ButtonDialogConfirm>
               </Stack>
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
                 <Stack direction={"row"} gap={1}>
                   <Input
                     sx={{ width: "100%" }}
-                    value={project.awardName}
+                    value={award.awardName}
                     label="Award Name"
                     onChange={(e) =>
                       handleInputChange({ awardName: e.target.value }, index)
@@ -104,7 +132,7 @@ export default function Award({ data, onChange }) {
                   />
                   <Input
                     type={"date"}
-                    value={project.dateReceived}
+                    value={award.dateReceived?.split("T")[0] || null}
                     label="Date Received"
                     sx={{ minWidth: "200px" }}
                     onChange={(e) =>
@@ -114,7 +142,7 @@ export default function Award({ data, onChange }) {
                 </Stack>
 
                 <Input
-                  value={project.issuingOrganization}
+                  value={award.issuingOrganization}
                   label="Issuing Organization"
                   onChange={(e) =>
                     handleInputChange(
@@ -138,9 +166,14 @@ export default function Award({ data, onChange }) {
         <Button startIcon={<Add />} color="primary" onClick={handleAddAward}>
           Add Award
         </Button>
-        <Button startIcon={<Check />} color="success">
+        <ButtonLoading
+          isLoading={isSaving}
+          onClick={handleSave}
+          startIcon={<Check />}
+          color="success"
+        >
           Save
-        </Button>
+        </ButtonLoading>
       </Stack>
     </Stack>
   );

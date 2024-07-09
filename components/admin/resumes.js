@@ -140,6 +140,7 @@ export default function Resumes() {
             ) : (
               <ResumeCreator
                 data={newResumeData}
+                onRefresh={initData}
                 onClose={() => {
                   setIsNewUserOpen(false);
                   handleResumeChange(resume_template);
@@ -353,7 +354,7 @@ const steps = [
   },
 ];
 
-function ResumeCreator({ data, onClose }) {
+function ResumeCreator({ data, onRefresh, onClose }) {
   const theme = useTheme();
   const [step, setStep] = useState(steps[0]);
   return (
@@ -391,7 +392,11 @@ function ResumeCreator({ data, onClose }) {
                       ? theme.palette.primary.main
                       : "transparent"
                   }`,
-                  height: "100%",
+                  display: "flex",
+                  justifyContent:
+                    step?.name === _step.name ? "flex-end" : "flex-start",
+                  transition: "ease 0.5s",
+                  textTransform: "none",
                 }}
               >
                 {_step.name}
@@ -422,7 +427,7 @@ function ResumeCreator({ data, onClose }) {
               style={{ transition: "ease" }}
             >
               <Stack height={"100%"}>
-                <step.Comp data={data} onChange={null} />
+                <step.Comp data={data} onRefresh={onRefresh} onChange={null} />
               </Stack>
             </Slide>
           )}

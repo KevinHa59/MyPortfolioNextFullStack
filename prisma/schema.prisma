@@ -64,7 +64,7 @@ model WorkExperience {
   location       String
   startDate      DateTime
   endDate        DateTime?
-  responsibilities String[]
+  responsibilities String
 
   resume         Resume @relation(fields: [resumeID], references: [id])
 }
@@ -132,7 +132,7 @@ model VolunteerExperience {
   location         String
   startDate        DateTime
   endDate          DateTime?
-  responsibilities String[]
+  responsibilities String?
 
   resume           Resume @relation(fields: [resumeID], references: [id])
 }

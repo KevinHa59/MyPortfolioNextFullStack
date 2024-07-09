@@ -1,4 +1,12 @@
-import { Add, Check, Clear, Engineering, School } from "@mui/icons-material";
+import {
+  Add,
+  Check,
+  Clear,
+  DeleteForever,
+  Engineering,
+  Remove,
+  School,
+} from "@mui/icons-material";
 import {
   Button,
   Divider,
@@ -14,6 +22,7 @@ import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
 import ButtonLoading from "../../widgets/buttons/button-loading";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
+import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
 
 const work_template = {
   jobTitle: "",
@@ -24,7 +33,7 @@ const work_template = {
   responsibilities: "",
 };
 
-export default function WorkExperience({ data, onChange }) {
+export default function WorkExperience({ data, onRefresh, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([work_template]);
   const [isSaving, setIsSaving] = useState(false);
@@ -47,10 +56,15 @@ export default function WorkExperience({ data, onChange }) {
     });
   };
 
-  const handleRemoveWork = (index) => {
+  const handleRemoveWork = async (index, id, setOpen) => {
+    if (id !== undefined) {
+      const res = await MyAPIs.Resume().deleteResumeWork(id);
+      onRefresh && onRefresh();
+    }
     const copy = _.cloneDeep(input);
     copy.splice(index, 1);
     setInput(copy);
+    setOpen(false);
   };
 
   const handleInputChange = (newValue, index) => {
@@ -66,6 +80,7 @@ export default function WorkExperience({ data, onChange }) {
     setIsSaving(true);
     const res = MyAPIs.Resume().updateResumeWork(data.id, input);
     setIsSaving(false);
+    onRefresh && onRefresh();
   };
 
   return (
@@ -96,13 +111,20 @@ export default function WorkExperience({ data, onChange }) {
                     {work.jobTitle}
                   </Typography>
                 </Stack>
-                <IconButton
+                <ButtonDialogConfirm
                   size="small"
-                  color="error"
-                  onClick={() => handleRemoveWork(index)}
+                  color={"error"}
+                  dialog_color="error"
+                  dialog_title={"Delete Work Experience"}
+                  dialog_message={"Are You Sure?"}
+                  onConfirm={(setOpen) =>
+                    handleRemoveWork(index, work.id, setOpen)
+                  }
+                  startIcon={work.id ? <DeleteForever /> : <Remove />}
+                  isConfirmRequired={work.id !== undefined}
                 >
-                  <Clear />
-                </IconButton>
+                  Delete
+                </ButtonDialogConfirm>
               </Stack>
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>

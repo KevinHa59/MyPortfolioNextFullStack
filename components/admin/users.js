@@ -31,13 +31,16 @@ import ErrorRenderer from "../widgets/texts/error-renderer";
 import LoadingComponent from "../widgets/loading/loading-component";
 import SelectCustom from "../widgets/select/select-custom";
 import Table from "../widgets/tables/table";
+import Input from "../widgets/input/Input";
+import jwt from "../../utils/jwt";
+import MyAPIs from "../../pages/api-functions/MyAPIs";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [userTypes, setUserTypes] = useState([]);
   const [isGettingData, setIsGettingData] = useState(true);
   const [isNewUserOpen, setIsNewUserOpen] = useState(false);
-
+  const [editUser, setEditUser] = useState(null);
   useEffect(() => {
     initData();
     getAllUserTypes();
@@ -63,6 +66,11 @@ export default function Users() {
     setUserTypes(res);
   }
 
+  const handleEditUserOpen = (user) => {
+    setEditUser(user);
+    setIsNewUserOpen(true);
+  };
+
   return (
     <Stack width={"100%"}>
       <Stack
@@ -86,10 +94,17 @@ export default function Users() {
             variant={"contained"}
             button_label="Create New User"
             size="small"
+            paperProps={{
+              style: { minWidth: "max-content", maxWidth: "100vw" },
+            }}
           >
             <NewUser
               userTypes={userTypes}
-              onClose={() => setIsNewUserOpen(false)}
+              value={editUser}
+              onClose={() => {
+                setIsNewUserOpen(false);
+                setEditUser(null);
+              }}
               onCreateUserSuccess={() => {
                 initData();
                 setIsNewUserOpen(false);
@@ -105,14 +120,20 @@ export default function Users() {
           <Table
             data={users}
             headers={headers}
-            callback_cell={(row, key) => <Cell row={row} header={key} />}
+            callback_cell={(row, key) => (
+              <Cell
+                row={row}
+                header={key}
+                onEdit={() => handleEditUserOpen(row)}
+              />
+            )}
           />
         </Stack>
       )}
     </Stack>
   );
 }
-function Cell({ row, header }) {
+function Cell({ row, header, onEdit }) {
   if (header === "userType") {
     return (
       <Chip
@@ -146,6 +167,7 @@ function Cell({ row, header }) {
           variant="contained"
           size="small"
           color="warning"
+          onClick={onEdit}
         >
           <Edit />
         </IconButton>
@@ -198,7 +220,7 @@ const headers = [
   },
 ];
 
-function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
+function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
   const [input, setInput] = useState({
     email: "",
     confirmEmail: "",
@@ -211,6 +233,16 @@ function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
   });
   const [inputErrors, setInputErrors] = useState([]);
   const [isCreatingUser, setIsCreatingUser] = useState(false);
+
+  useEffect(() => {
+    if (value !== null) {
+      const userInfo = {
+        ...value,
+        password: jwt.verifyToken(value.password)?.password || "",
+      };
+      setInput(userInfo);
+    }
+  }, [value]);
   const handleInputChange = (newValue) => {
     setInput((prev) => {
       return {
@@ -234,7 +266,7 @@ function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
     );
     setInputErrors(errors);
     if (errors.length === 0) {
-      const res = await createUser(
+      const res = await MyAPIs.User().createUser(
         input.email,
         input.firstName,
         input.lastName,
@@ -248,48 +280,50 @@ function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
     setIsCreatingUser(false);
   };
   return (
-    <Stack width={"300px"} gap={1} padding={1}>
+    <Stack width={"400px"} gap={1} padding={1}>
       <Stack
         direction={"row"}
         alignItems={"center"}
         justifyContent={"space-between"}
       >
-        <FormHeader title={"New User"} />
+        <FormHeader title={input.id ? "Edit User" : "New User"} />
         <IconButton size="small" color="error" onClick={onClose}>
           <Clear />
         </IconButton>
       </Stack>
       <Divider />
-      <LoadingComponent isLoading={isCreatingUser}>
+      <LoadingComponent isLoading={isCreatingUser} sx={{ paddingX: 4 }}>
         <Stack gap={2} width={"100%"}>
           <Stack gap={1}>
-            <TextField
+            <Input
               value={input.firstName}
               onChange={(e) => handleInputChange({ firstName: e.target.value })}
               autoComplete="off"
               size="small"
               label="First Name"
             />
-            <TextField
+            <Input
               value={input.lastName}
               onChange={(e) => handleInputChange({ lastName: e.target.value })}
               autoComplete="off"
               size="small"
               label="Last Name"
             />
-            <TextField
+            <Input
               InputProps={{
                 startAdornment: <DateRange sx={{ paddingRight: 1 }} />,
               }}
-              value={input.dob}
+              value={input.dob.split("T")[0]}
               onChange={(e) => handleInputChange({ dob: e.target.value })}
               autoComplete="off"
               size="small"
               type="date"
+              label="Date of Birth"
             />
             <SelectCustom
               label={"User Type"}
               data={userTypes}
+              selected_value={input.userTypeID}
               item_field={"type"}
               value_field={"id"}
               size="small"
@@ -298,7 +332,7 @@ function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
           </Stack>
           <Divider />
           <Stack gap={1}>
-            <TextField
+            <Input
               value={input.email}
               onChange={(e) => handleInputChange({ email: e.target.value })}
               type="email"
@@ -309,7 +343,7 @@ function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
               size="small"
               label="Email"
             />
-            <TextField
+            <Input
               value={input.confirmEmail}
               onChange={(e) =>
                 handleInputChange({ confirmEmail: e.target.value })
@@ -325,7 +359,7 @@ function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
           </Stack>
           <Divider />
           <Stack gap={1}>
-            <TextField
+            <Input
               value={input.password}
               onChange={(e) => handleInputChange({ password: e.target.value })}
               type="password"
@@ -336,7 +370,7 @@ function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
               size="small"
               label="Password"
             />
-            <TextField
+            <Input
               value={input.confirmPassword}
               onChange={(e) =>
                 handleInputChange({ confirmPassword: e.target.value })
@@ -350,13 +384,13 @@ function NewUser({ userTypes, onClose, onCreateUserSuccess }) {
               label="Confirm Password"
             />
           </Stack>
-          <ErrorRenderer errors={inputErrors} />
-          <Divider />
-          <Button size="small" onClick={handleCreateAccount}>
-            Create
-          </Button>
         </Stack>
       </LoadingComponent>
+      <ErrorRenderer errors={inputErrors} />
+      <Divider />
+      <Button size="small" onClick={handleCreateAccount}>
+        Save
+      </Button>
     </Stack>
   );
 }
@@ -428,31 +462,6 @@ async function getUsers() {
 async function removeUsers(id) {
   try {
     const res = await UsersAPI.deleteUserByID(id);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// create user
-async function createUser(
-  email,
-  firstName,
-  lastName,
-  dob,
-  password,
-  userTypeID
-) {
-  try {
-    const res = await UsersAPI.createUser(
-      email,
-      firstName,
-      lastName,
-      dob,
-      password,
-      userTypeID
-    );
-    console.log(res.data);
     return res.data;
   } catch (error) {
     console.error(error);
