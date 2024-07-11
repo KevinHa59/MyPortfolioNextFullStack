@@ -18,6 +18,7 @@ import FormHeader from "../widgets/texts/form-header";
 import ErrorRenderer from "../widgets/texts/error-renderer";
 import LoadingComponent from "../widgets/loading/loading-component";
 import { Circle, Clear, Delete, Edit, Label } from "@mui/icons-material";
+import Header from "./header";
 
 export default function UserTypes() {
   const [userTypes, setUserTypes] = useState([]);
@@ -37,18 +38,7 @@ export default function UserTypes() {
 
   return (
     <Stack width={"100%"}>
-      <Stack
-        direction={"row"}
-        gap={1}
-        paddingX={1}
-        justifyContent={"space-between"}
-      >
-        <Stack direction={"row"} gap={1} alignItems={"center"}>
-          <Label />
-          <Typography variant="h6" fontWeight={"bold"}>
-            User Types
-          </Typography>
-        </Stack>
+      <Header title={"User Types"}>
         <Stack direction={"row"} gap={1}>
           <ButtonDialog
             open={isNewUserTypeOpen}
@@ -71,12 +61,13 @@ export default function UserTypes() {
             />
           </ButtonDialog>
         </Stack>
-      </Stack>
+      </Header>
+
       <Divider sx={{ background: "rgba(100,100,100,1)" }} />
       {isGettingData && <LinearProgress />}
       {!isGettingData && (
-        <Stack padding={1} gap={1} paddingX={10}>
-          {userTypes.length === 0
+        <Stack padding={1} gap={1} paddingX={10} alignItems={"center"}>
+          {userTypes?.length === 0 || userTypes === undefined
             ? "No Data"
             : userTypes.map((type, index) => {
                 return (
@@ -108,7 +99,7 @@ export default function UserTypes() {
 
 function UserTypeCard({ type, index, onEditClick, onDeleteClick }) {
   return (
-    <Paper sx={{ width: "max-content" }}>
+    <Paper className="normal" sx={{ width: "max-content" }}>
       <Stack padding={1} minWidth={"300px"} width={"max-content"} gap={1}>
         <Stack
           direction={"row"}

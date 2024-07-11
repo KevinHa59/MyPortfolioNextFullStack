@@ -86,7 +86,7 @@ export default function Education({ data, onChange }) {
       >
         {input.map((edu, index) => {
           return (
-            <Paper key={index} variant="outlined">
+            <Paper key={index}>
               <Stack
                 direction={"row"}
                 paddingX={2}
@@ -192,11 +192,14 @@ export default function Education({ data, onChange }) {
       <Divider />
       <Stack
         direction={"row"}
-        gap={1}
+        gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
+        paddingX={1}
       >
         <Button
+          variant="contained"
+          size="small"
           startIcon={<Add />}
           color="primary"
           onClick={handleAddEducation}
@@ -204,6 +207,8 @@ export default function Education({ data, onChange }) {
           Add Education
         </Button>
         <ButtonLoading
+          variant="contained"
+          size="small"
           isLoading={isSaving}
           onClick={handleUpdateEducation}
           startIcon={<Check />}

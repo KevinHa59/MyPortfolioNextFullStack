@@ -159,14 +159,23 @@ export default function Award({ data, onChange }) {
       <Divider />
       <Stack
         direction={"row"}
-        gap={1}
+        gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
+        paddingX={1}
       >
-        <Button startIcon={<Add />} color="primary" onClick={handleAddAward}>
+        <Button
+          size="small"
+          variant="contained"
+          startIcon={<Add />}
+          color="primary"
+          onClick={handleAddAward}
+        >
           Add Award
         </Button>
         <ButtonLoading
+          size="small"
+          variant="contained"
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}

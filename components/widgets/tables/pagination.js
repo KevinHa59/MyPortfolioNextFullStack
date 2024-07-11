@@ -4,7 +4,7 @@ import {
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
 } from "@mui/icons-material";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import SelectCustom from "../select/select-custom";
 
@@ -24,14 +24,18 @@ export default function Pagination({ quantity }) {
   };
   return (
     <Stack gap={1} direction={"row"} alignItems={"center"}>
-      <SelectCustom
-        selected_value={pageSetting.rows}
-        data={[10, 25, 50, 100]}
-        size="small"
-        label={"Rows"}
-        sx={{ minWidth: "40px" }}
-        onChange={(va) => handlePageSettingChange({ rows: va })}
-      />
+      <Stack direction={"row"} alignItems={"center"} gap={1}>
+        <Typography variant="body1" fontWeight={"bold"}>
+          Rows
+        </Typography>
+        <SelectCustom
+          selected_value={pageSetting.rows}
+          data={[10, 25, 50, 100]}
+          size="small"
+          sx={{ minWidth: "40px" }}
+          onChange={(va) => handlePageSettingChange({ rows: va })}
+        />
+      </Stack>
       <IconButton
         disabled={pageSetting.page <= 1}
         size="small"

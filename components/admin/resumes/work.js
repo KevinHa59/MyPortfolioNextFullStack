@@ -191,14 +191,23 @@ export default function WorkExperience({ data, onRefresh, onChange }) {
       <Divider />
       <Stack
         direction={"row"}
-        gap={1}
+        gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
+        paddingX={1}
       >
-        <Button startIcon={<Add />} color="primary" onClick={handleAddWork}>
+        <Button
+          size="small"
+          variant="contained"
+          startIcon={<Add />}
+          color="primary"
+          onClick={handleAddWork}
+        >
           Add workcation
         </Button>
         <ButtonLoading
+          size="small"
+          variant="contained"
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}

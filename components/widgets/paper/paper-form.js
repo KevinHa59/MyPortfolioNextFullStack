@@ -1,0 +1,30 @@
+import { Paper, Stack, Zoom } from "@mui/material";
+import React from "react";
+import FormHeader from "../texts/form-header";
+import LoadingComponent from "../loading/loading-component";
+
+export default function PaperForm({ title, isLoading, sx, children }) {
+  return (
+    <Zoom in={true} timeout={300}>
+      <Paper
+        sx={{
+          maxWidth: "100vw",
+          background: "rgba(255,255,255,0.2)",
+          overflowX: "hidden",
+          backdropFilter: "blur(5px)",
+          ...sx,
+        }}
+        variant="outlined"
+      >
+        <Stack gap={3} padding={1} sx={{ height: "100%" }}>
+          <FormHeader title={title} color={"#fff"} />
+          <Paper sx={{ position: "relative", height: "100%" }}>
+            <LoadingComponent isLoading={isLoading}>
+              {children}
+            </LoadingComponent>
+          </Paper>
+        </Stack>
+      </Paper>
+    </Zoom>
+  );
+}

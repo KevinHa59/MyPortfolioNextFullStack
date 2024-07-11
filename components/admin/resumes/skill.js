@@ -135,8 +135,11 @@ export default function Skill({ data, onChange }) {
         gap={1}
         justifyContent={"flex-end"}
         height={"37px"}
+        paddingX={1}
       >
         <ButtonLoading
+          size="small"
+          variant={"contained"}
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}

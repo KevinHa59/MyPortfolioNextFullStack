@@ -9,7 +9,9 @@ const API = {
 
 class UsersAPI {
   async getUsers() {
-    return await axios.get(API.users);
+    return await axios.get(API.users, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+    });
   }
   async createUser(email, firstName, lastName, dob, password, userTypeID) {
     const jwtPassword = jwt.generateToken({ password: password });
@@ -24,6 +26,7 @@ class UsersAPI {
   }
   async getUserByID(id) {
     return await axios.get(API.users_user, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
         id,
       },
@@ -38,6 +41,7 @@ class UsersAPI {
   }
   async getUserTypes(isUserIncluding = false) {
     return await axios.get(API.userTypes, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
         userIncluding: isUserIncluding ? "true" : "false",
       },

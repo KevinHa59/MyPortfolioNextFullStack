@@ -191,11 +191,14 @@ export default function VolunteerExperience({ data, onChange }) {
       <Divider />
       <Stack
         direction={"row"}
-        gap={1}
+        gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
+        paddingX={1}
       >
         <Button
+          size="small"
+          variant="contained"
           startIcon={<Add />}
           color="primary"
           onClick={handleAddVolunteer}
@@ -203,6 +206,8 @@ export default function VolunteerExperience({ data, onChange }) {
           Add Volunteer
         </Button>
         <ButtonLoading
+          size="small"
+          variant="contained"
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}

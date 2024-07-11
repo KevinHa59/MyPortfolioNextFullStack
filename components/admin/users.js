@@ -34,6 +34,9 @@ import Table from "../widgets/tables/table";
 import Input from "../widgets/input/Input";
 import jwt from "../../utils/jwt";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
+import { styles } from "../../styles/useStyle";
+import Header from "./header";
+import PaperForm from "../widgets/paper/paper-form";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -49,7 +52,7 @@ export default function Users() {
   async function initData() {
     setIsGettingData(true);
     let data = await getUsers();
-    data = data.map((user) => {
+    data = data?.map((user) => {
       const _userType = { ...user.userType };
       return {
         ...user,
@@ -72,30 +75,20 @@ export default function Users() {
   };
 
   return (
-    <Stack width={"100%"}>
-      <Stack
-        direction={"row"}
-        gap={1}
-        paddingX={1}
-        justifyContent={"space-between"}
-      >
-        <Stack direction={"row"} gap={1} alignItems={"center"}>
-          <Label />
-          <Typography variant="h6" fontWeight={"bold"}>
-            Users
-          </Typography>
-        </Stack>
+    <Stack width={"100%"} height={"100%"}>
+      <Header title={"User"}>
         <Stack direction={"row"} gap={1}>
           <ButtonDialog
             open={isNewUserOpen}
             isCloseOnClickOut={false}
             onClick={() => setIsNewUserOpen(true)}
-            sx_button={{ borderRadius: 0 }}
             variant={"contained"}
             button_label="Create New User"
             size="small"
             paperProps={{
-              style: { minWidth: "max-content", maxWidth: "100vw" },
+              style: {
+                background: "transparent",
+              },
             }}
           >
             <NewUser
@@ -112,24 +105,30 @@ export default function Users() {
             />
           </ButtonDialog>
         </Stack>
-      </Stack>
-      <Divider sx={{ background: "rgba(100,100,100,1)" }} />
-      {isGettingData && <LinearProgress />}
-      {!isGettingData && (
-        <Stack gap={"1px"} padding={1} paddingX={10}>
-          <Table
-            data={users}
-            headers={headers}
-            callback_cell={(row, key) => (
-              <Cell
-                row={row}
-                header={key}
-                onEdit={() => handleEditUserOpen(row)}
-              />
-            )}
-          />
-        </Stack>
-      )}
+      </Header>
+      <Divider />
+      <Paper
+        // variant="outlined"
+        sx={{
+          height: "100%",
+          marginX: 5,
+          marginY: 1,
+          overflow: "hidden",
+        }}
+      >
+        <Table
+          isLoading={isGettingData}
+          data={users}
+          headers={headers}
+          callback_cell={(row, key) => (
+            <Cell
+              row={row}
+              header={key}
+              onEdit={() => handleEditUserOpen(row)}
+            />
+          )}
+        />
+      </Paper>
     </Stack>
   );
 }
@@ -280,21 +279,10 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
     setIsCreatingUser(false);
   };
   return (
-    <Stack width={"400px"} gap={1} padding={1}>
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-      >
-        <FormHeader title={input.id ? "Edit User" : "New User"} />
-        <IconButton size="small" color="error" onClick={onClose}>
-          <Clear />
-        </IconButton>
-      </Stack>
-      <Divider />
-      <LoadingComponent isLoading={isCreatingUser} sx={{ paddingX: 4 }}>
-        <Stack gap={2} width={"100%"}>
-          <Stack gap={1}>
+    <PaperForm title={input.id ? "Edit User" : "New User"}>
+      <Stack gap={2} width={"100%"}>
+        <Stack gap={1}>
+          <Stack direction={"row"} gap={1}>
             <Input
               value={input.firstName}
               onChange={(e) => handleInputChange({ firstName: e.target.value })}
@@ -309,6 +297,8 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
               size="small"
               label="Last Name"
             />
+          </Stack>
+          <Stack direction={"row"} gap={1}>
             <Input
               InputProps={{
                 startAdornment: <DateRange sx={{ paddingRight: 1 }} />,
@@ -327,71 +317,87 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
               item_field={"type"}
               value_field={"id"}
               size="small"
+              sx={{ width: "100%" }}
               onChange={(value) => handleInputChange({ userTypeID: value })}
             />
           </Stack>
-          <Divider />
-          <Stack gap={1}>
-            <Input
-              value={input.email}
-              onChange={(e) => handleInputChange({ email: e.target.value })}
-              type="email"
-              InputProps={{
-                startAdornment: <Email sx={{ paddingRight: 1 }} />,
-              }}
-              autoComplete="off"
-              size="small"
-              label="Email"
-            />
-            <Input
-              value={input.confirmEmail}
-              onChange={(e) =>
-                handleInputChange({ confirmEmail: e.target.value })
-              }
-              type="email"
-              InputProps={{
-                startAdornment: <Email sx={{ paddingRight: 1 }} />,
-              }}
-              autoComplete="off"
-              size="small"
-              label="Confirm Email"
-            />
-          </Stack>
-          <Divider />
-          <Stack gap={1}>
-            <Input
-              value={input.password}
-              onChange={(e) => handleInputChange({ password: e.target.value })}
-              type="password"
-              InputProps={{
-                startAdornment: <Password sx={{ paddingRight: 1 }} />,
-              }}
-              autoComplete="off"
-              size="small"
-              label="Password"
-            />
-            <Input
-              value={input.confirmPassword}
-              onChange={(e) =>
-                handleInputChange({ confirmPassword: e.target.value })
-              }
-              type="password"
-              InputProps={{
-                startAdornment: <Password sx={{ paddingRight: 1 }} />,
-              }}
-              autoComplete="off"
-              size="small"
-              label="Confirm Password"
-            />
-          </Stack>
         </Stack>
-      </LoadingComponent>
-      <ErrorRenderer errors={inputErrors} />
-      <Divider />
-      <Button size="small" onClick={handleCreateAccount}>
-        Save
-      </Button>
-    </Stack>
+        <Divider />
+        <Stack gap={1}>
+          <Input
+            value={input.email}
+            onChange={(e) => handleInputChange({ email: e.target.value })}
+            type="email"
+            InputProps={{
+              startAdornment: <Email sx={{ paddingRight: 1 }} />,
+            }}
+            autoComplete="off"
+            size="small"
+            label="Email"
+          />
+          <Input
+            value={input.confirmEmail}
+            onChange={(e) =>
+              handleInputChange({ confirmEmail: e.target.value })
+            }
+            type="email"
+            InputProps={{
+              startAdornment: <Email sx={{ paddingRight: 1 }} />,
+            }}
+            autoComplete="off"
+            size="small"
+            label="Confirm Email"
+          />
+        </Stack>
+        <Divider />
+        <Stack gap={1}>
+          <Input
+            value={input.password}
+            onChange={(e) => handleInputChange({ password: e.target.value })}
+            type="password"
+            InputProps={{
+              startAdornment: <Password sx={{ paddingRight: 1 }} />,
+            }}
+            autoComplete="off"
+            size="small"
+            label="Password"
+          />
+          <Input
+            value={input.confirmPassword}
+            onChange={(e) =>
+              handleInputChange({ confirmPassword: e.target.value })
+            }
+            type="password"
+            InputProps={{
+              startAdornment: <Password sx={{ paddingRight: 1 }} />,
+            }}
+            autoComplete="off"
+            size="small"
+            label="Confirm Password"
+          />
+        </Stack>
+        <Divider />
+        <Stack direction={"row"} gap={1}>
+          <Button
+            fullWidth
+            variant="contained"
+            size="small"
+            onClick={handleCreateAccount}
+          >
+            Save
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="error"
+            size="small"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+        </Stack>
+      </Stack>
+    </PaperForm>
   );
 }
 

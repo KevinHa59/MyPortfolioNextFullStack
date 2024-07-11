@@ -1,4 +1,11 @@
-import { Divider, Paper, Stack, TextField } from "@mui/material";
+import {
+  CircularProgress,
+  Divider,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Header from "./header";
 import Rows from "./rows";
@@ -6,7 +13,13 @@ import { Search } from "@mui/icons-material";
 import Pagination from "./pagination";
 import _ from "lodash";
 
-export default function Table({ data, headers = [], sx, callback_cell }) {
+export default function Table({
+  data,
+  isLoading = false,
+  headers = [],
+  sx,
+  callback_cell,
+}) {
   const [rows, setRows] = useState([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({
@@ -14,7 +27,11 @@ export default function Table({ data, headers = [], sx, callback_cell }) {
     isASC: true,
   });
   useEffect(() => {
-    setRows(data);
+    if (data && data.length > 0) {
+      setRows(data);
+    } else {
+      setRows([]);
+    }
   }, [data]);
 
   // search change and filter rows
@@ -60,7 +77,7 @@ export default function Table({ data, headers = [], sx, callback_cell }) {
 
   return (
     <Stack sx={{ width: "100%", ...sx }} gap={"1px"}>
-      <Paper sx={{ borderRadius: 0 }}>
+      <Paper sx={{ borderRadius: 0, background: "transparent" }}>
         <Stack
           direction={"row"}
           padding={1}
@@ -90,6 +107,17 @@ export default function Table({ data, headers = [], sx, callback_cell }) {
           onSortChange={handleSortRows}
         />
       </Paper>
+      {isLoading ? (
+        <Typography textAlign={"center"}>
+          <CircularProgress />
+        </Typography>
+      ) : (
+        <Typography textAlign={"center"}>
+          {data?.length === 0
+            ? "No Data"
+            : data === undefined && "Fail to get Data"}
+        </Typography>
+      )}
       <Rows data={rows} headers={headers} callback_cell={callback_cell} />
     </Stack>
   );

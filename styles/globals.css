@@ -43,4 +43,9 @@ a {
     color: white;
     background: black;
   }
+  /* Targeting the input[type="date"] field */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(100%);
+    cursor: pointer;
+  }
 }

@@ -15,7 +15,9 @@ const API = {
 
 class ResumesAPI {
   async getResumes() {
-    return await axios.get(API.resumes);
+    return await axios.get(API.resumes, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+    });
   }
   async createResume(userID, title) {
     return await axios.post(API.resumes, {
@@ -25,6 +27,7 @@ class ResumesAPI {
   }
   async getResumeByID(id) {
     return await axios.get(API.resumes_resume, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
         id,
       },

@@ -118,11 +118,14 @@ export default function Language({ data, onRefresh, onChange }) {
       <Divider />
       <Stack
         direction={"row"}
-        gap={1}
+        gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
+        paddingX={1}
       >
         <ButtonLoading
+          size="small"
+          variant="contained"
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}

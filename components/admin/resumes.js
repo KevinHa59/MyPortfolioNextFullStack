@@ -1,11 +1,21 @@
 import {
+  Badge,
   Clear,
   Delete,
   DeleteForever,
+  Diversity1,
   Edit,
+  EmojiEvents,
+  FitnessCenter,
+  HistoryEdu,
   Label,
+  Pool,
   Remove,
   RemoveCircle,
+  School,
+  SensorOccupied,
+  Work,
+  Language as LanguageIcon,
 } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -40,6 +50,11 @@ import ButtonLoading from "../widgets/buttons/button-loading";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import Table from "../widgets/tables/table";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
+import PaperForm from "../widgets/paper/paper-form";
+import SelectCustom from "../widgets/select/select-custom";
+import FormHeader from "../widgets/texts/form-header";
+import Header from "./header";
+import { styles } from "../../styles/useStyle";
 
 const resume_template = {
   user: null,
@@ -107,22 +122,14 @@ export default function Resumes() {
   };
 
   return (
-    <Stack width={"100%"}>
-      <Stack
-        direction={"row"}
-        gap={1}
-        paddingX={1}
-        justifyContent={"space-between"}
-      >
-        <Stack direction={"row"} gap={1} alignItems={"center"}>
-          <Label />
-          <Typography variant="h6" fontWeight={"bold"}>
-            Resumes
-          </Typography>
-        </Stack>
+    <Stack width={"100%"} height={"100%"}>
+      <Header title={"Resume"}>
         <Stack direction={"row"} gap={1}>
           <ButtonDialog
-            paperProps={{ sx: { minWidth: "max-content", overflow: "hidden" } }}
+            paperProps={{
+              sx: { minWidth: "max-content", overflow: "hidden" },
+              style: { background: "transparent" },
+            }}
             open={isNewUserOpen}
             isCloseOnClickOut={false}
             onClick={() => setIsNewUserOpen(true)}
@@ -149,12 +156,20 @@ export default function Resumes() {
             )}
           </ButtonDialog>
         </Stack>
-      </Stack>
+      </Header>
+
       <Divider sx={{ background: "rgba(100,100,100,1)" }} />
-      {isGettingData && <LinearProgress />}
-      <Stack gap={"1px"} padding={1} paddingX={10}>
+      <Paper
+        sx={{
+          height: "100%",
+          marginX: 5,
+          marginY: 1,
+          overflow: "hidden",
+        }}
+      >
         <Table
-          data={generalData?.resumes || []}
+          isLoading={isGettingData}
+          data={generalData?.resumes}
           headers={headers}
           callback_cell={(row, key) => (
             <Cell
@@ -165,7 +180,7 @@ export default function Resumes() {
             />
           )}
         />
-      </Stack>
+      </Paper>
     </Stack>
   );
 }
@@ -266,44 +281,48 @@ function UserSelection({ users, onChange, onClose }) {
   };
 
   return (
-    <Stack width={"500px"} padding={1} gap={1}>
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-      >
-        <Typography variant="body1" fontWeight={"bold"}>
-          Create New Resume
-        </Typography>
-        <IconButton
-          disabled={isCreateResume}
+    <PaperForm title={"Create New Resume"}>
+      <Stack width={"400px"} padding={1} gap={2}>
+        <Autocomplete
           size="small"
-          color="error"
-          onClick={onClose}
-        >
-          <Clear />
-        </IconButton>
+          value={input.user}
+          options={users}
+          getOptionLabel={(option) =>
+            `${option.firstName} ${option.lastName} - ${option.email}`
+          }
+          onChange={(event, newValue) => handleInputChange({ user: newValue })}
+          renderInput={(params) => (
+            <TextField {...params} label="Search User" />
+          )}
+        />
+        <Input
+          label={"Resume Title"}
+          onChange={(e) => handleInputChange({ title: e.target.value })}
+        />
+        <Divider />
+        <Stack direction={"row"} gap={1}>
+          <ButtonLoading
+            sx={{ width: "100%" }}
+            variant={"contained"}
+            size="small"
+            isLoading={isCreateResume}
+            onClick={handleCreateResume}
+          >
+            Create
+          </ButtonLoading>
+          <Button
+            fullWidth
+            disabled={isCreateResume}
+            variant="contained"
+            size="small"
+            color="error"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+        </Stack>
       </Stack>
-      <Divider />
-      <Autocomplete
-        size="small"
-        value={input.user}
-        options={users}
-        getOptionLabel={(option) =>
-          `${option.firstName} ${option.lastName} - ${option.email}`
-        }
-        onChange={(event, newValue) => handleInputChange({ user: newValue })}
-        renderInput={(params) => <TextField {...params} label="Search User" />}
-      />
-      <Input
-        label={"Resume Title"}
-        onChange={(e) => handleInputChange({ title: e.target.value })}
-      />
-      <Divider />
-      <ButtonLoading isLoading={isCreateResume} onClick={handleCreateResume}>
-        Create
-      </ButtonLoading>
-    </Stack>
+    </PaperForm>
   );
 }
 
@@ -311,38 +330,47 @@ const steps = [
   {
     name: "Summary",
     Comp: Summary,
+    Icon: <Badge />,
   },
   {
     name: "Education",
     Comp: Education,
+    Icon: <School />,
   },
   {
     name: "Certifications",
     Comp: Certification,
+    Icon: <HistoryEdu />,
   },
   {
     name: "Skills",
     Comp: Skill,
+    Icon: <FitnessCenter />,
   },
   {
     name: "Projects",
     Comp: Project,
+    Icon: <SensorOccupied />,
   },
   {
     name: "Work Experience",
     Comp: WorkExperience,
+    Icon: <Work />,
   },
   {
     name: "Volunteer Experience",
     Comp: VolunteerExperience,
+    Icon: <Diversity1 />,
   },
   {
     name: "Awards",
     Comp: Award,
+    Icon: <EmojiEvents />,
   },
   {
     name: "Languages",
     Comp: Language,
+    Icon: <LanguageIcon />,
   },
   //   {
   //     name: "Publications",
@@ -351,6 +379,7 @@ const steps = [
   {
     name: "Hobbies",
     Comp: Hobby,
+    Icon: <Pool />,
   },
 ];
 
@@ -358,82 +387,78 @@ function ResumeCreator({ data, onRefresh, onClose }) {
   const theme = useTheme();
   const [step, setStep] = useState(steps[0]);
   return (
-    <Stack
-      margin={"1px"}
-      direction={"row"}
-      height={"90vh"}
-      // sx={{ background: "rgba(0,0,0,0.1)" }}
-    >
-      <Stack width={"300px"} justifyContent={"space-evenly"}>
-        <Stack
-          paddingX={1}
-          sx={{ background: theme.palette.background.default }}
-        >
-          <Typography fontWeight={"bold"}>New Resume</Typography>
-          <Typography>{`${data.user.firstName} ${data.user.lastName}`}</Typography>
-          <Typography>{`${data.user.email}`}</Typography>
+    <PaperForm title={"New Resume"} sx={{ height: "90vh" }}>
+      <Stack direction={"row"} height={"calc(90vh - 90px)"}>
+        <Stack width={"300px"} justifyContent={"space-evenly"} padding={1}>
+          <Stack paddingX={1}>
+            <Typography>{`${data.user.firstName} ${data.user.lastName}`}</Typography>
+            <Typography>{`${data.user.email}`}</Typography>
+          </Stack>
+          <Divider />
+          <Stack height={"100%"}>
+            {steps.map((_step, index) => {
+              return (
+                <Button
+                  key={index}
+                  onClick={() => {
+                    setStep(null);
+                    setTimeout(() => {
+                      setStep(_step);
+                    }, 100);
+                  }}
+                  startIcon={_step.Icon}
+                  sx={{
+                    borderRadius: 0,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    background:
+                      step?.name === _step.name
+                        ? styles.background.subMenu
+                        : "transparent",
+                    transition: "ease 0.5s",
+                    textTransform: "none",
+                    color: step?.name === _step.name && "#fff",
+                  }}
+                >
+                  {_step.name}
+                </Button>
+              );
+            })}
+          </Stack>
+          <Divider />
+          <Button variant="contained" color="error" onClick={onClose}>
+            Close
+          </Button>
         </Stack>
-        <Divider />
-        <Stack height={"100%"}>
-          {steps.map((_step, index) => {
-            return (
-              <Button
-                key={index}
-                onClick={() => {
-                  setStep(null);
-                  setTimeout(() => {
-                    setStep(_step);
-                  }, 100);
-                }}
-                sx={{
-                  borderRadius: 0,
-                  borderRight: `5px solid ${
-                    step?.name === _step.name
-                      ? theme.palette.primary.main
-                      : "transparent"
-                  }`,
-                  display: "flex",
-                  justifyContent:
-                    step?.name === _step.name ? "flex-end" : "flex-start",
-                  transition: "ease 0.5s",
-                  textTransform: "none",
-                }}
+        <Divider flexItem orientation="vertical" />
+        <Stack minWidth={"1000px"} height={"100%"}>
+          <Stack
+            sx={{
+              height: "100%",
+              borderRadius: 0,
+              overflowX: "hidden",
+            }}
+          >
+            {step?.Comp && (
+              <Slide
+                in={true}
+                direction="right"
+                timeout={500}
+                style={{ transition: "ease" }}
               >
-                {_step.name}
-              </Button>
-            );
-          })}
+                <Stack height={"100%"}>
+                  <step.Comp
+                    data={data}
+                    onRefresh={onRefresh}
+                    onChange={null}
+                  />
+                </Stack>
+              </Slide>
+            )}
+          </Stack>
         </Stack>
-        <Divider />
-        <Button color="error" onClick={onClose}>
-          Close
-        </Button>
       </Stack>
-
-      <Stack minWidth={"1000px"} height={"100%"}>
-        <Paper
-          sx={{
-            height: "100%",
-            borderRadius: 0,
-
-            overflowX: "hidden",
-          }}
-        >
-          {step?.Comp && (
-            <Slide
-              in={true}
-              direction="right"
-              timeout={500}
-              style={{ transition: "ease" }}
-            >
-              <Stack height={"100%"}>
-                <step.Comp data={data} onRefresh={onRefresh} onChange={null} />
-              </Stack>
-            </Slide>
-          )}
-        </Paper>
-      </Stack>
-    </Stack>
+    </PaperForm>
   );
 }
 

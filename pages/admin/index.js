@@ -1,29 +1,43 @@
-import { Button, Divider, Link, Paper, Stack, useTheme } from "@mui/material";
+import {
+  Button,
+  Divider,
+  Link,
+  Paper,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import UserTypes from "../../components/admin/user-types";
 import { useRouter } from "next/router";
 import Users from "../../components/admin/users";
 import Resumes from "../../components/admin/resumes";
+import useStyle from "../../styles/useStyle";
+import { Article, Hub, People } from "@mui/icons-material";
 
 const menu_data = [
   {
     title: "User Types",
     param: "userTypes",
+    Icon: <Hub />,
     Comp: <UserTypes />,
   },
   {
     title: "Users",
     param: "users",
+    Icon: <People />,
     Comp: <Users />,
   },
   {
     title: "Resumes",
     param: "resumes",
+    Icon: <Article />,
     Comp: <Resumes />,
   },
 ];
 
 export default function Index() {
+  const style = useStyle();
   const router = useRouter();
   const [section, setSection] = useState(null);
 
@@ -35,27 +49,36 @@ export default function Index() {
   }, [router]);
 
   return (
-    <Stack direction={"row"} height={"100vh"}>
-      <Stack height={"100%"} minWidth={"200px"}>
-        <Paper sx={{ height: "100%", borderRadius: 0, overflowY: "auto" }}>
+    <Stack height={"100vh"}>
+      <Stack height={"40px"} sx={{ background: style.background.menu }}></Stack>
+      <Stack
+        direction={"row"}
+        height={"calc(100vh - 40px)"}
+        sx={{ background: style.background.default }}
+      >
+        <Stack
+          height={"100%"}
+          sx={{
+            height: "100%",
+            borderRadius: 0,
+            overflowY: "auto",
+            background: style.background.menu,
+          }}
+        >
           <Menu />
-        </Paper>
-      </Stack>
-      <Stack height={"100vh"} width={"100%"} sx={{ overflowY: "auto" }}>
-        {menu_data.find((menu) => menu.param === section)?.Comp}
+        </Stack>
+        <Stack height={"100%"} width={"100%"} sx={{ overflowY: "auto" }}>
+          {menu_data.find((menu) => menu.param === section)?.Comp}
+        </Stack>
       </Stack>
     </Stack>
   );
 }
 
 function Menu() {
-  const theme = useTheme();
-
-  const [menuParam, setMenuParam] = useState(null);
   const router = useRouter();
 
   const handleRoute = (section) => {
-    setMenuParam(section);
     router.push({
       pathname: router.pathname,
       query: {
@@ -65,28 +88,37 @@ function Menu() {
   };
 
   return (
-    <Stack paddingY={2}>
+    <Stack paddingY={2} sx={{ color: "#fff" }}>
       {menu_data.map((menu, index) => {
         return (
-          <Button
-            key={index}
-            size="small"
-            sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              transition: "ease 0.1s",
-              // padding: 0,
-              minWidth: 0,
-              borderRadius: 0,
-              borderLeft:
-                menuParam === menu.param
-                  ? `10px solid ${theme.palette.primary.main}`
-                  : "0px solid transparent",
-            }}
-            onClick={() => handleRoute(menu.param)}
-          >
-            {menu.title}
-          </Button>
+          <>
+            <Button
+              key={index}
+              variant={
+                router.query.section === menu.param ? "contained" : "text"
+              }
+              color="inherit"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                transition: "ease 0.1s",
+                padding: 1,
+                minWidth: 0,
+                borderRadius: 0,
+                whiteSpace: "nowrap",
+                textTransform: "none",
+                color: "#fff",
+              }}
+              onClick={() => handleRoute(menu.param)}
+            >
+              {menu.Icon}
+              <Typography fontWeight={"bold"} variant="body2">
+                {menu.title}
+              </Typography>
+            </Button>
+            {index < menu_data.length - 1 && <Divider />}
+          </>
         );
       })}
     </Stack>
