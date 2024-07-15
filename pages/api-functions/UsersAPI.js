@@ -42,11 +42,12 @@ class UsersAPI {
       },
     });
   }
-  async getUserTypes(isUserIncluding = false) {
+  async getUserTypes(isUserIncluding = false, isPageIncluding = false) {
     return await axios.get(API.userTypes, {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
         userIncluding: isUserIncluding ? "true" : "false",
+        pageIncluding: isPageIncluding ? "true" : "false",
       },
     });
   }

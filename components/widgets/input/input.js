@@ -1,6 +1,7 @@
 import { RemoveRedEye, Visibility, VisibilityOff } from "@mui/icons-material";
 import { IconButton, Stack, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { styles } from "../../../styles/useStyle";
 
 export default function Input({
   label,
@@ -14,6 +15,8 @@ export default function Input({
   inputClassName,
   size = "small",
   fullWidth = false,
+  isInvalidInput = false,
+  inputErrorMessage = "",
   variant,
   value,
   onChange,
@@ -29,6 +32,11 @@ export default function Input({
         <Typography variant="body2" fontStyle={"italic"}>
           {subLabel}
         </Typography>
+        {isInvalidInput && (
+          <Typography sx={{ color: styles.error.main }} variant="body2">
+            {inputErrorMessage}
+          </Typography>
+        )}
       </Stack>
       <TextField
         type={type === "password" ? (visible ? "text" : "password") : type}

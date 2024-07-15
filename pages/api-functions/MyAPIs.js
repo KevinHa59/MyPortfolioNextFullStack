@@ -1,3 +1,5 @@
+import PagesAPI from "./PagesAPI";
+import PermissionsAPI from "./PermissionsAPI";
 import ResumesAPI from "./ResumesAPI";
 import UsersAPI from "./UsersAPI";
 class MyAPIs {
@@ -157,6 +159,18 @@ class MyAPIs {
           return res?.data || [];
         } catch (error) {}
       },
+      getUserTypes: async (
+        isUserIncluding = false,
+        isPageIncluding = false
+      ) => {
+        try {
+          const res = await UsersAPI.getUserTypes(
+            isUserIncluding,
+            isPageIncluding
+          );
+          return res?.data || [];
+        } catch (error) {}
+      },
       createUser: async (
         email,
         firstName,
@@ -213,6 +227,50 @@ class MyAPIs {
         } catch (error) {
           console.error("Error refreshing access token:", error);
         }
+      },
+    };
+  }
+  Page() {
+    return {
+      getPages: async (isUserTypeIncluding = false) => {
+        try {
+          const res = await PagesAPI.getPages(isUserTypeIncluding);
+          return res?.data || [];
+        } catch (error) {}
+      },
+      createPages: async (pages) => {
+        try {
+          const res = await PagesAPI.createPages(pages);
+          return res?.data || [];
+        } catch (error) {}
+      },
+      savePage: async (path, description, id) => {
+        try {
+          const res = await PagesAPI.savePage(path, description, id);
+          return res?.data || [];
+        } catch (error) {}
+      },
+      deletePage: async (id) => {
+        try {
+          const res = await PagesAPI.deletePage(id);
+          return res?.data || [];
+        } catch (error) {}
+      },
+    };
+  }
+  Permission() {
+    return {
+      createPermissions: async (links) => {
+        try {
+          const res = await PermissionsAPI.createPermissions(links);
+          return res?.data || [];
+        } catch (error) {}
+      },
+      deletePage: async (ids) => {
+        try {
+          const res = await PermissionsAPI.deletePermissions(ids);
+          return res?.data || [];
+        } catch (error) {}
       },
     };
   }

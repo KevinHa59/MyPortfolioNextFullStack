@@ -91,7 +91,7 @@ export const darkThemeOptions = {
         root: {
           color: "#000",
           "&:hover": {
-            color: "#fff",
+            color: "rgba(150,150,150,1)",
             background: `rgba(200,200,200,0.1)`,
           },
           "&.MuiButton-containedPrimary": {
@@ -115,6 +115,10 @@ export const darkThemeOptions = {
             "&:hover": {
               background: "rgb(129, 214, 210)",
             },
+          },
+          "&.Mui-disabled": {
+            color: "rgba(150,150,150,0.5)", // Color when the IconButton is disabled
+            opacity: 0.5, // Opacity when disabled (optional)
           },
         },
       },
@@ -158,6 +162,9 @@ export const darkThemeOptions = {
       styleOverrides: {
         notchedOutline: {
           borderColor: divider,
+        },
+        "&:hover MuiOutlinedInput-notchedOutline": {
+          borderColor: "rgba(120, 120, 120, 1)",
         },
       },
     },

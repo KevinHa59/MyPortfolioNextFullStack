@@ -6,6 +6,7 @@ import LoadingComponent from "../loading/loading-component";
 export default function PaperForm({
   title,
   isLoading,
+  titleColor = "#fff",
   sx,
   sx_paper,
   children,
@@ -23,7 +24,7 @@ export default function PaperForm({
         variant="outlined"
       >
         <Stack gap={1} padding={1} sx={{ height: "100%" }}>
-          <FormHeader title={title} color={"#fff"} />
+          <FormHeader title={title} color={titleColor} />
           <Paper sx={{ position: "relative", height: "100%", ...sx_paper }}>
             <LoadingComponent isLoading={isLoading}>
               {children}

@@ -32,11 +32,14 @@ export default function Login() {
       loginInput.password
     );
     if (res) {
-      router.push(localStorage.getItem("redirectPath"));
+      const currentPath = localStorage.getItem("redirectPath")
+        ? localStorage.getItem("redirectPath")
+        : "/";
+      router.push(currentPath);
       // Clear the stored path after successful login
       localStorage.removeItem("redirectPath");
     }
-    console.log(res);
+
     setIsLogin(false);
   };
 

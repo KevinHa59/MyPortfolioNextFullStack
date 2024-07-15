@@ -33,7 +33,24 @@ model UserTypes {
   description String? @default("")
   color String?
   users Users[]
+  pageLinks UserTypePageLinks[]
   @@map("user_types")
+}
+
+model Pages {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  path String @unique
+  description String? @default("")
+  userTypeLinks UserTypePageLinks[]
+}
+
+model UserTypePageLinks {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  userTypeID String
+  pageID     String
+  userType UserTypes @relation(fields: [userTypeID], references: [id])
+  page       Pages     @relation(fields: [pageID], references: [id])
+  @@unique([userTypeID, pageID])
 }
 
 model Resume {

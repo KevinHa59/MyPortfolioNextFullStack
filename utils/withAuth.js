@@ -1,8 +1,9 @@
 const { useRouter } = require("next/router");
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import MyAPIs from "../pages/api-functions/MyAPIs";
+import { CircularProgress, Stack } from "@mui/material";
 
 const isTokenExpired = (token) => {
   if (!token) return true;
@@ -18,6 +19,7 @@ const isTokenExpired = (token) => {
 
 const withAuth = (WrappedComponent) => {
   const ComponentWithAuth = (props) => {
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
     let cookies = getCookie("user");
     cookies = cookies ? JSON.parse(cookies) : null;
@@ -51,7 +53,17 @@ const withAuth = (WrappedComponent) => {
             router.replace("/authentication/login");
           }
         }
+      } else {
+        setIsLoading(false);
       }
+    }
+
+    if (isLoading) {
+      return (
+        <Stack alignItems={"center"} justifyContent={"center"} height={"100vh"}>
+          <CircularProgress />
+        </Stack>
+      );
     }
 
     return <WrappedComponent {...props} />;

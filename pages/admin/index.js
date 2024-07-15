@@ -13,9 +13,18 @@ import { useRouter } from "next/router";
 import Users from "../../components/admin/users";
 import Resumes from "../../components/admin/resumes";
 import useStyle from "../../styles/useStyle";
-import { Article, Hub, Logout, People } from "@mui/icons-material";
+import {
+  AdminPanelSettings,
+  Article,
+  Hub,
+  Logout,
+  PagesRounded,
+  People,
+} from "@mui/icons-material";
 import withAuth from "../../utils/withAuth";
 import { deleteCookie, getCookie } from "cookies-next";
+import Pages from "../../components/admin/pages";
+import Permissions from "../../components/admin/permissions";
 
 const menu_data = [
   {
@@ -23,6 +32,18 @@ const menu_data = [
     param: "userTypes",
     Icon: <Hub />,
     Comp: <UserTypes />,
+  },
+  {
+    title: "Pages",
+    param: "pages",
+    Icon: <PagesRounded />,
+    Comp: <Pages />,
+  },
+  {
+    title: "Permissions",
+    param: "permissions",
+    Icon: <AdminPanelSettings />,
+    Comp: <Permissions />,
   },
   {
     title: "Users",
@@ -124,7 +145,7 @@ function Menu() {
                 {menu.title}
               </Typography>
             </Button>
-            {index < menu_data.length - 1 && <Divider />}
+            {index < menu_data.length && <Divider />}
           </>
         );
       })}

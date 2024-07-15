@@ -24,19 +24,68 @@ export default async function handler(req, res) {
 // [GET] handle get user types
 // input: userIncluding: "1" or "true" to include users in response, otherwise users wont be including in response
 async function getUserTypes(req, res) {
-  const { userIncluding } = req.query;
+  const { userIncluding, pageIncluding } = req.query;
   let isUserIncluding = false;
+  let isPageIncluding = false;
   if (
     userIncluding &&
     (parseInt(userIncluding) === 1 || userIncluding?.toLowerCase() === "true")
   ) {
     isUserIncluding = true;
   }
-  const userTypes = await prisma.userTypes.findMany({
-    include: {
-      users: isUserIncluding,
-    },
-  });
+  if (
+    pageIncluding &&
+    (parseInt(pageIncluding) === 1 || pageIncluding?.toLowerCase() === "true")
+  ) {
+    isPageIncluding = true;
+  }
+  let userTypes = [];
+  if (isUserIncluding || isPageIncluding) {
+    if (isUserIncluding && !isPageIncluding) {
+      userTypes = await prisma.userTypes.findMany({
+        include: {
+          users: isUserIncluding,
+        },
+      });
+    } else if (isPageIncluding && !isUserIncluding) {
+      userTypes = await prisma.userTypes.findMany({
+        include: {
+          pageLinks: {
+            include: {
+              page: true,
+            },
+          },
+        },
+      });
+      userTypes = userTypes.map((type) => {
+        const types = {
+          ...type,
+          pages: type.pageLinks.map((link) => link.page),
+        };
+        delete types.pageLinks;
+        return types;
+      });
+    } else {
+      userTypes = await prisma.userTypes.findMany({
+        include: {
+          users: true,
+          pageLinks: {
+            include: {
+              page: true,
+            },
+          },
+        },
+      });
+      userTypes = userTypes.map((type) => {
+        const types = {
+          ...page,
+          pages: type.pageLinks.map((link) => link.page),
+        };
+        delete types.pageLinks;
+        return types;
+      });
+    }
+  }
   res.status(200).json(userTypes);
 }
 
