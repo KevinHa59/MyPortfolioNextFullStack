@@ -91,6 +91,9 @@ export default function Table({
               InputProps={{
                 startAdornment: <Search sx={{ paddingRight: 1 }} />,
                 paddingY: 0,
+                style: {
+                  color: "#fff",
+                },
               }}
               label="Search"
               onChange={(e) => handleSearchChange(e.target.value)}

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../../../utils/hash";
 
 const prisma = new PrismaClient();
 /**
@@ -50,11 +51,11 @@ async function createUser(req, res) {
     ) {
       res.status(400).json({ error: "Incomplete data" });
     }
-
+    const hashedPassword = await hashPassword(body.password);
     const user = await prisma.users.create({
       data: {
         email: body.email,
-        password: body.password,
+        password: hashedPassword,
         firstName: body.firstName,
         lastName: body.lastName,
         dob: new Date(body.dob),

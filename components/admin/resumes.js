@@ -282,7 +282,7 @@ function UserSelection({ users, onChange, onClose }) {
 
   return (
     <PaperForm title={"Create New Resume"}>
-      <Stack width={"400px"} padding={1} gap={2}>
+      <Stack width={"400px"} padding={2} gap={2}>
         <Autocomplete
           size="small"
           value={input.user}
@@ -384,44 +384,66 @@ const steps = [
 ];
 
 function ResumeCreator({ data, onRefresh, onClose }) {
-  const theme = useTheme();
   const [step, setStep] = useState(steps[0]);
   return (
-    <PaperForm title={"New Resume"} sx={{ height: "90vh" }}>
-      <Stack direction={"row"} height={"calc(90vh - 90px)"}>
-        <Stack width={"300px"} justifyContent={"space-evenly"} padding={1}>
-          <Stack paddingX={1}>
-            <Typography>{`${data.user.firstName} ${data.user.lastName}`}</Typography>
-            <Typography>{`${data.user.email}`}</Typography>
+    <PaperForm
+      title={"New Resume"}
+      sx={{ height: "90vh" }}
+      sx_paper={{ overflow: "hidden" }}
+    >
+      <Stack direction={"row"} height={"100%"}>
+        <Stack
+          width={"250px"}
+          justifyContent={"space-evenly"}
+          sx={{ background: styles.background.menu }}
+        >
+          <Stack
+            sx={{
+              padding: 1,
+              color: "#fff",
+            }}
+          >
+            <Typography
+              fontWeight={"bold"}
+            >{`${data.user.firstName} ${data.user.lastName}`}</Typography>
+            <Typography variant="body2">{`${data.user.email}`}</Typography>
           </Stack>
           <Divider />
-          <Stack height={"100%"}>
+          <Stack height={"100%"} justifyContent={"center"}>
+            <Divider sx={{ opacity: 0.5 }} />
             {steps.map((_step, index) => {
               return (
-                <Button
-                  key={index}
-                  onClick={() => {
-                    setStep(null);
-                    setTimeout(() => {
-                      setStep(_step);
-                    }, 100);
-                  }}
-                  startIcon={_step.Icon}
-                  sx={{
-                    borderRadius: 0,
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    background:
-                      step?.name === _step.name
-                        ? styles.background.subMenu
-                        : "transparent",
-                    transition: "ease 0.5s",
-                    textTransform: "none",
-                    color: step?.name === _step.name && "#fff",
-                  }}
-                >
-                  {_step.name}
-                </Button>
+                <>
+                  <Button
+                    key={index}
+                    onClick={() => {
+                      setStep(null);
+                      setTimeout(() => {
+                        setStep(_step);
+                      }, 100);
+                    }}
+                    startIcon={_step.Icon}
+                    sx={{
+                      borderRadius: 0,
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      background:
+                        step?.name === _step.name
+                          ? "rgba(200,200,200,0.1)"
+                          : "transparent",
+                      paddingLeft: step?.name === _step.name ? 3 : 2,
+                      transition: "ease 0.3s",
+                      textTransform: "none",
+                      color: "#fff",
+                      "&:hover": {
+                        paddingLeft: 3,
+                      },
+                    }}
+                  >
+                    {_step.name}
+                  </Button>
+                  <Divider sx={{ opacity: 0.5 }} />
+                </>
               );
             })}
           </Stack>

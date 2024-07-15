@@ -23,6 +23,7 @@ import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
+import { styles } from "../../../styles/useStyle";
 
 const project_template = {
   title: "",
@@ -91,9 +92,10 @@ export default function Project({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
+                sx={{ background: styles.background.menu, color: "#fff" }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
-                  <TipsAndUpdates />{" "}
+                  <TipsAndUpdates sx={{ color: "#fff" }} />{" "}
                   <Typography
                     fontWeight={"bold"}
                     fontStyle={"italic"}
@@ -107,13 +109,15 @@ export default function Project({ data, onChange }) {
                     {project.title}
                   </Typography>
                 </Stack>
-                <IconButton
+                <Button
+                  startIcon={project.id ? <DeleteForever /> : <Remove />}
+                  variant="contained"
                   size="small"
                   color="error"
                   onClick={() => handleRemoveProject(index)}
                 >
-                  {project.id ? <DeleteForever /> : <Remove />}
-                </IconButton>
+                  {project.id ? "Delete" : "Remove"}
+                </Button>
               </Stack>
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
@@ -170,7 +174,6 @@ export default function Project({ data, onChange }) {
         gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
-        paddingX={1}
       >
         <Button
           size="small"
@@ -187,7 +190,6 @@ export default function Project({ data, onChange }) {
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}
-          color="success"
         >
           Save
         </ButtonLoading>

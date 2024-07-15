@@ -34,6 +34,9 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.hoverPadding {
+  padding-left: 20px;
+}
 
 @media (prefers-color-scheme: dark) {
   html {
@@ -47,5 +50,8 @@ a {
   input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(100%);
     cursor: pointer;
+  }
+  .hoverPadding {
+    padding-left: 20px;
   }
 }

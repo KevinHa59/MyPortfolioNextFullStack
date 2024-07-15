@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../../../../../utils/hash";
 
 const prisma = new PrismaClient();
 /**
@@ -10,55 +11,37 @@ const prisma = new PrismaClient();
 // api handler
 export default async function handler(req, res) {
   const method = req.method;
-  if (method === "GET") {
-    getUserByID(req, res);
-  } else if (method === "PUT") {
-    UpdateUser(req, res);
-  } else if (method === "DELETE") {
-    removeUserByID(req, res);
+  if (method === "PUT") {
+    UpdatePassword(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
 }
 
-// [GET] handle get user by id
-// input: id
-async function getUserByID(req, res) {
-  try {
-    const { id } = req.query;
-    if (!id) {
-      res.status(400).json({ error: "Incomplete data" });
-    }
-    const user = await prisma.users.findUnique({ where: { id: id } });
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ err: "Internal server error" });
-  }
-}
-
 // [PUT] handle update user
 // input: email, firstName, lastName, dob, userTypeID
-async function UpdateUser(req, res) {
+async function UpdatePassword(req, res) {
   try {
     const body = req.body;
     // input validation
-    if (
-      !body.id ||
-      !body.firstName ||
-      !body.lastName ||
-      !body.dob ||
-      !body.userTypeID
-    ) {
+    if (!body.email || !body.password) {
       res.status(400).json({ error: "Incomplete data" });
     }
-
+    // verify email
+    const verifyUser = await prisma.users.findUnique({
+      where: { email: body.email },
+    });
+    // if email not valid return 401
+    if (!verifyUser) {
+      return res.status(401).join({ err: "Invalid User" });
+    }
+    // hash given password
+    const hashedPassword = await hashPassword(body.password);
+    // update password
     const user = await prisma.users.update({
-      where: { id: id },
+      where: { email: body.email },
       data: {
-        firstName: body.firstName,
-        lastName: body.lastName,
-        dob: new Date(body.dob),
-        userTypeID: body.userTypeID,
+        password: hashedPassword,
       },
     });
     res.status(201).json(user);

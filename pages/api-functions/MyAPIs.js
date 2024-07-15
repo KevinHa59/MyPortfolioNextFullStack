@@ -183,6 +183,37 @@ class MyAPIs {
           return res?.data;
         } catch (error) {}
       },
+      login: async (email, password) => {
+        try {
+          const res = await UsersAPI.login(email, password);
+          return res?.data;
+        } catch (error) {}
+      },
+      updatePassword: async (email, password) => {
+        try {
+          const res = await UsersAPI.updatePassword(email, password);
+          return res?.data;
+        } catch (error) {}
+      },
+      generateToken: async (email) => {
+        try {
+          const res = await UsersAPI.generateToken(email);
+          return res?.data;
+        } catch (error) {}
+      },
+      refreshToken: async () => {
+        try {
+          const res = await UsersAPI.refreshToken();
+          if (res.status === 201) {
+            const data = res.data;
+            return data.accessToken;
+          } else {
+            throw new Error("Failed to refresh access token");
+          }
+        } catch (error) {
+          console.error("Error refreshing access token:", error);
+        }
+      },
     };
   }
 }

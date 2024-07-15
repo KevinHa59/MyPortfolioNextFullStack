@@ -23,6 +23,7 @@ import Input from "../../widgets/input/Input";
 import ButtonLoading from "../../widgets/buttons/button-loading";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
+import { styles } from "../../../styles/useStyle";
 
 const work_template = {
   jobTitle: "",
@@ -99,10 +100,10 @@ export default function WorkExperience({ data, onRefresh, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
-                sx={{ background: theme.palette.grey[200] }}
+                sx={{ background: styles.background.menu, color: "#fff" }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
-                  <Engineering />{" "}
+                  <Engineering sx={{ color: "#fff" }} />{" "}
                   <Typography
                     fontWeight={"bold"}
                     fontStyle={"italic"}
@@ -112,6 +113,7 @@ export default function WorkExperience({ data, onRefresh, onChange }) {
                   </Typography>
                 </Stack>
                 <ButtonDialogConfirm
+                  variant={"contained"}
                   size="small"
                   color={"error"}
                   dialog_color="error"
@@ -123,7 +125,7 @@ export default function WorkExperience({ data, onRefresh, onChange }) {
                   startIcon={work.id ? <DeleteForever /> : <Remove />}
                   isConfirmRequired={work.id !== undefined}
                 >
-                  Delete
+                  {work.id ? "Delete" : "Remove"}
                 </ButtonDialogConfirm>
               </Stack>
               <Divider />
@@ -194,7 +196,6 @@ export default function WorkExperience({ data, onRefresh, onChange }) {
         gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
-        paddingX={1}
       >
         <Button
           size="small"
@@ -211,7 +212,6 @@ export default function WorkExperience({ data, onRefresh, onChange }) {
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}
-          color="success"
         >
           Save
         </ButtonLoading>

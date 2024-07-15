@@ -13,7 +13,9 @@ import { useRouter } from "next/router";
 import Users from "../../components/admin/users";
 import Resumes from "../../components/admin/resumes";
 import useStyle from "../../styles/useStyle";
-import { Article, Hub, People } from "@mui/icons-material";
+import { Article, Hub, Logout, People } from "@mui/icons-material";
+import withAuth from "../../utils/withAuth";
+import { deleteCookie, getCookie } from "cookies-next";
 
 const menu_data = [
   {
@@ -36,7 +38,7 @@ const menu_data = [
   },
 ];
 
-export default function Index() {
+function Index() {
   const style = useStyle();
   const router = useRouter();
   const [section, setSection] = useState(null);
@@ -87,6 +89,11 @@ function Menu() {
     });
   };
 
+  const handleLogout = () => {
+    deleteCookie("user");
+    router.reload();
+  };
+
   return (
     <Stack paddingY={2} sx={{ color: "#fff" }}>
       {menu_data.map((menu, index) => {
@@ -121,6 +128,30 @@ function Menu() {
           </>
         );
       })}
+      <Button
+        variant={"text"}
+        color="inherit"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          transition: "ease 0.1s",
+          padding: 1,
+          minWidth: 0,
+          borderRadius: 0,
+          whiteSpace: "nowrap",
+          textTransform: "none",
+          color: "#fff",
+        }}
+        onClick={() => handleLogout()}
+      >
+        <Logout />
+        <Typography fontWeight={"bold"} variant="body2">
+          Logout
+        </Typography>
+      </Button>
     </Stack>
   );
 }
+
+export default withAuth(Index);

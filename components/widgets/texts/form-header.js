@@ -6,7 +6,7 @@ export default function FormHeader({ title, color }) {
     <Stack alignItems={"center"} width={"100%"}>
       <Slide in={true} direction="down" timeout={500}>
         <Typography
-          variant="h4"
+          variant="h6"
           textAlign={"left"}
           fontWeight={"bold"}
           data-text={title}

@@ -2,27 +2,38 @@
 import { CssBaseline, Stack, ThemeProvider } from "@mui/material";
 import "../styles/globals.css";
 import Head from "next/head";
-import { useState } from "react";
+import { createContext, useState } from "react";
 import { createTheme } from "../theme";
+import Notification from "../components/widgets/notification/notification";
+
+export const mainContext = createContext(null);
 
 function MyApp({ Component, pageProps }) {
   const [settings, setSettings] = useState({
     theme: "dark",
   });
+  const [note, setNote] = useState(null);
   return (
     <Stack>
       <Head>
         <title>My Portfolio</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      <ThemeProvider
-        theme={createTheme({
-          mode: settings.theme,
-        })}
+      <mainContext.Provider
+        value={{
+          setNote: setNote,
+        }}
       >
-        <CssBaseline />
-        <Component {...pageProps} />
-      </ThemeProvider>
+        <ThemeProvider
+          theme={createTheme({
+            mode: settings.theme,
+          })}
+        >
+          <CssBaseline />
+          <Component {...pageProps} />
+          <Notification note={note} />
+        </ThemeProvider>
+      </mainContext.Provider>
     </Stack>
   );
 }

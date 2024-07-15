@@ -13,11 +13,12 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ButtonDialog from "../widgets/buttons/button_dialog";
 import UsersAPI from "../../pages/api-functions/UsersAPI";
 import {
   Clear,
+  CopyAll,
   DateRange,
   Delete,
   Edit,
@@ -25,6 +26,7 @@ import {
   Label,
   Password,
   Remove,
+  Token,
 } from "@mui/icons-material";
 import FormHeader from "../widgets/texts/form-header";
 import ErrorRenderer from "../widgets/texts/error-renderer";
@@ -32,11 +34,14 @@ import LoadingComponent from "../widgets/loading/loading-component";
 import SelectCustom from "../widgets/select/select-custom";
 import Table from "../widgets/tables/table";
 import Input from "../widgets/input/Input";
-import jwt from "../../utils/jwt";
+import jwt from "../../utils/jwtUtil";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import { styles } from "../../styles/useStyle";
 import Header from "./header";
 import PaperForm from "../widgets/paper/paper-form";
+import ButtonLoading from "../widgets/buttons/button-loading";
+import LabelText from "../widgets/texts/label-text";
+import { mainContext } from "../../pages/_app";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -96,7 +101,9 @@ export default function Users() {
               value={editUser}
               onClose={() => {
                 setIsNewUserOpen(false);
-                setEditUser(null);
+                setTimeout(() => {
+                  setEditUser(null);
+                }, 200);
               }}
               onCreateUserSuccess={() => {
                 initData();
@@ -125,6 +132,8 @@ export default function Users() {
               row={row}
               header={key}
               onEdit={() => handleEditUserOpen(row)}
+              onPasswordChange={() => handlePasswordChangeOpen(row)}
+              onRefresh={initData}
             />
           )}
         />
@@ -132,7 +141,7 @@ export default function Users() {
     </Stack>
   );
 }
-function Cell({ row, header, onEdit }) {
+function Cell({ row, header, onEdit, onRefresh }) {
   if (header === "userType") {
     return (
       <Chip
@@ -170,6 +179,8 @@ function Cell({ row, header, onEdit }) {
         >
           <Edit />
         </IconButton>
+        <PasswordChangeButton user={row} />
+        <TokenButton user={row} onRefresh={onRefresh} />
         <IconButton
           sx={{ borderRadius: "20px", paddingY: 0 }}
           variant="contained"
@@ -219,17 +230,19 @@ const headers = [
   },
 ];
 
+const temp_user = {
+  email: "",
+  confirmEmail: "",
+  password: "",
+  confirmPassword: "",
+  firstName: "",
+  lastName: "",
+  dob: "",
+  userTypeID: "",
+};
+
 function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
-  const [input, setInput] = useState({
-    email: "",
-    confirmEmail: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
-    dob: "",
-    userTypeID: "",
-  });
+  const [input, setInput] = useState(null);
   const [inputErrors, setInputErrors] = useState([]);
   const [isCreatingUser, setIsCreatingUser] = useState(false);
 
@@ -240,6 +253,8 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
         password: jwt.verifyToken(value.password)?.password || "",
       };
       setInput(userInfo);
+    } else {
+      setInput(temp_user);
     }
   }, [value]);
   const handleInputChange = (newValue) => {
@@ -254,44 +269,43 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
   const handleCreateAccount = async () => {
     setIsCreatingUser(true);
     const errors = verifyNewUser(
-      input.email,
-      input.confirmEmail,
-      input.password,
-      input.confirmPassword,
-      input.firstName,
-      input.lastName,
-      input.dob,
-      input.userTypeID
+      input?.email,
+      input?.confirmEmail,
+      input?.password,
+      input?.confirmPassword,
+      input?.firstName,
+      input?.lastName,
+      input?.dob,
+      input?.userTypeID
     );
     setInputErrors(errors);
     if (errors.length === 0) {
       const res = await MyAPIs.User().createUser(
-        input.email,
-        input.firstName,
-        input.lastName,
-        input.dob,
-        input.password,
-        input.userTypeID
+        input?.email,
+        input?.firstName,
+        input?.lastName,
+        input?.dob,
+        input?.password,
+        input?.userTypeID
       );
-      console.log(res);
       onCreateUserSuccess && onCreateUserSuccess();
     }
     setIsCreatingUser(false);
   };
   return (
-    <PaperForm title={input.id ? "Edit User" : "New User"}>
-      <Stack gap={2} width={"100%"}>
-        <Stack gap={1}>
+    <PaperForm title={input?.id ? "Edit User" : "New User"}>
+      <Stack gap={2} width={"100%"} paddingY={2}>
+        <Stack gap={1} paddingX={2}>
           <Stack direction={"row"} gap={1}>
             <Input
-              value={input.firstName}
+              value={input?.firstName}
               onChange={(e) => handleInputChange({ firstName: e.target.value })}
               autoComplete="off"
               size="small"
               label="First Name"
             />
             <Input
-              value={input.lastName}
+              value={input?.lastName}
               onChange={(e) => handleInputChange({ lastName: e.target.value })}
               autoComplete="off"
               size="small"
@@ -303,7 +317,7 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
               InputProps={{
                 startAdornment: <DateRange sx={{ paddingRight: 1 }} />,
               }}
-              value={input.dob.split("T")[0]}
+              value={input?.dob.split("T")[0]}
               onChange={(e) => handleInputChange({ dob: e.target.value })}
               autoComplete="off"
               size="small"
@@ -313,7 +327,7 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
             <SelectCustom
               label={"User Type"}
               data={userTypes}
-              selected_value={input.userTypeID}
+              selected_value={input?.userTypeID}
               item_field={"type"}
               value_field={"id"}
               size="small"
@@ -322,62 +336,69 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
             />
           </Stack>
         </Stack>
+        {value === null && (
+          <>
+            <Divider />
+            <Stack gap={1} paddingX={2}>
+              <Input
+                value={input?.email}
+                onChange={(e) => handleInputChange({ email: e.target.value })}
+                type="email"
+                InputProps={{
+                  startAdornment: <Email sx={{ paddingRight: 1 }} />,
+                }}
+                autoComplete="off"
+                size="small"
+                label="Email"
+              />
+              <Input
+                value={input?.confirmEmail}
+                onChange={(e) =>
+                  handleInputChange({ confirmEmail: e.target.value })
+                }
+                type="email"
+                InputProps={{
+                  startAdornment: <Email sx={{ paddingRight: 1 }} />,
+                }}
+                autoComplete="off"
+                size="small"
+                label="Confirm Email"
+              />
+            </Stack>
+            <Divider />
+            <Stack gap={1} paddingX={2}>
+              <Input
+                value={input?.password}
+                onChange={(e) =>
+                  handleInputChange({ password: e.target.value })
+                }
+                type="password"
+                InputProps={{
+                  startAdornment: <Password sx={{ paddingRight: 1 }} />,
+                }}
+                autoComplete="off"
+                size="small"
+                label="Password"
+              />
+              <Input
+                value={input?.confirmPassword}
+                onChange={(e) =>
+                  handleInputChange({ confirmPassword: e.target.value })
+                }
+                type="password"
+                InputProps={{
+                  startAdornment: <Password sx={{ paddingRight: 1 }} />,
+                }}
+                autoComplete="off"
+                size="small"
+                label="Confirm Password"
+              />
+            </Stack>
+          </>
+        )}
+        <ErrorRenderer errors={inputErrors} />
         <Divider />
-        <Stack gap={1}>
-          <Input
-            value={input.email}
-            onChange={(e) => handleInputChange({ email: e.target.value })}
-            type="email"
-            InputProps={{
-              startAdornment: <Email sx={{ paddingRight: 1 }} />,
-            }}
-            autoComplete="off"
-            size="small"
-            label="Email"
-          />
-          <Input
-            value={input.confirmEmail}
-            onChange={(e) =>
-              handleInputChange({ confirmEmail: e.target.value })
-            }
-            type="email"
-            InputProps={{
-              startAdornment: <Email sx={{ paddingRight: 1 }} />,
-            }}
-            autoComplete="off"
-            size="small"
-            label="Confirm Email"
-          />
-        </Stack>
-        <Divider />
-        <Stack gap={1}>
-          <Input
-            value={input.password}
-            onChange={(e) => handleInputChange({ password: e.target.value })}
-            type="password"
-            InputProps={{
-              startAdornment: <Password sx={{ paddingRight: 1 }} />,
-            }}
-            autoComplete="off"
-            size="small"
-            label="Password"
-          />
-          <Input
-            value={input.confirmPassword}
-            onChange={(e) =>
-              handleInputChange({ confirmPassword: e.target.value })
-            }
-            type="password"
-            InputProps={{
-              startAdornment: <Password sx={{ paddingRight: 1 }} />,
-            }}
-            autoComplete="off"
-            size="small"
-            label="Confirm Password"
-          />
-        </Stack>
-        <Divider />
-        <Stack direction={"row"} gap={1}>
+        <Stack direction={"row"} gap={1} paddingX={2}>
           <Button
             fullWidth
             variant="contained"
@@ -398,6 +419,220 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
         </Stack>
       </Stack>
     </PaperForm>
+  );
+}
+
+const password_temp = {
+  currentPassword: "",
+  password: "",
+  confirmPassword: "",
+};
+
+function PasswordChangeButton({ user }) {
+  const [open, setOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [errors, setErrors] = useState([]);
+  const [input, setInput] = useState(password_temp);
+
+  const handleInputChange = (newValue) => {
+    setInput((prev) => {
+      return {
+        ...prev,
+        ...newValue,
+      };
+    });
+  };
+
+  const handleUpdatePassword = async () => {
+    const _errors = [];
+    setIsUpdating(true);
+    const verifyPassword = await MyAPIs.User().login(
+      user.email,
+      input.currentPassword
+    );
+    if (verifyPassword !== undefined) {
+      if (input.password.length < 8) {
+        _errors.push("Password must contains at least 8 characters");
+      }
+      if (input.password !== input.confirmPassword) {
+        _errors.push("Passwords not matched");
+      }
+
+      if (_errors.length === 0) {
+        const res = await MyAPIs.User().updatePassword(
+          user.email,
+          input.password
+        );
+        setOpen(false);
+        setInput(password_temp);
+      }
+    } else {
+      _errors.push("Invalid Password");
+    }
+    setErrors(_errors);
+    setIsUpdating(false);
+  };
+
+  return (
+    <ButtonDialog
+      isIconButton={true}
+      size="small"
+      color={"info"}
+      icon={<Password />}
+      open={open}
+      isCloseOnClickOut={false}
+      onClick={() => setOpen(true)}
+      paperProps={{ style: { background: "transparent" } }}
+    >
+      <PaperForm title={"Edit Password"}>
+        <Stack gap={1}>
+          <Stack padding={2} gap={1}>
+            <LabelText label={"Email"}>{user.email}</LabelText>
+            <Input
+              type={"password"}
+              value={input.currentPassword}
+              label={"Current Password"}
+              size="small"
+              onChange={(e) =>
+                handleInputChange({ currentPassword: e.target.value })
+              }
+            />
+            <Divider />
+            <Input
+              type={"password"}
+              value={input.password}
+              label={"New Password"}
+              size="small"
+              onChange={(e) => handleInputChange({ password: e.target.value })}
+            />
+            <Input
+              type={"password"}
+              value={input.confirmPassword}
+              label={"Confirm New Password"}
+              size="small"
+              onChange={(e) =>
+                handleInputChange({ confirmPassword: e.target.value })
+              }
+            />
+            <ErrorRenderer errors={errors} />
+          </Stack>
+
+          <Divider />
+          <Stack direction={"row"} gap={"1px"} padding={2}>
+            <ButtonLoading
+              sx={{ width: "100%" }}
+              variant={"contained"}
+              isLoading={isUpdating}
+              size="small"
+              onClick={handleUpdatePassword}
+            >
+              Confirm
+            </ButtonLoading>
+            <Button
+              size="small"
+              fullWidth
+              variant="contained"
+              color="error"
+              onClick={() => {
+                setOpen(false);
+                setInput(password_temp);
+                setErrors([]);
+              }}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </Stack>
+      </PaperForm>
+    </ButtonDialog>
+  );
+}
+
+function TokenButton({ user, onRefresh }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isGenerateToken, setIsGenerateToken] = useState(false);
+  const { setNote } = useContext(mainContext);
+  const handleCreateToken = async () => {
+    setIsGenerateToken(true);
+    const res = await MyAPIs.User().generateToken(user.email);
+
+    if (res !== undefined) {
+      onRefresh && onRefresh();
+    }
+    setIsGenerateToken(false);
+  };
+  const handleCopy = (message, token) => {
+    navigator.clipboard.writeText(token);
+    setNote(message);
+  };
+
+  return (
+    <ButtonDialog
+      isIconButton={true}
+      icon={<Token />}
+      size="small"
+      color={"secondary"}
+      open={isOpen}
+      isCloseOnClickOut={false}
+      onClick={() => setIsOpen(true)}
+      paperProps={{
+        style: {
+          background: "transparent",
+          width: "clamp(400px, 100%, 600px)",
+          maxWidth: "100%",
+        },
+      }}
+    >
+      <PaperForm title={"Token"}>
+        <Stack padding={2} gap={1} width={"100%"}>
+          <LabelText label={"Email"}>{user.email}</LabelText>
+          {user.refreshToken === null ? (
+            <ButtonLoading
+              isLoading={isGenerateToken}
+              onClick={handleCreateToken}
+              variant="contained"
+              size="small"
+            >
+              Create Refresh and Access Token
+            </ButtonLoading>
+          ) : (
+            <Stack width={"100%"} gap={2}>
+              <LabelText
+                label={
+                  <Stack direction={"row"} alignItems={"center"}>
+                    Token{" "}
+                    <IconButton
+                      size="small"
+                      onClick={() =>
+                        handleCopy("Copied Refresh Token", user.refreshToken)
+                      }
+                    >
+                      <CopyAll fontSize={"10px"} />
+                    </IconButton>
+                  </Stack>
+                }
+              >
+                <Typography noWrap sx={{ width: "100%", overflowY: "auto" }}>
+                  {user.refreshToken}
+                </Typography>
+              </LabelText>
+            </Stack>
+          )}
+        </Stack>
+        <Stack width={"100%"} alignItems={"flex-end"}>
+          <Divider flexItem />
+          <Button
+            sx={{ width: "max-content" }}
+            size="small"
+            variant="contained"
+            color="error"
+            onClick={() => setIsOpen(false)}
+          >
+            Close
+          </Button>
+        </Stack>
+      </PaperForm>
+    </ButtonDialog>
   );
 }
 

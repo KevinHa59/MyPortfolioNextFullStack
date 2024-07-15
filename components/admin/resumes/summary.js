@@ -3,6 +3,7 @@ import { Button, IconButton, Stack, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
+import Input from "../../widgets/input/Input";
 
 export default function Summary({ data, onChange }) {
   const [input, setInput] = useState("");
@@ -21,7 +22,8 @@ export default function Summary({ data, onChange }) {
 
   return (
     <Stack gap={1} padding={5}>
-      <TextField
+      {/* <Input /> */}
+      <Input
         value={input}
         label="Write short cool summary about yourself here... "
         fullWidth
@@ -31,11 +33,10 @@ export default function Summary({ data, onChange }) {
       />
       <Stack alignItems={"flex-end"}>
         <ButtonLoading
+          size="small"
           isLoading={isSaving}
-          variant="outlined"
+          variant="contained"
           startIcon={<Check />}
-          color="success"
-          sx={{ borderRadius: "50px" }}
           onClick={handleUpdateResume}
         >
           Save

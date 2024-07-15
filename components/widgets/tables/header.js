@@ -10,10 +10,11 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { styles } from "../../../styles/useStyle";
 
 export default function Header({ headers, sortSetting, onSortChange }) {
   return (
-    <Grid container>
+    <Grid container sx={{ background: styles.background.menu }}>
       {headers?.map((header, index) => {
         const justify = header.align
           ? header.align === "left"
@@ -33,7 +34,12 @@ export default function Header({ headers, sortSetting, onSortChange }) {
             >
               <Button
                 size="small"
-                sx={{ padding: 0, textTransform: "none", minWidth: 0 }}
+                sx={{
+                  padding: 0,
+                  textTransform: "none",
+                  minWidth: 0,
+                  color: "#fff",
+                }}
                 onClick={() =>
                   onSortChange &&
                   onSortChange({
@@ -56,9 +62,9 @@ export default function Header({ headers, sortSetting, onSortChange }) {
               </Button>
               {sortSetting.column === header.key &&
                 (sortSetting.isASC ? (
-                  <ArrowUpward sx={{ fontSize: 10 }} />
+                  <ArrowUpward sx={{ fontSize: 10, color: "#fff" }} />
                 ) : (
-                  <ArrowDownward sx={{ fontSize: 10 }} />
+                  <ArrowDownward sx={{ fontSize: 10, color: "#fff" }} />
                 ))}
             </Stack>
           </Grid>

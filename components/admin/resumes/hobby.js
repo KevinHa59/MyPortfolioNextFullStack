@@ -103,7 +103,6 @@ export default function Hobby({ data, onRefresh, onChange }) {
         gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
-        paddingX={1}
       >
         <ButtonLoading
           size="small"
@@ -111,7 +110,6 @@ export default function Hobby({ data, onRefresh, onChange }) {
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}
-          color="success"
         >
           Save
         </ButtonLoading>

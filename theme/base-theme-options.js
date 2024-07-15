@@ -27,9 +27,6 @@ export const baseThemeOptions = {
           textTransform: "none",
           borderRadius: 0,
           color: "#000",
-          "&.MuiButton-primary": {
-            color: "#ffffff", // Font color for primary button
-          },
         },
         sizeSmall: {
           padding: "6px 16px",
@@ -229,7 +226,7 @@ export const baseThemeOptions = {
         root: {
           backgroundImage: "none",
           color: "#000",
-          boxShadow: "3px 3px 10px rgba(0,0,0,0.2)",
+          boxShadow: "0px 0px 10px rgba(0,0,0,0.5)",
           "&.MuiPaper-outlined": {
             borderColor: "rgba(180,180,180,0.5)",
           },
@@ -353,7 +350,7 @@ export const baseThemeOptions = {
             color: "transparent",
             transform: "scaleY(-1)",
             opacity: "0.6",
-            filter: "blur(2px)",
+            filter: "blur(1px)",
           },
         },
       },

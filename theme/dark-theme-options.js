@@ -16,6 +16,7 @@ const background = {
   default: "#efefef",
   paper: "#ffffff",
   menu: "#2b3240",
+  subMenu: "#304152",
 };
 
 const divider = "#2D3748";
@@ -89,23 +90,28 @@ export const darkThemeOptions = {
       styleOverrides: {
         root: {
           color: "#000",
+          "&:hover": {
+            color: "#fff",
+            background: `rgba(200,200,200,0.1)`,
+          },
           "&.MuiButton-containedPrimary": {
             color: "#FFFFFF",
             boxShadow: `0px 2px 7px rgba(117, 130, 235, 0.7)`,
+            background: background.menu,
             "&:hover": {
-              background: "rgb(158, 174, 255)",
+              background: `${background.menu}cc`,
             },
           },
           "&.MuiButton-containedError": {
             color: "#FFFFFF",
             boxShadow: `0px 2px 7px rgba(230, 57, 70, 0.7)`,
             "&:hover": {
-              background: "rgb(255, 107, 97)",
+              background: `${error.main}cc`,
             },
           },
           "&.MuiButton-containedSuccess": {
             color: "#FFFFFF",
-            boxShadow: `0px 2px 7px rgba(212, 255, 253, 0.7)`,
+            boxShadow: `0px 2px 7px rgba(145, 230, 220, 0.7)`,
             "&:hover": {
               background: "rgb(129, 214, 210)",
             },
@@ -152,6 +158,15 @@ export const darkThemeOptions = {
       styleOverrides: {
         notchedOutline: {
           borderColor: divider,
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          "&.Mui-checked": {
+            color: background.menu, // customize the color when checked
+          },
         },
       },
     },

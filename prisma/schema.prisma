@@ -22,6 +22,7 @@ model Users {
   password String?
   userTypeID String
   userType UserTypes @relation(fields: [userTypeID], references: [id])
+  refreshToken String?
   resumes Resume[]
   @@map("users")
 }

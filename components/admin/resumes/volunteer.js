@@ -25,6 +25,7 @@ import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
+import { styles } from "../../../styles/useStyle";
 
 const volunteer_template = {
   role: "",
@@ -92,9 +93,10 @@ export default function VolunteerExperience({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
+                sx={{ background: styles.background.menu, color: "#fff" }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
-                  <Diversity1 />{" "}
+                  <Diversity1 sx={{ color: "#fff" }} />{" "}
                   <Typography
                     fontWeight={"bold"}
                     fontStyle={"italic"}
@@ -109,6 +111,7 @@ export default function VolunteerExperience({ data, onChange }) {
                   </Typography>
                 </Stack>
                 <ButtonDialogConfirm
+                  variant={"contained"}
                   size="small"
                   color={"error"}
                   dialog_color="error"
@@ -120,7 +123,7 @@ export default function VolunteerExperience({ data, onChange }) {
                   startIcon={volunteer.id ? <DeleteForever /> : <Remove />}
                   isConfirmRequired={volunteer.id !== undefined}
                 >
-                  Delete
+                  {volunteer.id ? "Delete" : "Remove"}
                 </ButtonDialogConfirm>
               </Stack>
               <Divider />
@@ -194,7 +197,6 @@ export default function VolunteerExperience({ data, onChange }) {
         gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
-        paddingX={1}
       >
         <Button
           size="small"
@@ -211,7 +213,6 @@ export default function VolunteerExperience({ data, onChange }) {
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}
-          color="success"
         >
           Save
         </ButtonLoading>

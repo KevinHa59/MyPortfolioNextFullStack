@@ -9,7 +9,7 @@ export default function ErrorRenderer({ errors }) {
       {errors.map((error, index) => {
         return (
           <Typography key={index} color={palette.error.main}>
-            {error}
+            * {error}
           </Typography>
         );
       })}

@@ -1,5 +1,5 @@
 import axios from "axios";
-
+axios.defaults.withCredentials = true;
 const API = {
   resumes: "/api/resumes",
   resumes_resume: "/api/resumes/resume",

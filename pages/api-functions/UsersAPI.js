@@ -1,10 +1,14 @@
 import axios from "axios";
-import jwt from "../../utils/jwt";
-
+import jwt from "../../utils/jwtUtil";
+axios.defaults.withCredentials = true;
 const API = {
   users: "/api/users",
   users_user: "/api/users/user",
+  users_user_password: "/api/users/user/password",
+  users_user_token: "/api/users/user/token",
+  users_user_token_refresh: "/api/users/user/token/refresh",
   userTypes: "/api/userTypes",
+  login: "/api/authentication/login",
 };
 
 class UsersAPI {
@@ -14,13 +18,12 @@ class UsersAPI {
     });
   }
   async createUser(email, firstName, lastName, dob, password, userTypeID) {
-    const jwtPassword = jwt.generateToken({ password: password });
     return await axios.post(API.users, {
       email,
       firstName,
       lastName,
       dob,
-      password: jwtPassword,
+      password,
       userTypeID,
     });
   }
@@ -60,6 +63,26 @@ class UsersAPI {
       type,
       description,
       color,
+    });
+  }
+  async updatePassword(email, password) {
+    return await axios.put(API.users_user_password, {
+      email,
+      password,
+    });
+  }
+  async generateToken(email) {
+    return await axios.put(API.users_user_token, {
+      email,
+    });
+  }
+  async refreshToken() {
+    return await axios.post(API.users_user_token_refresh);
+  }
+  async login(email, password) {
+    return await axios.post(API.login, {
+      email,
+      password,
     });
   }
 }

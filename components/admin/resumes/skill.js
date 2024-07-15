@@ -1,4 +1,4 @@
-import { Check } from "@mui/icons-material";
+import { Add, Check } from "@mui/icons-material";
 import {
   Autocomplete,
   Button,
@@ -83,38 +83,42 @@ export default function Skill({ data, onChange }) {
         gap={1}
         padding={5}
       >
-        <Autocomplete
-          size="small"
-          options={skillSuggestions}
-          loading={loadingSkills}
-          open={open}
-          value={search}
-          onOpen={() => setOpen(true)}
-          onClose={() => setOpen(false)}
-          onChange={(event, newValue) => handleSkillAdd(newValue)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <Stack direction={"row"} gap={1} alignItems={"center"}>
-                    {loadingSkills && <CircularProgress size={15} />}
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => handleSkillAdd(search)}
-                    >
-                      Add
-                    </Button>
-                  </Stack>
-                ),
-              }}
-              label="Search Skill"
-              onChange={handleSearchChange}
-            />
-          )}
-        />
+        <Stack direction={"row"} gap={1}>
+          <Autocomplete
+            sx={{ width: "100%" }}
+            size="small"
+            options={skillSuggestions}
+            loading={loadingSkills}
+            open={open}
+            value={search}
+            onOpen={() => setOpen(true)}
+            onClose={() => setOpen(false)}
+            onChange={(event, newValue) => handleSkillAdd(newValue)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <Stack direction={"row"} gap={1} alignItems={"center"}>
+                      {loadingSkills && <CircularProgress size={15} />}
+                    </Stack>
+                  ),
+                }}
+                label="Search Skill"
+                onChange={handleSearchChange}
+              />
+            )}
+          />
+          <Button
+            startIcon={<Add />}
+            size="small"
+            variant="contained"
+            onClick={() => handleSkillAdd(search)}
+          >
+            Add
+          </Button>
+        </Stack>
         <Stack gap={"2px"}>
           {skills.map((skill, index) => {
             return (
@@ -135,7 +139,6 @@ export default function Skill({ data, onChange }) {
         gap={1}
         justifyContent={"flex-end"}
         height={"37px"}
-        paddingX={1}
       >
         <ButtonLoading
           size="small"
@@ -143,7 +146,6 @@ export default function Skill({ data, onChange }) {
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}
-          color="success"
         >
           Save
         </ButtonLoading>

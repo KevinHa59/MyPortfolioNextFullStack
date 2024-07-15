@@ -24,11 +24,9 @@ export default function Rows({ data, headers, callback_cell = null }) {
                 sx={{
                   borderRadius: 0,
                   background:
-                    index % 2 === 0
-                      ? "rgba(150,150,150,0.4)"
-                      : "rgba(150,150,150,0.2)",
+                    index % 2 === 0 ? "transparent" : "rgba(150,150,150,0.2)",
                   ":hover": {
-                    background: "rgba(150,150,150,0.5)",
+                    background: "rgba(150,150,150,0.1)",
                   },
                 }}
               >

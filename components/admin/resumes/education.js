@@ -27,6 +27,7 @@ import AutocompleteCustom from "../../widgets/autocomplete/autocomplete";
 import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
+import { styles } from "../../../styles/useStyle";
 
 const edu_template = {
   degree: "",
@@ -92,9 +93,10 @@ export default function Education({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
+                sx={{ background: styles.background.menu, color: "#fff" }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
-                  <School />{" "}
+                  <School sx={{ color: "#fff" }} />
                   <Typography
                     fontWeight={"bold"}
                     fontStyle={"italic"}
@@ -108,13 +110,15 @@ export default function Education({ data, onChange }) {
                     {edu.schoolName}
                   </Typography>
                 </Stack>
-                <IconButton
+                <Button
+                  startIcon={edu.id ? <DeleteForever /> : <Remove />}
+                  variant="contained"
                   size="small"
                   color="error"
                   onClick={() => handleRemoveEducation(index)}
                 >
-                  {edu.id ? <DeleteForever /> : <Remove />}
-                </IconButton>
+                  {edu.id ? "Delete" : "Remove"}
+                </Button>
               </Stack>
               <Divider />
               <Stack gap={1} paddingX={5} paddingY={3}>
@@ -195,7 +199,6 @@ export default function Education({ data, onChange }) {
         gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
-        paddingX={1}
       >
         <Button
           variant="contained"
@@ -212,7 +215,6 @@ export default function Education({ data, onChange }) {
           isLoading={isSaving}
           onClick={handleUpdateEducation}
           startIcon={<Check />}
-          color="success"
         >
           Save
         </ButtonLoading>

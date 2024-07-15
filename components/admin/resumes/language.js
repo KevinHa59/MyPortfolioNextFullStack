@@ -91,10 +91,9 @@ export default function Language({ data, onRefresh, onChange }) {
             }
           />
           <Button
-            variant="outlined"
+            variant="contained"
             startIcon={<Add />}
-            color="info"
-            sx={{ borderRadius: "50px", height: "max-content" }}
+            sx={{ height: "max-content" }}
             onClick={() => handleAddLanguage()}
           >
             Add
@@ -121,7 +120,6 @@ export default function Language({ data, onRefresh, onChange }) {
         gap={"1px"}
         justifyContent={"flex-end"}
         height={"37px"}
-        paddingX={1}
       >
         <ButtonLoading
           size="small"
@@ -129,7 +127,6 @@ export default function Language({ data, onRefresh, onChange }) {
           isLoading={isSaving}
           onClick={handleSave}
           startIcon={<Check />}
-          color="success"
         >
           Save
         </ButtonLoading>

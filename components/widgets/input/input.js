@@ -1,5 +1,6 @@
-import { Stack, TextField, Typography } from "@mui/material";
-import React from "react";
+import { RemoveRedEye, Visibility, VisibilityOff } from "@mui/icons-material";
+import { IconButton, Stack, TextField, Typography } from "@mui/material";
+import React, { useState } from "react";
 
 export default function Input({
   label,
@@ -9,6 +10,8 @@ export default function Input({
   rows = 1,
   sx,
   sx_input,
+  inputProps,
+  inputClassName,
   size = "small",
   fullWidth = false,
   variant,
@@ -16,6 +19,7 @@ export default function Input({
   onChange,
   onKeyPress = null,
 }) {
+  const [visible, setVisible] = useState(false);
   return (
     <Stack sx={sx}>
       <Stack direction={"row"} gap={1}>
@@ -27,13 +31,29 @@ export default function Input({
         </Typography>
       </Stack>
       <TextField
-        type={type}
+        type={type === "password" ? (visible ? "text" : "password") : type}
         variant={variant}
         fullWidth={fullWidth}
         multiline={multiline}
         rows={rows}
         size={size}
         sx={sx_input}
+        InputProps={
+          type === "password"
+            ? {
+                ...inputProps,
+                endAdornment: (
+                  <IconButton
+                    size="small"
+                    onClick={() => setVisible((prev) => !prev)}
+                  >
+                    {visible ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                ),
+              }
+            : inputProps
+        }
+        className={inputClassName}
         value={value}
         onChange={onChange}
         onKeyPress={onKeyPress}
