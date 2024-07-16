@@ -60,7 +60,12 @@ async function getUserTypes(req, res) {
       userTypes = userTypes.map((type) => {
         const types = {
           ...type,
-          pages: type.pageLinks.map((link) => link.page),
+          pages: type.pageLinks.map((link) => {
+            return {
+              ...link.page,
+              linkID: link.id,
+            };
+          }),
         };
         delete types.pageLinks;
         return types;
@@ -79,12 +84,19 @@ async function getUserTypes(req, res) {
       userTypes = userTypes.map((type) => {
         const types = {
           ...page,
-          pages: type.pageLinks.map((link) => link.page),
+          pages: type.pageLinks.map((link) => {
+            return {
+              ...link.page,
+              linkID: link.id,
+            };
+          }),
         };
         delete types.pageLinks;
         return types;
       });
     }
+  } else {
+    userTypes = await prisma.userTypes.findMany();
   }
   res.status(200).json(userTypes);
 }

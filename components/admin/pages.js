@@ -1,48 +1,14 @@
-import {
-  Button,
-  Chip,
-  Divider,
-  Fade,
-  Grid,
-  IconButton,
-  LinearProgress,
-  Paper,
-  Slide,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import { Button, Divider, Paper, Stack } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import ButtonDialog from "../widgets/buttons/button_dialog";
-import PagesAPI from "../../pages/api-functions/PagesAPI";
-import {
-  Add,
-  Clear,
-  CopyAll,
-  DateRange,
-  Delete,
-  Edit,
-  Email,
-  Label,
-  Password,
-  Remove,
-  Token,
-} from "@mui/icons-material";
-import FormHeader from "../widgets/texts/form-header";
-import ErrorRenderer from "../widgets/texts/error-renderer";
-import LoadingComponent from "../widgets/loading/loading-component";
-import SelectCustom from "../widgets/select/select-custom";
+import { Add, Clear, DeleteForever, Edit } from "@mui/icons-material";
 import Table from "../widgets/tables/table";
 import Input from "../widgets/input/Input";
-import jwt from "../../utils/jwtUtil";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
-import { styles } from "../../styles/useStyle";
 import Header from "./header";
 import PaperForm from "../widgets/paper/paper-form";
 import ButtonLoading from "../widgets/buttons/button-loading";
-import LabelText from "../widgets/texts/label-text";
-import { mainContext } from "../../pages/_app";
+import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 
 export default function Pages() {
   const [pages, setPages] = useState([]);
@@ -60,11 +26,6 @@ export default function Pages() {
     setPages(data);
     setIsGettingData(false);
   }
-
-  // const handleEditUserOpen = (user) => {
-  //   setEditPage(user);
-  //   setIsNewPageOpen(true);
-  // };
 
   return (
     <Stack width={"100%"} height={"100%"}>
@@ -93,10 +54,10 @@ export default function Pages() {
                   setEditPage(null);
                 }, 200);
               }}
-              // onCreatePagesuccess={() => {
-              //   initData();
-              //   setIsNewPageOpen(false);
-              // }}
+              onCreatePageSuccess={() => {
+                initData();
+                setIsNewPageOpen(false);
+              }}
             />
           </ButtonDialog>
         </Stack>
@@ -115,42 +76,23 @@ export default function Pages() {
           isLoading={isGettingData}
           data={pages}
           headers={headers}
-          // callback_cell={(row, key) => (
-          //   <Cell
-          //     row={row}
-          //     header={key}
-          //     onEdit={() => handleEditUserOpen(row)}
-          //     onPasswordChange={() => handlePasswordChangeOpen(row)}
-          //     onRefresh={initData}
-          //   />
-          // )}
+          callback_cell={(row, key) => (
+            <Cell
+              row={row}
+              header={key}
+              pages={pages}
+              onEdit={() => handleEditUserOpen(row)}
+              onPasswordChange={() => handlePasswordChangeOpen(row)}
+              onRefresh={initData}
+            />
+          )}
         />
       </Paper>
     </Stack>
   );
 }
-function Cell({ row, header, onEdit, onRefresh }) {
-  if (header === "userType") {
-    return (
-      <Chip
-        size="small"
-        label={`${row[header]}`}
-        sx={{ background: row["userTypeColor"], fontWeight: "bold" }}
-      />
-    );
-  } else if (header === "dob") {
-    return new Date(
-      row["dob"].split("T")[0] + "T05:00:00.000Z"
-    ).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  } else if (header === "actions") {
-    const handleRemoveUser = async () => {
-      const res = await removePages(row["id"]);
-      onRemoveSuccess && onRemoveSuccess();
-    };
+function Cell({ row, header, pages, onEdit, onRefresh }) {
+  if (header === "actions") {
     return (
       <Stack
         direction={"row"}
@@ -158,24 +100,8 @@ function Cell({ row, header, onEdit, onRefresh }) {
         justifyContent={"flex-end"}
         gap={"1px"}
       >
-        <IconButton
-          sx={{ borderRadius: "20px", paddingY: 0 }}
-          variant="contained"
-          size="small"
-          color="warning"
-          onClick={onEdit}
-        >
-          <Edit />
-        </IconButton>
-        <IconButton
-          sx={{ borderRadius: "20px", paddingY: 0 }}
-          variant="contained"
-          size="small"
-          color="error"
-          onClick={() => handleRemoveUser()}
-        >
-          <Delete />
-        </IconButton>
+        <EditButton data={row} pages={pages} onRefresh={onRefresh} />
+        <DeletePageButton id={row.id} onRefresh={onRefresh} />
       </Stack>
     );
   } else return row[header];
@@ -390,4 +316,138 @@ function validateNewPageInput(inputs, allPages) {
     isValid,
     pathErrors,
   };
+}
+
+function EditButton({ data, pages, onRefresh }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [input, setInput] = useState({
+    path: "",
+    description: "",
+  });
+  const [errors, setErrors] = useState(null);
+
+  const handleInputChange = (newValue) => {
+    const copy = _.cloneDeep(input);
+    const newCopy = {
+      ...copy,
+      ...newValue,
+    };
+    const { isValid, pathErrors } = validateNewPageInput([newCopy], pages);
+    if (!isValid && newCopy.path !== data.path) {
+      setErrors({ isValid, pathErrors });
+    } else {
+      setErrors(null);
+    }
+    setInput(newCopy);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    const res = await MyAPIs.Page().savePage(
+      input.path,
+      input.description,
+      input.id
+    );
+    if (res) {
+      onRefresh && onRefresh();
+      setIsOpen(false);
+    }
+    setIsSaving(false);
+  };
+
+  return (
+    <ButtonDialog
+      isIconButton={true}
+      size="small"
+      color={"warning"}
+      icon={<Edit />}
+      open={isOpen}
+      isCloseOnClickOut={false}
+      onClick={() => {
+        setIsOpen(true);
+        setInput(data);
+      }}
+      paperProps={{
+        style: {
+          background: "transparent",
+          minWidth: "max-content",
+          maxWidth: "100%",
+          width: "clamp(600px, 100%, 1000px)",
+        },
+      }}
+    >
+      <PaperForm title={"Edit Page"} sx_paper={{ width: "100%" }}>
+        <Stack padding={2} gap={1} width={"100%"}>
+          <Stack direction={"row"} gap={1} width={"100%"}>
+            <Input
+              isInvalidInput={errors !== null}
+              inputErrorMessage="Path Existed"
+              sx={{ width: "40%" }}
+              value={input?.path}
+              label={"Path"}
+              size="small"
+              onChange={(e) => handleInputChange({ path: e.target.value })}
+            />
+            <Input
+              sx={{ width: "60%" }}
+              value={input?.description}
+              label={"Description"}
+              size="small"
+              onChange={(e) =>
+                handleInputChange({ description: e.target.value })
+              }
+            />
+          </Stack>
+          <Divider />
+          <Stack direction={"row"} gap={1}>
+            <ButtonLoading
+              sx={{ width: "100%" }}
+              size="small"
+              variant="contained"
+              disabled={errors !== null}
+              onClick={handleSave}
+            >
+              Save
+            </ButtonLoading>
+            <Button
+              fullWidth
+              size="small"
+              variant="contained"
+              color="error"
+              onClick={() => setIsOpen(false)}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </Stack>
+      </PaperForm>
+    </ButtonDialog>
+  );
+}
+
+function DeletePageButton({ id, onRefresh }) {
+  const [isRemoving, setIsRemoving] = useState(false);
+  const handleRemove = async (setOpen) => {
+    setIsRemoving(true);
+    const res = await MyAPIs.Page().deletePage(id);
+    if (res) {
+      onRefresh && onRefresh();
+      setOpen(false);
+    }
+    setIsRemoving(false);
+  };
+  return (
+    <ButtonDialogConfirm
+      dialog_color={"error"}
+      dialog_title={"Remove Page"}
+      dialog_message={"Are you sure?"}
+      isLoading={isRemoving}
+      sx={{ padding: 0, minWidth: 0 }}
+      onConfirm={handleRemove}
+      color={"error"}
+    >
+      <DeleteForever color="error" />
+    </ButtonDialogConfirm>
+  );
 }

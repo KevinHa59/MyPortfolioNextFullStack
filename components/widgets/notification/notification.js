@@ -2,8 +2,15 @@ import { Paper, Slide, Stack } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { mainContext } from "../../../pages/_app";
 import PaperForm from "../paper/paper-form";
+import { Check, ErrorOutline, Info } from "@mui/icons-material";
 
-export default function Notification({ note = null }) {
+const icons = {
+  success: <Check color="success" />,
+  error: <ErrorOutline color="error" />,
+  info: <Info color="info" />,
+};
+
+export default function Notification({ note = null, type }) {
   const { setNote } = useContext(mainContext);
   const [info, setInfo] = useState({
     active: null,
@@ -23,7 +30,7 @@ export default function Notification({ note = null }) {
       handleUpdateInfo({ note: note, active: true });
       const _out = setTimeout(() => {
         handleUpdateInfo({ active: false });
-        setNote(null);
+        setNote[type](null);
       }, 3000);
 
       return () => {
@@ -45,7 +52,10 @@ export default function Notification({ note = null }) {
         }}
       >
         <PaperForm>
-          <Stack padding={1}>{info.note}</Stack>
+          <Stack padding={1} direction={"row"} gap={1}>
+            {icons[type] || ""}
+            {info.note}
+          </Stack>
         </PaperForm>
       </Stack>
     </Slide>

@@ -54,7 +54,16 @@ const withAuth = (WrappedComponent) => {
           }
         }
       } else {
-        setIsLoading(false);
+        const userTypeID = cookies.userTypeID;
+        const pages = await MyAPIs.Permission().getPermissionsByUserType(
+          userTypeID
+        );
+        if (pages?.some((page) => page.path === router.pathname)) {
+          setIsLoading(false);
+        } else {
+          localStorage.setItem("redirectPath", router.asPath);
+          router.replace("/401");
+        }
       }
     }
 

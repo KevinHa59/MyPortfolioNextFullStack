@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import UsersAPI from "../../pages/api-functions/UsersAPI";
 import {
   Button,
@@ -15,26 +15,25 @@ import {
   Typography,
   Zoom,
 } from "@mui/material";
-import ButtonDialog from "../widgets/buttons/button_dialog";
-import FormHeader from "../widgets/texts/form-header";
-import ErrorRenderer from "../widgets/texts/error-renderer";
-import LoadingComponent from "../widgets/loading/loading-component";
-import { Circle, Clear, Delete, Edit, Label } from "@mui/icons-material";
 import Header from "./header";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import axios from "axios";
-import PaperForm from "../widgets/paper/paper-form";
 import { styles } from "../../styles/useStyle";
 import { useRouter } from "next/router";
+import ButtonLoading from "../widgets/buttons/button-loading";
+import { mainContext } from "../../pages/_app";
+import { getCookie, getCookies } from "cookies-next";
 
 export default function Permissions() {
   const router = useRouter();
+  const { setNote } = useContext(mainContext);
   const [data, setData] = useState({
     userTypes: [],
     pages: [],
   });
   const [selectedUserType, setSelectedUserType] = useState(null);
   const [isGettingData, setIsGettingData] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     initData();
@@ -47,13 +46,18 @@ export default function Permissions() {
       MyAPIs.Page().getPages(),
     ];
     const res = await axios.all(APIs);
-    console.log(res);
     if (router.query.user_type) {
       const _type = res[0]?.find((item) => item.id === router.query.user_type);
       if (_type) {
         setSelectedUserType(_type);
       } else {
         handleRoute(null);
+      }
+    } else {
+      if (res[0].length > 0) {
+        const _type = res[0][0];
+        setSelectedUserType(_type);
+        handleRoute(_type.id);
       }
     }
     setIsGettingData(false);
@@ -73,17 +77,20 @@ export default function Permissions() {
   };
 
   const handleTypeSelect = (type) => {
-    setSelectedUserType(type);
-    handleRoute(type.id);
+    setSelectedUserType(null);
+    setTimeout(() => {
+      setSelectedUserType(type);
+      handleRoute(type.id);
+    }, 0);
   };
 
-  const handleRoute = (type) => {
-    if (type) {
+  const handleRoute = (id) => {
+    if (id) {
       router.push({
         pathname: router.pathname,
         query: {
           ...router.query,
-          user_type: type,
+          user_type: id,
         },
       });
     } else {
@@ -93,6 +100,45 @@ export default function Permissions() {
         pathname: router.pathname,
         query: queries,
       });
+    }
+  };
+
+  // save
+  const handleSave = async () => {
+    setIsSaving(true);
+    const pages = document.querySelectorAll(".pageItem");
+    const newLinks = [];
+    const removeLinks = [];
+    Array.from(pages).forEach((item) => {
+      const currentCheck = item.querySelector("input[type='checkbox']").checked;
+      const pageInfo = JSON.parse(item.getAttribute("data-page"));
+      console.log(pageInfo);
+      if (currentCheck && !pageInfo.defaultChecked) {
+        newLinks.push({
+          userTypeID: selectedUserType.id,
+          pageID: pageInfo.id,
+        });
+      } else if (!currentCheck && pageInfo.defaultChecked) {
+        removeLinks.push(pageInfo.linkID);
+      }
+    });
+    const APIs = [];
+    if (newLinks.length > 0) {
+      APIs.push(MyAPIs.Permission().createPermissions(newLinks));
+    }
+    if (removeLinks.length > 0) {
+      APIs.push(MyAPIs.Permission().deletePage(removeLinks));
+    }
+
+    try {
+      const res = await axios.all(APIs);
+      initData();
+      setNote.success("Save Permissions Success");
+      setIsSaving(false);
+    } catch (error) {
+      setNote.error("Save Permissions Fail");
+      setIsSaving(false);
+      console.log(error);
     }
   };
 
@@ -112,6 +158,7 @@ export default function Permissions() {
           }}
         >
           <Stack alignItems={"flex-start"} direction={"row"} height={"100%"}>
+            {/* user type */}
             <Stack width={"300px"} height={"100%"} gap={1}>
               <Stack
                 height="30px"
@@ -151,6 +198,7 @@ export default function Permissions() {
               </Stack>
             </Stack>
             <Divider orientation="vertical" flexItem />
+            {/* pages list */}
             <Stack width={"100%"} height={"100%"}>
               <Stack
                 height="30px"
@@ -165,12 +213,18 @@ export default function Permissions() {
                 </Typography>
               </Stack>
               <Stack height={"100%"}>
-                <Stack width={"100%"} padding={1}>
-                  {selectedUserType &&
+                <Stack
+                  width={"100%"}
+                  height={"calc(100% - 50px)"}
+                  padding={1}
+                  sx={{ overflowY: "auto" }}
+                >
+                  {selectedUserType ? (
                     data.pages?.map((page, index) => {
-                      const isChecked = selectedUserType.pages.some(
+                      const existPage = selectedUserType.pages.find(
                         (_page) => _page.id === page.id
                       );
+                      const isChecked = existPage !== undefined;
                       return (
                         <Slide
                           key={index}
@@ -189,11 +243,14 @@ export default function Permissions() {
                               <FormControlLabel
                                 control={
                                   <Checkbox
-                                    checked={isChecked}
-                                    className="page"
+                                    defaultChecked={isChecked}
+                                    className="pageItem"
                                     data-page={JSON.stringify({
-                                      checked: isChecked,
+                                      defaultChecked: isChecked,
                                       id: page.id,
+                                      linkID: isChecked
+                                        ? existPage.linkID
+                                        : null,
                                     })}
                                   />
                                 }
@@ -210,7 +267,24 @@ export default function Permissions() {
                           </Stack>
                         </Slide>
                       );
-                    })}
+                    })
+                  ) : (
+                    <Typography textAlign={"center"}>
+                      No UserType Selected
+                    </Typography>
+                  )}
+                </Stack>
+                <Stack height={"50px"} gap={1} alignItems={"flex-end"}>
+                  <Divider flexItem />
+                  <ButtonLoading
+                    isLoading={isSaving}
+                    variant={"contained"}
+                    sx={{ width: "max-content", marginX: 1 }}
+                    size="small"
+                    onClick={handleSave}
+                  >
+                    Save
+                  </ButtonLoading>
                 </Stack>
               </Stack>
             </Stack>

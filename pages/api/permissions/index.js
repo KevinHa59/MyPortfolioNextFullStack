@@ -10,12 +10,52 @@ const prisma = new PrismaClient();
 // api handler
 export default async function handler(req, res) {
   const method = req.method;
-  if (method === "POST") {
+  if (method === "GET") {
+    getPermissions(req, res);
+  } else if (method === "POST") {
     createPermissions(req, res);
   } else if (method === "DELETE") {
     removePermissions(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
+  }
+}
+
+// [GET] handle insert permission
+async function getPermissions(req, res) {
+  try {
+    const { userTypeID, pageID } = req.query;
+    // input validation
+    if (!userTypeID && !pageID) {
+      res.status(400).json({ error: "Incomplete data" });
+    }
+    let result = [];
+    if (userTypeID) {
+      const res = await prisma.userTypePageLinks.findMany({
+        where: {
+          userTypeID: userTypeID,
+        },
+        include: {
+          page: true,
+        },
+      });
+
+      result = res.map((item) => item.page);
+    } else if (pageID) {
+      const res = await prisma.userTypePageLinks.findMany({
+        where: {
+          pageID: pageID,
+        },
+        include: {
+          userType: true,
+        },
+      });
+
+      result = res.map((item) => item.userType);
+    }
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(500).json({ err: "Internal server error" });
   }
 }
 
@@ -46,7 +86,7 @@ async function removePermissions(req, res) {
       res.status(400).json({ error: "Incomplete data" });
     }
     const _ids = ids.split(",");
-    const links = await prisma.pages.deleteMany({
+    const links = await prisma.userTypePageLinks.deleteMany({
       where: {
         id: {
           in: _ids,

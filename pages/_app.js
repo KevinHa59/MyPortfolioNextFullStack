@@ -12,7 +12,39 @@ function MyApp({ Component, pageProps }) {
   const [settings, setSettings] = useState({
     theme: "dark",
   });
-  const [note, setNote] = useState(null);
+  const [note, setNote] = useState({
+    message: null,
+    type: "info",
+  });
+
+  // const handleUpdateNote = (note, type = "success") => {
+  //   setNote({
+  //     message: note,
+  //     type: type,
+  //   });
+  // };
+
+  const handleUpdateNote = {
+    success: (message) => {
+      setNote({
+        message: message,
+        type: "success",
+      });
+    },
+    error: (message) => {
+      setNote({
+        message: message,
+        type: "error",
+      });
+    },
+    info: (message) => {
+      setNote({
+        message: message,
+        type: "info",
+      });
+    },
+  };
+
   return (
     <Stack>
       <Head>
@@ -21,7 +53,7 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <mainContext.Provider
         value={{
-          setNote: setNote,
+          setNote: handleUpdateNote,
         }}
       >
         <ThemeProvider
@@ -31,7 +63,7 @@ function MyApp({ Component, pageProps }) {
         >
           <CssBaseline />
           <Component {...pageProps} />
-          <Notification note={note} />
+          <Notification note={note.message} type={note.type} />
         </ThemeProvider>
       </mainContext.Provider>
     </Stack>

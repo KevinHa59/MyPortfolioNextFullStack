@@ -1,6 +1,7 @@
 import {
   CircularProgress,
   Divider,
+  LinearProgress,
   Paper,
   Stack,
   TextField,
@@ -76,7 +77,7 @@ export default function Table({
   }
 
   return (
-    <Stack sx={{ width: "100%", ...sx }} gap={"1px"}>
+    <Stack sx={{ width: "100%", position: "relative", ...sx }} gap={"1px"}>
       <Paper sx={{ borderRadius: 0, background: "transparent" }}>
         <Stack
           direction={"row"}
@@ -91,9 +92,6 @@ export default function Table({
               InputProps={{
                 startAdornment: <Search sx={{ paddingRight: 1 }} />,
                 paddingY: 0,
-                style: {
-                  color: "#fff",
-                },
               }}
               label="Search"
               onChange={(e) => handleSearchChange(e.target.value)}
@@ -111,7 +109,10 @@ export default function Table({
         />
       </Paper>
       {isLoading ? (
-        <Typography textAlign={"center"}>
+        <Typography
+          textAlign={"center"}
+          sx={{ position: "absolute", top: 0, width: "100%" }}
+        >
           <CircularProgress />
         </Typography>
       ) : (

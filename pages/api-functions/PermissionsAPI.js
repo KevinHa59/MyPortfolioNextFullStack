@@ -6,6 +6,22 @@ const API = {
 };
 
 class PermissionsAPI {
+  async getPermissionsByUserType(userTypeID) {
+    return await axios.get(API.permissions, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+      params: {
+        userTypeID,
+      },
+    });
+  }
+  async getPermissionsByPage(pageID) {
+    return await axios.get(API.permissions, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+      params: {
+        pageID,
+      },
+    });
+  }
   async createPermissions(links) {
     return await axios.post(
       API.permissions,
@@ -20,7 +36,7 @@ class PermissionsAPI {
     return await axios.delete(API.permissions, {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
-        id: ids.join(","),
+        ids: ids.join(","),
       },
     });
   }
