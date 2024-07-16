@@ -18,7 +18,20 @@ model Users {
   email String  @unique
   firstName  String?
   lastName  String?
-  dob DateTime
+  dob DateTime?
+  address String?
+  city String?
+  state String?
+  country String?
+  zipCode String?
+  cellPhone String?
+  homePhone String?
+  linkedIn String?
+  github String?
+  twitter String?
+  facebook String?
+  instagram String?
+  portfolio String?
   password String?
   userTypeID String
   userType UserTypes @relation(fields: [userTypeID], references: [id])

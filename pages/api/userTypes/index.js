@@ -24,9 +24,11 @@ export default async function handler(req, res) {
 // [GET] handle get user types
 // input: userIncluding: "1" or "true" to include users in response, otherwise users wont be including in response
 async function getUserTypes(req, res) {
-  const { userIncluding, pageIncluding } = req.query;
+  const { userIncluding, pageIncluding, isQuantity } = req.query;
   let isUserIncluding = false;
   let isPageIncluding = false;
+  const method =
+    isQuantity && ["1", "true"].includes(isQuantity) ? "count" : "findMany";
   if (
     userIncluding &&
     (parseInt(userIncluding) === 1 || userIncluding?.toLowerCase() === "true")
@@ -42,13 +44,13 @@ async function getUserTypes(req, res) {
   let userTypes = [];
   if (isUserIncluding || isPageIncluding) {
     if (isUserIncluding && !isPageIncluding) {
-      userTypes = await prisma.userTypes.findMany({
+      userTypes = await prisma.userTypes[method]({
         include: {
           users: isUserIncluding,
         },
       });
     } else if (isPageIncluding && !isUserIncluding) {
-      userTypes = await prisma.userTypes.findMany({
+      userTypes = await prisma.userTypes[method]({
         include: {
           pageLinks: {
             include: {
@@ -71,7 +73,7 @@ async function getUserTypes(req, res) {
         return types;
       });
     } else {
-      userTypes = await prisma.userTypes.findMany({
+      userTypes = await prisma.userTypes[method]({
         include: {
           users: true,
           pageLinks: {
@@ -96,7 +98,7 @@ async function getUserTypes(req, res) {
       });
     }
   } else {
-    userTypes = await prisma.userTypes.findMany();
+    userTypes = await prisma.userTypes[method]();
   }
   res.status(200).json(userTypes);
 }

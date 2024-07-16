@@ -141,6 +141,26 @@ export const darkThemeOptions = {
         },
       },
     },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "transparent", // Change background color of the progress bar
+        },
+        bar: {
+          backgroundColor: background.menu, // Change the color of the progress bar itself
+        },
+      },
+    },
+    MuiCircularProgress: {
+      styleOverrides: {
+        colorPrimary: {
+          color: background.menu, // Change the color of the circular progress indicator
+        },
+        circle: {
+          strokeLinecap: "round", // Make the progress circle's line cap rounded
+        },
+      },
+    },
     MuiDivider: {
       styleOverrides: {
         root: {

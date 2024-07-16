@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { ObjectId } from "mongodb";
+import { errorMapping } from "../../../utils/errorCodeMapping";
 
 const prisma = new PrismaClient();
 /**
@@ -27,39 +28,46 @@ export default async function handler(req, res) {
 // [GET] handle get pages
 // input: userTypeIncluding: "1" or "true" to include userTypes in response, otherwise userTypes wont be including in response
 async function getPages(req, res) {
-  const { userTypeIncluding } = req.query;
-  let isUserTypeIncluding = false;
-  if (
-    userTypeIncluding &&
-    (parseInt(userTypeIncluding) === 1 ||
-      userTypeIncluding?.toLowerCase() === "true")
-  ) {
-    isUserTypeIncluding = true;
-  }
-  let pages = [];
-  if (isUserTypeIncluding) {
-    pages = await prisma.pages.findMany({
-      include: {
-        userTypeLinks: {
-          include: {
-            userType: true,
+  try {
+    const { userTypeIncluding, isQuantity } = req.query;
+    let isUserTypeIncluding = false;
+    if (
+      userTypeIncluding &&
+      (parseInt(userTypeIncluding) === 1 ||
+        userTypeIncluding?.toLowerCase() === "true")
+    ) {
+      isUserTypeIncluding = true;
+    }
+    let pages = [];
+    const method =
+      isQuantity && ["1", "true"].includes(isQuantity) ? "count" : "findMany";
+    if (isUserTypeIncluding) {
+      pages = await prisma.pages[method]({
+        include: {
+          userTypeLinks: {
+            include: {
+              userType: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    pages = pages.map((page) => {
-      const _page = {
-        ...page,
-        userTypes: page.userTypeLinks.map((link) => link.userType),
-      };
-      delete _page.userTypeLinks;
-      return _page;
-    });
-  } else {
-    pages = await prisma.pages.findMany();
+      pages = pages.map((page) => {
+        const _page = {
+          ...page,
+          userTypes: page.userTypeLinks.map((link) => link.userType),
+        };
+        delete _page.userTypeLinks;
+        return _page;
+      });
+    } else {
+      pages = await prisma.pages[method]();
+    }
+    res.status(200).json(pages);
+  } catch (err) {
+    const { statusCode, message } = errorMapping[err.code];
+    res.status(statusCode).json({ err: message });
   }
-  res.status(200).json(pages);
 }
 
 // [POST] handle insert pages
@@ -76,7 +84,8 @@ async function createPages(req, res) {
     });
     res.status(201).json(pages);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    const { statusCode, message } = errorMapping[err.code];
+    res.status(statusCode).json({ err: message });
   }
 }
 // [PUT] handle insert/update page
@@ -100,7 +109,8 @@ async function savePage(req, res) {
     });
     res.status(201).json(page);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    const { statusCode, message } = errorMapping[err.code];
+    res.status(statusCode).json({ err: message });
   }
 }
 
@@ -120,6 +130,7 @@ async function removePageByID(req, res) {
     });
     res.status(201).json(user);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    const { statusCode, message } = errorMapping[err.code];
+    res.status(statusCode).json({ err: message });
   }
 }

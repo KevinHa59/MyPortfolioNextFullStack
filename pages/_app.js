@@ -15,6 +15,7 @@ function MyApp({ Component, pageProps }) {
   const [note, setNote] = useState({
     message: null,
     type: "info",
+    timeout: 3000,
   });
 
   // const handleUpdateNote = (note, type = "success") => {
@@ -25,22 +26,25 @@ function MyApp({ Component, pageProps }) {
   // };
 
   const handleUpdateNote = {
-    success: (message) => {
+    success: (message, timeout = 3000) => {
       setNote({
         message: message,
         type: "success",
+        timeout: timeout,
       });
     },
-    error: (message) => {
+    error: (message, timeout = 3000) => {
       setNote({
         message: message,
         type: "error",
+        timeout: timeout,
       });
     },
-    info: (message) => {
+    info: (message, timeout = 3000) => {
       setNote({
         message: message,
         type: "info",
+        timeout: timeout,
       });
     },
   };
@@ -63,7 +67,11 @@ function MyApp({ Component, pageProps }) {
         >
           <CssBaseline />
           <Component {...pageProps} />
-          <Notification note={note.message} type={note.type} />
+          <Notification
+            note={note.message}
+            type={note.type}
+            timeout={note.timeout}
+          />
         </ThemeProvider>
       </mainContext.Provider>
     </Stack>

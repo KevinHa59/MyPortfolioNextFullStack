@@ -10,7 +10,7 @@ const icons = {
   info: <Info color="info" />,
 };
 
-export default function Notification({ note = null, type }) {
+export default function Notification({ note = null, type, timeout = 3000 }) {
   const { setNote } = useContext(mainContext);
   const [info, setInfo] = useState({
     active: null,
@@ -31,7 +31,7 @@ export default function Notification({ note = null, type }) {
       const _out = setTimeout(() => {
         handleUpdateInfo({ active: false });
         setNote[type](null);
-      }, 3000);
+      }, timeout);
 
       return () => {
         clearTimeout(_out);

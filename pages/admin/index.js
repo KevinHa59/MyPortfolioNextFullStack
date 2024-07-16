@@ -16,6 +16,7 @@ import useStyle from "../../styles/useStyle";
 import {
   AdminPanelSettings,
   Article,
+  DashboardCustomize,
   Hub,
   Logout,
   PagesRounded,
@@ -25,8 +26,15 @@ import withAuth from "../../utils/withAuth";
 import { deleteCookie, getCookie } from "cookies-next";
 import Pages from "../../components/admin/pages";
 import Permissions from "../../components/admin/permissions";
+import Dashboard from "../../components/admin/dashboard";
 
 const menu_data = [
+  {
+    title: "Dashboard",
+    param: "dashboard",
+    Icon: <DashboardCustomize />,
+    Comp: <Dashboard />,
+  },
   {
     title: "User Types",
     param: "userTypes",
@@ -68,6 +76,14 @@ function Index() {
     const _section = router.query.section;
     if (_section && _section !== section) {
       setSection(_section);
+    } else if (section === null) {
+      setSection("dashboard");
+      router.push({
+        pathname: router.pathname,
+        query: {
+          section: "dashboard",
+        },
+      });
     }
   }, [router]);
 

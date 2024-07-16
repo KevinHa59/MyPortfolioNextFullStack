@@ -37,29 +37,27 @@ async function getUserByID(req, res) {
 }
 
 // [PUT] handle update user
-// input: email, firstName, lastName, dob, userTypeID
+// input: email, firstName, lastName, dob, userTypeID, ...
 async function UpdateUser(req, res) {
   try {
-    const body = req.body;
-    // input validation
-    if (
-      !body.id ||
-      !body.firstName ||
-      !body.lastName ||
-      !body.dob ||
-      !body.userTypeID
-    ) {
-      res.status(400).json({ error: "Incomplete data" });
+    const { id, firstName, lastName, dob, userTypeID, ...rest } = req.body;
+
+    // Validate required fields
+    if (!id || !firstName || !lastName || !dob || !userTypeID) {
+      return res.status(400).json({ error: "Incomplete data" });
     }
+    // Prepare data object with optional fields
+    const dataToUpdate = {
+      ...rest,
+      firstName,
+      lastName,
+      dob: new Date(dob),
+      userTypeID,
+    };
 
     const user = await prisma.users.update({
       where: { id: id },
-      data: {
-        firstName: body.firstName,
-        lastName: body.lastName,
-        dob: new Date(body.dob),
-        userTypeID: body.userTypeID,
-      },
+      data: dataToUpdate,
     });
     res.status(201).json(user);
   } catch (err) {

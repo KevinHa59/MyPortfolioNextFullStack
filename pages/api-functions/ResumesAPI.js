@@ -14,9 +14,12 @@ const API = {
 };
 
 class ResumesAPI {
-  async getResumes() {
+  async getResumes(isQuantity = false) {
     return await axios.get(API.resumes, {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+      params: {
+        isQuantity: isQuantity ? "1" : "0",
+      },
     });
   }
   async createResume(userID, title) {

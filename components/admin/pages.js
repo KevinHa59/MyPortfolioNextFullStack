@@ -1,5 +1,5 @@
 import { Button, Divider, Paper, Stack } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ButtonDialog from "../widgets/buttons/button_dialog";
 import { Add, Clear, DeleteForever, Edit } from "@mui/icons-material";
 import Table from "../widgets/tables/table";
@@ -9,6 +9,7 @@ import Header from "./header";
 import PaperForm from "../widgets/paper/paper-form";
 import ButtonLoading from "../widgets/buttons/button-loading";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
+import { mainContext } from "../../pages/_app";
 
 export default function Pages() {
   const [pages, setPages] = useState([]);
@@ -428,12 +429,16 @@ function EditButton({ data, pages, onRefresh }) {
 
 function DeletePageButton({ id, onRefresh }) {
   const [isRemoving, setIsRemoving] = useState(false);
+  const { setNote } = useContext(mainContext);
   const handleRemove = async (setOpen) => {
     setIsRemoving(true);
     const res = await MyAPIs.Page().deletePage(id);
-    if (res) {
+    if (res.status === 201) {
       onRefresh && onRefresh();
       setOpen(false);
+      setNote.success("Remove page success", 5000);
+    } else {
+      setNote.error(res.data.err, 5000);
     }
     setIsRemoving(false);
   };

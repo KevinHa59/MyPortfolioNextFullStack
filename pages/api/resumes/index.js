@@ -22,20 +22,24 @@ export default async function handler(req, res) {
 // [GET] handle get resume
 async function getResumes(req, res) {
   try {
-    const resumes = await prisma.resume.findMany({
-      include: {
-        workExperience: true,
-        education: true,
-        skills: true,
-        certifications: true,
-        projects: true,
-        awards: true,
-        volunteerExperience: true,
-        languages: true,
-        hobbies: true,
-        user: true,
-      },
-    });
+    const { isQuantity } = req.query;
+    const isCount = ["1", "true"].includes(isQuantity.toString());
+    const resumes = isCount
+      ? await prisma.resume.count()
+      : await prisma.resume.findMany({
+          include: {
+            workExperience: true,
+            education: true,
+            skills: true,
+            certifications: true,
+            projects: true,
+            awards: true,
+            volunteerExperience: true,
+            languages: true,
+            hobbies: true,
+            user: true,
+          },
+        });
     res.status(200).json(resumes);
   } catch (error) {
     res.status(500).json({ err: "Internal server error" });

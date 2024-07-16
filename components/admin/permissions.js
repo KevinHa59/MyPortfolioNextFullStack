@@ -112,7 +112,7 @@ export default function Permissions() {
     Array.from(pages).forEach((item) => {
       const currentCheck = item.querySelector("input[type='checkbox']").checked;
       const pageInfo = JSON.parse(item.getAttribute("data-page"));
-      console.log(pageInfo);
+
       if (currentCheck && !pageInfo.defaultChecked) {
         newLinks.push({
           userTypeID: selectedUserType.id,

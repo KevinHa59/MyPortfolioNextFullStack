@@ -6,11 +6,12 @@ const API = {
 };
 
 class PagesAPI {
-  async getPages(isUserTypeIncluding = false) {
+  async getPages(isUserTypeIncluding = false, isQuantity = false) {
     return await axios.get(API.pages, {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
         isUserTypeIncluding: isUserTypeIncluding ? "1" : "0",
+        isQuantity: isQuantity ? "1" : "0",
       },
     });
   }

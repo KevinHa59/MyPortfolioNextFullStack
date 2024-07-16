@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { styles } from "../../../styles/useStyle";
 
 export default function Input({
+  id,
   label,
   subLabel,
   type,
@@ -39,6 +40,7 @@ export default function Input({
         )}
       </Stack>
       <TextField
+        id={id}
         type={type === "password" ? (visible ? "text" : "password") : type}
         variant={variant}
         fullWidth={fullWidth}

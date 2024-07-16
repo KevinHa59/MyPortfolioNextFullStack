@@ -338,19 +338,21 @@ export const baseThemeOptions = {
       styleOverrides: {
         root: {
           position: "relative",
+          zIndex: 2,
           "&:after": {
             content: `attr(data-text)`,
             position: "absolute",
             left: 0,
-            top: "60%",
+            zIndex: 0,
+            top: "75%",
             width: "100%",
-            background:
-              "linear-gradient(0deg, rgb(255, 255, 255), transparent 80%)",
+            background: `linear-gradient(0deg, rgb(190,190,190), transparent 80%)`,
             "-webkit-background-clip": "text",
             color: "transparent",
             transform: "scaleY(-1)",
-            opacity: "0.6",
-            filter: "blur(1px)",
+            opacity: "0.8",
+            height: "80%",
+            overflow: "hidden",
           },
         },
       },

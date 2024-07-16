@@ -5,9 +5,9 @@ import UsersAPI from "./UsersAPI";
 class MyAPIs {
   Resume() {
     return {
-      getResumes: async () => {
+      getResumes: async (isQuantity = false) => {
         try {
-          const res = await ResumesAPI.getResumes();
+          const res = await ResumesAPI.getResumes(isQuantity);
           return res?.data || [];
         } catch (error) {
           console.error(error);
@@ -153,20 +153,22 @@ class MyAPIs {
   }
   User() {
     return {
-      getUsers: async () => {
+      getUsers: async (isQuantity = false) => {
         try {
-          const res = await UsersAPI.getUsers();
+          const res = await UsersAPI.getUsers(isQuantity);
           return res?.data || [];
         } catch (error) {}
       },
       getUserTypes: async (
         isUserIncluding = false,
-        isPageIncluding = false
+        isPageIncluding = false,
+        isQuantity = false
       ) => {
         try {
           const res = await UsersAPI.getUserTypes(
             isUserIncluding,
-            isPageIncluding
+            isPageIncluding,
+            isQuantity
           );
           return res?.data || [];
         } catch (error) {}
@@ -232,9 +234,9 @@ class MyAPIs {
   }
   Page() {
     return {
-      getPages: async (isUserTypeIncluding = false) => {
+      getPages: async (isUserTypeIncluding = false, isQuantity = false) => {
         try {
-          const res = await PagesAPI.getPages(isUserTypeIncluding);
+          const res = await PagesAPI.getPages(isUserTypeIncluding, isQuantity);
           return res?.data || [];
         } catch (error) {}
       },
@@ -253,8 +255,10 @@ class MyAPIs {
       deletePage: async (id) => {
         try {
           const res = await PagesAPI.deletePage(id);
-          return res?.data || [];
-        } catch (error) {}
+          return res || [];
+        } catch (error) {
+          return error.response;
+        }
       },
     };
   }

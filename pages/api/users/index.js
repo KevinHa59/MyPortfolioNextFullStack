@@ -23,12 +23,17 @@ export default async function handler(req, res) {
 // [GET] handle get users
 async function getUsers(req, res) {
   try {
-    const users = await prisma.users.findMany({
-      include: {
-        resumes: true,
-        userType: true,
-      },
-    });
+    const { isQuantity } = req.query;
+    const isCount = ["1", "true"].includes(isQuantity.toString());
+    const users = isCount
+      ? await prisma.users.count()
+      : await prisma.users.findMany({
+          include: {
+            resumes: true,
+            userType: true,
+          },
+        });
+
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ err: "Internal server error" });

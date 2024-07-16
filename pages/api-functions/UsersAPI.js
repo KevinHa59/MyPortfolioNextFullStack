@@ -12,9 +12,12 @@ const API = {
 };
 
 class UsersAPI {
-  async getUsers() {
+  async getUsers(isQuantity = false) {
     return await axios.get(API.users, {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+      params: {
+        isQuantity: isQuantity ? "1" : "0",
+      },
     });
   }
   async createUser(email, firstName, lastName, dob, password, userTypeID) {
@@ -42,12 +45,17 @@ class UsersAPI {
       },
     });
   }
-  async getUserTypes(isUserIncluding = false, isPageIncluding = false) {
+  async getUserTypes(
+    isUserIncluding = false,
+    isPageIncluding = false,
+    isQuantity = false
+  ) {
     return await axios.get(API.userTypes, {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
         userIncluding: isUserIncluding ? "true" : "false",
         pageIncluding: isPageIncluding ? "true" : "false",
+        isQuantity: isQuantity ? "1" : "0",
       },
     });
   }
