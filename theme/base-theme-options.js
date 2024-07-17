@@ -1,4 +1,6 @@
-import { styles } from "../styles/useStyle";
+import { styles, styles_dark } from "../styles/useStyle";
+import { darkStyles } from "./dark-theme-options";
+import { lightStyles } from "./light-theme-options";
 
 export const baseThemeOptions = {
   breakpoints: {
@@ -28,7 +30,32 @@ export const baseThemeOptions = {
         root: {
           textTransform: "none",
           borderRadius: 0,
-          color: "#000",
+
+          "&.dark-active": {
+            background: styles_dark.background.default,
+            color: darkStyles.text.primary,
+          },
+          "&.dark-inactive": {
+            color: darkStyles.text.primary,
+          },
+          "&.light-active": {
+            background: lightStyles.background.default,
+            color: "#fff",
+          },
+          "&.light-inactive": {
+            background: "#000",
+            color: "#fff",
+          },
+          "&.flex-start": {
+            minWidth: 0,
+            display: "flex",
+            justifyContent: "flex-start",
+          },
+          "&.flex-end": {
+            minWidth: 0,
+            display: "flex",
+            justifyContent: "flex-end",
+          },
         },
         sizeSmall: {
           padding: "6px 16px",
@@ -220,10 +247,12 @@ export const baseThemeOptions = {
       styleOverrides: {
         root: {
           "&.dark": {
-            background: styles.background.menu,
+            background: styles_dark.background.paper,
+            color: styles_dark.text.primary,
           },
           "&.light": {
             background: styles.background.menu,
+            color: styles.text.primary,
           },
         },
       },
@@ -231,6 +260,7 @@ export const baseThemeOptions = {
     MuiPaper: {
       styleOverrides: {
         root: {
+          borderRadius: 0,
           backgroundImage: "none",
           position: "relative",
           color: "#000",
@@ -241,6 +271,9 @@ export const baseThemeOptions = {
           "&.flat": {
             boxShadow:
               "-5px -5px 10px rgba(255,255,255,1), 3px 3px 10px rgba(0,0,0,0.2), inset -5px -5px 10px rgba(255,255,255,1), inset 5px 5px 10px rgba(0,0,0,0.1)",
+          },
+          "&.br0": {
+            borderRadius: 5,
           },
         },
       },

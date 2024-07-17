@@ -12,7 +12,7 @@ export default function LabelText({ label, subLabel, sx, children }) {
           {subLabel}
         </Typography>
       </Stack>
-      {children}
+      <Typography>{children}</Typography>
     </Stack>
   );
 }

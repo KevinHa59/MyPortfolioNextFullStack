@@ -1,31 +1,33 @@
 // Colors
 
+import { lightStyles } from "./light-theme-options";
+
 const neutral = {
-  100: "#F3F4F6",
-  200: "#E5E7EB",
-  300: "#D1D5DB",
-  400: "#9CA3AF",
+  100: "#111827",
+  200: "#1F2937",
+  300: "#374151",
+  400: "#4B5563",
   500: "#6B7280",
-  600: "#4B5563",
-  700: "#374151",
-  800: "#1F2937",
-  900: "#111827",
+  600: "#9CA3AF",
+  700: "#D1D5DB",
+  800: "#E5E7EB",
+  900: "#F3F4F6",
 };
 
 const background = {
   default: "#1a1e26",
   paper: "#2b3240",
-  menu: "#1a1e26",
-  subMenu: "#1a1e26",
+  menu: "#ffffff",
+  subMenu: "#E5E7EB",
 };
 
-const divider = "#2D3748";
+const divider = "#42464e";
 
 const primary = {
-  main: "#7582EB",
-  light: "#909BEF",
-  dark: "#515BA4",
-  contrastText: neutral[900],
+  main: "#515BA4",
+  light: "#3B429D",
+  dark: "#7582EB",
+  contrastText: neutral[100],
 };
 
 const secondary = {
@@ -64,9 +66,24 @@ const error = {
 };
 
 const text = {
-  primary: "#d7e2fa",
-  secondary: "#A0AEC0",
-  disabled: "rgba(255, 255, 255, 0.48)",
+  primary: "#e0eaff",
+  secondary: "#4A5568",
+  white: "#000",
+  black: "#fff",
+  disabled: "rgba(0, 0, 0, 0.48)",
+};
+
+export const darkStyles = {
+  neutral,
+  background,
+  divider,
+  primary,
+  secondary,
+  success,
+  info,
+  warning,
+  error,
+  text,
 };
 
 export const darkThemeOptions = {
@@ -97,29 +114,52 @@ export const darkThemeOptions = {
           },
           "&.MuiButton-containedPrimary": {
             color: "#000000",
-            boxShadow: `0px 2px 7px rgba(117, 130, 235, 0.7)`,
-            background: "#ffffff",
+            boxShadow: `0px 2px 7px rgba(255, 255, 255, 0.4)`,
+            background: background.menu,
             "&:hover": {
-              background: `rgba(200,200,200,0.9)`,
+              background: `${background.menu}cc`,
+            },
+          },
+          "&.MuiButton-containedSecondary": {
+            boxShadow: `0px 2px 7px rgba(23, 166, 119, 0.4)`,
+            "&:hover": {
+              color: "#fff",
+              background: `${secondary.main}cc`,
             },
           },
           "&.MuiButton-containedError": {
-            color: "#fff",
-            boxShadow: `0px 2px 7px rgba(230, 57, 70, 0.7)`,
+            boxShadow: `0px 2px 7px rgba(230, 57, 70, 0.4)`,
             "&:hover": {
               background: `${error.main}cc`,
             },
           },
-          "&.MuiButton-containedSuccess": {
-            color: "#000000",
-            boxShadow: `0px 2px 7px rgba(145, 230, 220, 0.7)`,
+          "&.MuiButton-containedWarning": {
+            boxShadow: `0px 2px 7px rgba(207, 145, 33, 0.4)`,
             "&:hover": {
-              background: "rgb(129, 214, 210)",
+              background: `${warning.main}cc`,
+            },
+          },
+          "&.MuiButton-containedSuccess": {
+            boxShadow: `0px 2px 7px rgba(21, 163, 148, 0.4)`,
+            "&:hover": {
+              background: `${success.main}cc`,
+              color: "#fff",
+            },
+          },
+          "&.MuiButton-containedInfo": {
+            boxShadow: `0px 2px 7px rgba(16, 138, 235, 0.4)`,
+            "&:hover": {
+              background: `${info.main}cc`,
+              color: "#fff",
             },
           },
           "&.Mui-disabled": {
             color: "rgba(150,150,150,0.5)", // Color when the IconButton is disabled
             opacity: 0.5, // Opacity when disabled (optional)
+          },
+          "&.active": {
+            background: background.paper,
+            color: "#fff",
           },
         },
       },
@@ -128,7 +168,7 @@ export const darkThemeOptions = {
       styleOverrides: {
         root: {
           "&.MuiChip-filledDefault": {
-            backgroundColor: neutral[800],
+            // backgroundColor: neutral[800],
             "& .MuiChip-deleteIcon": {
               color: error.main,
             },
@@ -195,7 +235,9 @@ export const darkThemeOptions = {
     },
     MuiTextField: {
       styleOverrides: {
-        root: {},
+        root: {
+          background: "rgba(0,0,0,0.2)",
+        },
       },
     },
     MuiSelect: {
@@ -303,7 +345,10 @@ export const darkThemeOptions = {
       },
       styleOverrides: {
         root: {
-          color: "#000",
+          color: text.primary,
+          "&.reverse": {
+            background: lightStyles.background.default,
+          },
         },
       },
     },
@@ -314,9 +359,9 @@ export const darkThemeOptions = {
             background: background.paper,
             // boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
           },
-          "&.outlined": {
-            background: background.paper,
-            borderColor: text.primary,
+          "&.MuiPaper-outlined": {
+            // background: background.paper,
+            borderColor: divider,
           },
         },
       },
@@ -324,7 +369,7 @@ export const darkThemeOptions = {
     MuiTypography: {
       styleOverrides: {
         root: {
-          color: "#d7e2fa",
+          color: text.primary,
           position: "relative",
           zIndex: 2,
           "&:after": {

@@ -78,7 +78,7 @@ export default function Education({ data, onChange }) {
   };
 
   return (
-    <Stack height={"100%"}>
+    <Stack height={"100%"} width={"100%"}>
       <Stack
         height={"calc(100% - 37px)"}
         sx={{ overflowY: "auto" }}
@@ -87,7 +87,7 @@ export default function Education({ data, onChange }) {
       >
         {input.map((edu, index) => {
           return (
-            <Paper key={index}>
+            <Paper variant="outlined" key={index}>
               <Stack
                 direction={"row"}
                 paddingX={2}

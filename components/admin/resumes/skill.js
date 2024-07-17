@@ -76,7 +76,7 @@ export default function Skill({ data, onChange }) {
   };
 
   return (
-    <Stack height={"100%"}>
+    <Stack height={"100%"} width={"100%"}>
       <Stack
         height={"calc(100% - 37px)"}
         sx={{ overflowY: "auto" }}

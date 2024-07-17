@@ -16,11 +16,13 @@ import {
   SensorOccupied,
   Work,
   Language as LanguageIcon,
+  Article,
 } from "@mui/icons-material";
 import {
   Autocomplete,
   Button,
   Divider,
+  Fade,
   IconButton,
   LinearProgress,
   Paper,
@@ -54,7 +56,9 @@ import PaperForm from "../widgets/paper/paper-form";
 import SelectCustom from "../widgets/select/select-custom";
 import FormHeader from "../widgets/texts/form-header";
 import Header from "./header";
-import { styles } from "../../styles/useStyle";
+import { StyleMode, styles } from "../../styles/useStyle";
+import { darkStyles } from "../../theme/dark-theme-options";
+import { lightStyles } from "../../theme/light-theme-options";
 
 const resume_template = {
   user: null,
@@ -122,8 +126,8 @@ export default function Resumes() {
   };
 
   return (
-    <Stack width={"100%"} height={"100%"}>
-      <Header title={"Resume"}>
+    <Stack width={"100%"} height={"100%"} gap={"1px"}>
+      <Header title={"Resume"} icon={<Article />}>
         <Stack direction={"row"} gap={1}>
           <ButtonDialog
             paperProps={{
@@ -160,8 +164,7 @@ export default function Resumes() {
       <Paper
         sx={{
           height: "100%",
-          marginX: 5,
-          marginY: 1,
+
           overflow: "hidden",
         }}
       >
@@ -393,7 +396,12 @@ function ResumeCreator({ data, onRefresh, onClose }) {
         <Stack
           width={"250px"}
           justifyContent={"space-evenly"}
-          sx={{ background: styles.background.menu }}
+          sx={{
+            background: StyleMode(
+              darkStyles.background.default,
+              darkStyles.background.paper
+            ),
+          }}
         >
           <Stack
             sx={{
@@ -453,6 +461,7 @@ function ResumeCreator({ data, onRefresh, onClose }) {
         <Divider flexItem orientation="vertical" />
         <Stack minWidth={"1000px"} height={"100%"}>
           <Stack
+            width={"100%"}
             sx={{
               height: "100%",
               borderRadius: 0,
@@ -460,20 +469,20 @@ function ResumeCreator({ data, onRefresh, onClose }) {
             }}
           >
             {step?.Comp && (
-              <Slide
+              <Fade
                 in={true}
                 direction="right"
                 timeout={500}
-                style={{ transition: "ease" }}
+                style={{ transition: "ease", width: "100%" }}
               >
-                <Stack height={"100%"}>
+                <Stack height={"100%"} width={"100%"}>
                   <step.Comp
                     data={data}
                     onRefresh={onRefresh}
                     onChange={null}
                   />
                 </Stack>
-              </Slide>
+              </Fade>
             )}
           </Stack>
         </Stack>

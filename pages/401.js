@@ -1,7 +1,7 @@
 import { BackHand, ErrorOutline } from "@mui/icons-material";
 import { Button, Divider, Paper, Stack, Typography, Zoom } from "@mui/material";
 import React from "react";
-import { styles } from "../styles/useStyle";
+import { Styles, styles } from "../styles/useStyle";
 import { useRouter } from "next/router";
 import { deleteCookie } from "cookies-next";
 
@@ -29,7 +29,7 @@ export default function Index() {
             <Typography
               fontWeight={"bold"}
               textAlign={"center"}
-              sx={{ color: styles.error.main, fontSize: "100px" }}
+              sx={{ color: Styles().error.main, fontSize: "100px" }}
             >
               401
             </Typography>
@@ -38,7 +38,7 @@ export default function Index() {
             </Typography>
             <Divider flexItem />
 
-            <BackHand sx={{ fontSize: "100px", color: styles.error.main }} />
+            <BackHand sx={{ fontSize: "100px", color: Styles().error.main }} />
           </Stack>
           <Stack gap={"1px"} direction={"row"} minWidth={"400px"}>
             <Button fullWidth variant="contained" onClick={handleHome}>

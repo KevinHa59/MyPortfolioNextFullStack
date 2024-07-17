@@ -236,7 +236,9 @@ class MyAPIs {
         try {
           const res = await UsersAPI.updatePassword(email, password);
           return res?.data;
-        } catch (error) {}
+        } catch (error) {
+          return error.response;
+        }
       },
       generateToken: async (email) => {
         try {

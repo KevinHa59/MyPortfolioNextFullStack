@@ -1,5 +1,4 @@
 // Colors
-
 const neutral = {
   100: "#F3F4F6",
   200: "#E5E7EB",
@@ -64,9 +63,22 @@ const error = {
 };
 
 const text = {
-  primary: "#EDF2F7",
+  primary: "#000000",
   secondary: "#A0AEC0",
   disabled: "rgba(255, 255, 255, 0.48)",
+};
+
+export const lightStyles = {
+  neutral,
+  background,
+  divider,
+  primary,
+  secondary,
+  success,
+  info,
+  warning,
+  error,
+  text,
 };
 
 export const lightThemeOptions = {
@@ -91,15 +103,22 @@ export const lightThemeOptions = {
         root: {
           color: "#000",
           "&:hover": {
-            color: "rgba(150,150,150,1)",
             background: `rgba(200,200,200,0.1)`,
           },
           "&.MuiButton-containedPrimary": {
             color: "#FFFFFF",
-            boxShadow: `0px 2px 7px rgba(117, 130, 235, 0.7)`,
+            boxShadow: `0px 2px 7px rgba(0,0,0, 0.4)`,
             background: background.menu,
             "&:hover": {
+              color: "rgba(150,150,150,1)",
               background: `${background.menu}cc`,
+            },
+          },
+          "&.MuiButton-containedSecondary": {
+            color: "#FFFFFF",
+            boxShadow: `0px 2px 7px rgba(17, 212, 147, 0.4)`,
+            "&:hover": {
+              background: `${secondary.main}cc`,
             },
           },
           "&.MuiButton-containedError": {
@@ -109,16 +128,34 @@ export const lightThemeOptions = {
               background: `${error.main}cc`,
             },
           },
+          "&.MuiButton-containedWarning": {
+            color: "#FFFFFF",
+            boxShadow: `0px 2px 7px rgba(255, 193, 79, 0.4)`,
+            "&:hover": {
+              background: `${warning.main}cc`,
+            },
+          },
           "&.MuiButton-containedSuccess": {
             color: "#FFFFFF",
             boxShadow: `0px 2px 7px rgba(145, 230, 220, 0.7)`,
             "&:hover": {
-              background: "rgb(129, 214, 210)",
+              background: `${success.main}cc`,
+            },
+          },
+          "&.MuiButton-containedInfo": {
+            color: "#FFFFFF",
+            boxShadow: `0px 2px 7px rgba(57, 165, 250, 0.4)`,
+            "&:hover": {
+              background: `${info.main}cc`,
             },
           },
           "&.Mui-disabled": {
             color: "rgba(150,150,150,0.5)", // Color when the IconButton is disabled
             opacity: 0.5, // Opacity when disabled (optional)
+          },
+          "&.active": {
+            background: background.paper,
+            color: "#000",
           },
         },
       },
@@ -127,7 +164,7 @@ export const lightThemeOptions = {
       styleOverrides: {
         root: {
           "&.MuiChip-filledDefault": {
-            backgroundColor: neutral[800],
+            // backgroundColor: neutral[800],
             "& .MuiChip-deleteIcon": {
               color: error.main,
             },
@@ -185,6 +222,14 @@ export const lightThemeOptions = {
         },
         "&:hover MuiOutlinedInput-notchedOutline": {
           borderColor: "rgba(120, 120, 120, 1)",
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+          background: "rgba(0,0,0,0.05)",
         },
       },
     },
@@ -293,6 +338,30 @@ export const lightThemeOptions = {
           "&.normal": {
             background: background.paper,
             boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
+          },
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          color: text.primary,
+          position: "relative",
+          zIndex: 2,
+          "&:after": {
+            content: `none`,
+            position: "absolute",
+            left: 0,
+            zIndex: 0,
+            top: "90%",
+            width: "100%",
+            background: `transparent`,
+            "-webkit-background-clip": "text",
+            color: "transparent",
+            transform: "scaleY(-1)",
+            opacity: 0,
+            height: "80%",
+            overflow: "hidden",
           },
         },
       },

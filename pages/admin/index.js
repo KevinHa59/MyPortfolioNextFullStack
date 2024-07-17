@@ -30,6 +30,7 @@ import Pages from "../../components/admin/pages";
 import Permissions from "../../components/admin/permissions";
 import Dashboard from "../../components/admin/dashboard";
 import ThemeButton, { getMode } from "../../components/widgets/themeButton";
+import ButtonAccount from "../../components/widgets/buttons/button-account";
 
 const menu_data = [
   {
@@ -71,10 +72,9 @@ const menu_data = [
 ];
 
 function Index() {
-  const style = useStyle();
   const router = useRouter();
   const [section, setSection] = useState(null);
-  const theme = useTheme();
+
   useEffect(() => {
     const _section = router.query.section;
     if (_section && _section !== section) {
@@ -90,29 +90,30 @@ function Index() {
     }
   }, [router]);
   return (
-    <Stack height={"100vh"}>
-      <Stack
-        height={"40px"}
-        direction={"row"}
-        justifyContent={"flex-end"}
-        alignItems={"center"}
-        paddingX={2}
-        // className={getMode()}
-      >
-        <ThemeButton />
-      </Stack>
-      <Divider />
-      <Stack direction={"row"} height={"calc(100vh - 40px)"}>
+    <Stack height={"100vh"} gap={"1px"}>
+      <Paper sx={{ zIndex: 2 }}>
         <Stack
-          height={"max-content"}
-          paddingY={2}
-          sx={{
-            borderRadius: 0,
-            // overflowY: "auto",
-          }}
+          height={"40px"}
+          direction={"row"}
+          justifyContent={"flex-end"}
+          alignItems={"center"}
+          paddingX={2}
         >
+          <ThemeButton />
+          <ButtonAccount />
+        </Stack>
+      </Paper>
+      {/* <Divider /> */}
+      <Stack
+        zIndex={1}
+        direction={"row"}
+        height={"calc(100vh - 40px)"}
+        // gap={"1px"}
+      >
+        <Stack height={"100%"} width="250px">
           <Menu />
         </Stack>
+        <Divider orientation="vertical" />
         <Stack height={"100%"} width={"100%"} sx={{ overflowY: "auto" }}>
           {menu_data.find((menu) => menu.param === section)?.Comp}
         </Stack>
@@ -133,20 +134,18 @@ function Menu() {
     });
   };
 
-  const handleLogout = () => {
-    deleteCookie("user");
-    router.reload();
-  };
-
   return (
-    <Slide in={true} direction="right" style={{ transitionDelay: 100 }}>
+    <Slide
+      in={true}
+      direction="right"
+      height="100%"
+      style={{ transitionDelay: 100 }}
+    >
       <Stack
         paddingY={3}
-        className={getMode()}
+        // className={"dark"}
         sx={{
           color: "#fff",
-          borderRadius: "0 20px 20px 0",
-
           overflowY: "auto",
         }}
       >
@@ -156,21 +155,20 @@ function Menu() {
               <Button
                 key={index}
                 color="inherit"
+                className={
+                  router.query.section === menu.param ? "active" : "inactive"
+                }
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
+                  gap: 1,
+                  // flexDirection: "column",
                   justifyContent: "flex-start",
                   transition: "ease 0.1s",
-                  padding: 1,
+                  paddingX: 2,
                   minWidth: 0,
                   borderRadius: 0,
                   whiteSpace: "nowrap",
                   textTransform: "none",
-                  color: router.query.section === menu.param ? "#000" : "#fff",
-                  background:
-                    router.query.section === menu.param
-                      ? "#fff"
-                      : styles.background.menu,
                 }}
                 onClick={() => handleRoute(menu.param)}
               >
@@ -185,36 +183,10 @@ function Menu() {
                   {menu.title}
                 </Typography>
               </Button>
-              {index < menu_data.length && <Divider />}
+              {/* {index < menu_data.length && <Divider />} */}
             </>
           );
         })}
-        <Button
-          variant={"text"}
-          color="inherit"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            transition: "ease 0.1s",
-            padding: 1,
-            minWidth: 0,
-            borderRadius: 0,
-            whiteSpace: "nowrap",
-            textTransform: "none",
-            color: "#fff",
-          }}
-          onClick={() => handleLogout()}
-        >
-          <Logout />
-          <Typography
-            fontWeight={"bold"}
-            variant="body2"
-            sx={{ color: "#fff" }}
-          >
-            Logout
-          </Typography>
-        </Button>
       </Stack>
     </Slide>
   );

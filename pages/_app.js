@@ -6,6 +6,9 @@ import { createContext, useEffect, useState } from "react";
 import { createTheme } from "../theme";
 import Notification from "../components/widgets/notification/notification";
 import { getCookie, getCookies, setCookie } from "cookies-next";
+import { StyleMode } from "../styles/useStyle";
+import { darkStyles } from "../theme/dark-theme-options";
+import { lightStyles } from "../theme/light-theme-options";
 
 export const mainContext = createContext(null);
 
@@ -73,11 +76,12 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <Stack
-      sx={
-        settings.theme === "dark"
-          ? { background: "#1a1e26", color: "#abbce0" }
-          : { background: "#fff", color: "#000" }
-      }
+      className={settings.theme}
+      sx={StyleMode(
+        { background: darkStyles.background.default, color: "#abbce0" },
+        { background: lightStyles.background.default, color: "#000" },
+        settings.theme
+      )}
     >
       <Head>
         <title>My Portfolio</title>

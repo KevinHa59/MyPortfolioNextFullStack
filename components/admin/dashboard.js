@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import axios from "axios";
 import {
+  Button,
   CircularProgress,
   Fade,
   Grid,
+  LinearProgress,
   Paper,
   Stack,
   Typography,
@@ -57,7 +59,7 @@ export default function Dashboard() {
     <Stack padding={5}>
       {isGettingData && (
         <Typography textAlign={"center"}>
-          <CircularProgress />
+          <LinearProgress />
         </Typography>
       )}
       <Grid container spacing={5}>
@@ -82,6 +84,47 @@ export default function Dashboard() {
           />
         )}
       </Grid>
+      {/* <Stack gap={1}>
+        <Button>Text</Button>
+        <Button variant="outlined">Outlined</Button>
+        <Button variant="contained">Contained</Button>
+        <Button variant="outlined" color="primary">
+          Outlined primary
+        </Button>
+        <Button variant="contained" color="primary">
+          Contained primary
+        </Button>
+        <Button variant="outlined" color="secondary">
+          Outlined secondary
+        </Button>
+        <Button variant="contained" color="secondary">
+          Contained secondary
+        </Button>
+        <Button variant="outlined" color="error">
+          Outlined error
+        </Button>
+        <Button variant="contained" color="error">
+          Contained error
+        </Button>
+        <Button variant="outlined" color="info">
+          Outlined info
+        </Button>
+        <Button variant="contained" color="info">
+          Contained info
+        </Button>
+        <Button variant="outlined" color="success">
+          Outlined success
+        </Button>
+        <Button variant="contained" color="success">
+          Contained success
+        </Button>
+        <Button variant="outlined" color="warning">
+          Outlined warning
+        </Button>
+        <Button variant="contained" color="warning">
+          Contained warning
+        </Button>
+      </Stack> */}
     </Stack>
   );
 }

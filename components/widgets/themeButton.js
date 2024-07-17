@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { mainContext } from "../../pages/_app";
-import { Button } from "@mui/material";
+import { Button, Slide, Stack } from "@mui/material";
 import { getCookie, setCookie } from "cookies-next";
 import { DarkMode, LightMode } from "@mui/icons-material";
 import { styles } from "../../styles/useStyle";
@@ -45,14 +45,42 @@ export default function ThemeButton({ sx, size }) {
         ...sx,
         borderRadius: "25px",
         padding: 0,
-        height: "max-content",
-        background: "#fff",
+        height: "30px",
+        width: "80px",
+        display: "flex",
+        justifyContent: "center",
+        position: "relative",
+        overflow: "hidden",
       }}
       variant="contained"
       onClick={handleToggleMode}
-      startIcon={settings.theme === "dark" ? <DarkMode /> : <LightMode />}
     >
-      {settings.theme}
+      <Slide direction={"down"} in={settings.theme === "dark"}>
+        <Stack
+          direction={"row"}
+          gap={0.5}
+          sx={{
+            color: "inherit",
+            position: "absolute",
+          }}
+        >
+          <DarkMode />
+          Dark
+        </Stack>
+      </Slide>
+      <Slide direction={"up"} in={settings.theme === "light"}>
+        <Stack
+          direction={"row"}
+          gap={0.5}
+          sx={{
+            color: "inherit",
+            position: "absolute",
+          }}
+        >
+          <LightMode />
+          Light
+        </Stack>
+      </Slide>
     </Button>
   );
 }

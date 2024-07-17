@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../../../../../utils/hash";
+import { errorMapping } from "../../../../../utils/errorCodeMapping";
 
 const prisma = new PrismaClient();
 /**
@@ -25,15 +26,15 @@ async function UpdatePassword(req, res) {
     const body = req.body;
     // input validation
     if (!body.email || !body.password) {
-      res.status(400).json({ error: "Incomplete data" });
+      return res.status(400).json({ error: "Incomplete data" });
     }
     // verify email
     const verifyUser = await prisma.users.findUnique({
       where: { email: body.email },
     });
     // if email not valid return 401
-    if (!verifyUser) {
-      return res.status(401).join({ err: "Invalid User" });
+    if (verifyUser === null) {
+      return res.status(401).json({ err: "Invalid User" });
     }
     // hash given password
     const hashedPassword = await hashPassword(body.password);
@@ -46,7 +47,8 @@ async function UpdatePassword(req, res) {
     });
     res.status(201).json(user);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    const { statusCode, message } = errorMapping[err.code];
+    res.status(statusCode).json({ err: message });
   }
 }
 

@@ -23,6 +23,7 @@ import { useRouter } from "next/router";
 import ButtonLoading from "../widgets/buttons/button-loading";
 import { mainContext } from "../../pages/_app";
 import { getCookie, getCookies } from "cookies-next";
+import { AdminPanelSettings } from "@mui/icons-material";
 
 export default function Permissions() {
   const router = useRouter();
@@ -143,15 +144,14 @@ export default function Permissions() {
   };
 
   return (
-    <Stack width={"100%"} height={"100%"}>
-      <Header title={"Permissions"}></Header>
+    <Stack width={"100%"} height={"100%"} gap={"1px"}>
+      <Header title={"Permissions"} icon={<AdminPanelSettings />}></Header>
       {isGettingData && <LinearProgress />}
       {!isGettingData && (
         <Paper
           sx={{
             height: "100%",
-            marginX: 5,
-            marginY: 1,
+
             overflow: "hidden",
           }}
         >

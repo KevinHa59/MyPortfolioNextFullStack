@@ -1,19 +1,9 @@
-import { ArrowDownward, ArrowUpward, Search } from "@mui/icons-material";
-import {
-  Button,
-  Divider,
-  Grid,
-  Link,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
+import { Button, Grid, Stack, Typography } from "@mui/material";
 import React, { useContext } from "react";
-import { styles } from "../../../styles/useStyle";
-import { getMode } from "../themeButton";
+import { StyleMode, styles } from "../../../styles/useStyle";
 import { mainContext } from "../../../pages/_app";
+import { lightStyles } from "../../../theme/light-theme-options";
 
 export default function Header({ headers, sortSetting, onSortChange }) {
   const { settings } = useContext(mainContext);
@@ -21,8 +11,7 @@ export default function Header({ headers, sortSetting, onSortChange }) {
     <Grid
       container
       sx={{
-        background:
-          settings.theme === "light" ? styles.background.menu : "#fff",
+        background: StyleMode(lightStyles.text.primary, styles.background.menu),
       }}
     >
       {headers?.map((header, index) => {

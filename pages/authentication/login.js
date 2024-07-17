@@ -4,9 +4,7 @@ import PaperForm from "../../components/widgets/paper/paper-form";
 import Input from "../../components/widgets/input/input";
 import ButtonLoading from "../../components/widgets/buttons/button-loading";
 import MyAPIs from "../api-functions/MyAPIs";
-import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
-import { getMode } from "../../components/widgets/themeButton";
 import { mainContext } from "../_app";
 export default function Login() {
   const router = useRouter();

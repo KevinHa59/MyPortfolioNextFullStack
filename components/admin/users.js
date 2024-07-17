@@ -25,6 +25,7 @@ import {
   Email,
   Label,
   Password,
+  People,
   Remove,
   Token,
 } from "@mui/icons-material";
@@ -80,8 +81,8 @@ export default function Users() {
   };
 
   return (
-    <Stack width={"100%"} height={"100%"}>
-      <Header title={"User"}>
+    <Stack width={"100%"} height={"100%"} gap={"1px"}>
+      <Header title={"User"} icon={<People />}>
         <Stack direction={"row"} gap={1}>
           <ButtonDialog
             open={isNewUserOpen}
@@ -116,8 +117,6 @@ export default function Users() {
       <Paper
         sx={{
           height: "100%",
-          marginX: 5,
-          marginY: 1,
           overflow: "hidden",
         }}
       >
@@ -561,7 +560,7 @@ function TokenButton({ user, onRefresh }) {
   };
   const handleCopy = (message, token) => {
     navigator.clipboard.writeText(token);
-    setNote(message);
+    setNote.success(message);
   };
 
   return (

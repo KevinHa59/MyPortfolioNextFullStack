@@ -1,7 +1,13 @@
 import { Button, Divider, Paper, Stack } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import ButtonDialog from "../widgets/buttons/button_dialog";
-import { Add, Clear, DeleteForever, Edit } from "@mui/icons-material";
+import {
+  Add,
+  Clear,
+  DeleteForever,
+  Edit,
+  PagesRounded,
+} from "@mui/icons-material";
 import Table from "../widgets/tables/table";
 import Input from "../widgets/input/Input";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
@@ -29,8 +35,8 @@ export default function Pages() {
   }
 
   return (
-    <Stack width={"100%"} height={"100%"}>
-      <Header title={"Pages"}>
+    <Stack width={"100%"} height={"100%"} gap={"1px"}>
+      <Header title={"Pages"} icon={<PagesRounded />}>
         <Stack direction={"row"} gap={1}>
           <ButtonDialog
             open={isNewPageOpen}
@@ -67,8 +73,6 @@ export default function Pages() {
         // variant="outlined"
         sx={{
           height: "100%",
-          marginX: 5,
-          marginY: 1,
           overflow: "hidden",
         }}
       >
