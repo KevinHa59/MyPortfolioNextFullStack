@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { errorMapping } from "../../../../utils/errorCodeMapping";
 
 const prisma = new PrismaClient();
 /**
@@ -31,8 +32,9 @@ async function getUserByID(req, res) {
     }
     const user = await prisma.users.findUnique({ where: { id: id } });
     res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ err: "Internal server error" });
+  } catch (err) {
+    const { statusCode, message } = errorMapping[err.code];
+    res.status(statusCode).json({ err: message });
   }
 }
 
@@ -40,28 +42,27 @@ async function getUserByID(req, res) {
 // input: email, firstName, lastName, dob, userTypeID, ...
 async function UpdateUser(req, res) {
   try {
-    const { id, firstName, lastName, dob, userTypeID, ...rest } = req.body;
+    const { id, dob, userTypeID, ...rest } = req.body;
 
     // Validate required fields
-    if (!id || !firstName || !lastName || !dob || !userTypeID) {
+    if (!id) {
       return res.status(400).json({ error: "Incomplete data" });
     }
     // Prepare data object with optional fields
     const dataToUpdate = {
       ...rest,
-      firstName,
-      lastName,
-      dob: new Date(dob),
-      userTypeID,
+      dob: dob ? new Date(dob) : null,
     };
-
+    delete dataToUpdate.id;
     const user = await prisma.users.update({
       where: { id: id },
       data: dataToUpdate,
     });
     res.status(201).json(user);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    console.log(err);
+    const { statusCode, message } = errorMapping[err.code];
+    res.status(statusCode).json({ err: message });
   }
 }
 
@@ -81,6 +82,7 @@ async function removeUserByID(req, res) {
     });
     res.status(201).json(user);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    const { statusCode, message } = errorMapping[err.code];
+    res.status(statusCode).json({ err: message });
   }
 }

@@ -8,13 +8,23 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { styles } from "../../../styles/useStyle";
+import { getMode } from "../themeButton";
+import { mainContext } from "../../../pages/_app";
 
 export default function Header({ headers, sortSetting, onSortChange }) {
+  const { settings } = useContext(mainContext);
   return (
-    <Grid container sx={{ background: styles.background.menu }}>
+    <Grid
+      container
+      sx={{
+        background:
+          settings.theme === "light" ? styles.background.menu : "#fff",
+      }}
+    >
       {headers?.map((header, index) => {
         const justify = header.align
           ? header.align === "left"
@@ -31,6 +41,10 @@ export default function Header({ headers, sortSetting, onSortChange }) {
               alignItems={"center"}
               justifyContent={justify}
               width={"100%"}
+              sx={{
+                color:
+                  settings.theme === "light" ? "#fff" : styles.background.menu,
+              }}
             >
               <Button
                 size="small"
@@ -38,7 +52,7 @@ export default function Header({ headers, sortSetting, onSortChange }) {
                   padding: 0,
                   textTransform: "none",
                   minWidth: 0,
-                  color: "#fff",
+                  color: "inherit",
                 }}
                 onClick={() =>
                   onSortChange &&
@@ -56,15 +70,18 @@ export default function Header({ headers, sortSetting, onSortChange }) {
                   fontWeight={"bold"}
                   variant="body2"
                   noWrap
+                  sx={{
+                    color: "inherit",
+                  }}
                 >
                   {header.name}
                 </Typography>
               </Button>
               {sortSetting.column === header.key &&
                 (sortSetting.isASC ? (
-                  <ArrowUpward sx={{ fontSize: 10, color: "#fff" }} />
+                  <ArrowUpward sx={{ fontSize: 10 }} />
                 ) : (
-                  <ArrowDownward sx={{ fontSize: 10, color: "#fff" }} />
+                  <ArrowDownward sx={{ fontSize: 10 }} />
                 ))}
             </Stack>
           </Grid>

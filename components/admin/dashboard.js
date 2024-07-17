@@ -96,10 +96,11 @@ function StatsItem({ index = 0, title, value }) {
           sx={{ overflow: "hidden" }}
         >
           <Stack
-            paddingX={2}
+            padding={2}
             width="100%"
             height={"150px"}
             sx={{ position: "relative" }}
+            justifyContent={"space-between"}
           >
             <Stack
               sx={{
@@ -115,11 +116,7 @@ function StatsItem({ index = 0, title, value }) {
               }}
             />
             <FormHeader title={title} variant="h3" sx={{ height: "100%" }} />
-            <Typography
-              variant="h4"
-              textAlign={"right"}
-              sx={{ height: "100%" }}
-            >
+            <Typography variant="h4" textAlign={"right"} fontWeight={200}>
               {value}
             </Typography>
           </Stack>

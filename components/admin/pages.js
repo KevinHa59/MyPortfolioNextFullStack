@@ -63,7 +63,6 @@ export default function Pages() {
           </ButtonDialog>
         </Stack>
       </Header>
-      <Divider />
       <Paper
         // variant="outlined"
         sx={{

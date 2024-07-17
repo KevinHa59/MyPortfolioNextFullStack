@@ -193,6 +193,33 @@ class MyAPIs {
           return res?.data;
         } catch (error) {}
       },
+      updateUser: async (userInfo) => {
+        try {
+          const res = await UsersAPI.updateUser(
+            userInfo.id,
+            userInfo.firstName,
+            userInfo.lastName,
+            userInfo.dob,
+            userInfo.userTypeID,
+            userInfo.address,
+            userInfo.city,
+            userInfo.state,
+            userInfo.country,
+            userInfo.zipCode,
+            userInfo.cellPhone,
+            userInfo.homePhone,
+            userInfo.linkedIn,
+            userInfo.github,
+            userInfo.twitter,
+            userInfo.facebook,
+            userInfo.instagram,
+            userInfo.portfolio
+          );
+          return res?.data;
+        } catch (error) {
+          return error.response;
+        }
+      },
       getUserByID: async (id) => {
         try {
           const res = await UsersAPI.getUserByID(id);

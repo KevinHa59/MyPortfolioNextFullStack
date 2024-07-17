@@ -1,3 +1,5 @@
+import { styles } from "../styles/useStyle";
+
 export const baseThemeOptions = {
   breakpoints: {
     values: {
@@ -48,17 +50,7 @@ export const baseThemeOptions = {
         },
       },
     },
-    MuiStack: {
-      defaultProps: {
-        useFlexGap: true,
-      },
-      styleOverrides: {
-        root: {
-          backgroundColor: "transparent",
-          color: "#000",
-        },
-      },
-    },
+
     MuiInputBase: {
       styleOverrides: {
         root: {
@@ -221,10 +213,26 @@ export const baseThemeOptions = {
         },
       },
     },
+    MuiStack: {
+      defaultProps: {
+        useFlexGap: true,
+      },
+      styleOverrides: {
+        root: {
+          "&.dark": {
+            background: styles.background.menu,
+          },
+          "&.light": {
+            background: styles.background.menu,
+          },
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {
           backgroundImage: "none",
+          position: "relative",
           color: "#000",
           boxShadow: "0px 0px 10px rgba(0,0,0,0.5)",
           "&.MuiPaper-outlined": {

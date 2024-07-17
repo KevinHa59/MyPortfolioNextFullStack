@@ -13,10 +13,10 @@ const neutral = {
 };
 
 const background = {
-  default: "#1a1e26",
-  paper: "#2b3240",
-  menu: "#1a1e26",
-  subMenu: "#1a1e26",
+  default: "#efefef",
+  paper: "#ffffff",
+  menu: "#2b3240",
+  subMenu: "#304152",
 };
 
 const divider = "#2D3748";
@@ -64,12 +64,12 @@ const error = {
 };
 
 const text = {
-  primary: "#d7e2fa",
+  primary: "#EDF2F7",
   secondary: "#A0AEC0",
   disabled: "rgba(255, 255, 255, 0.48)",
 };
 
-export const darkThemeOptions = {
+export const lightThemeOptions = {
   components: {
     MuiCssBaseline: {
       styleOverrides: {
@@ -89,29 +89,28 @@ export const darkThemeOptions = {
     MuiButton: {
       styleOverrides: {
         root: {
-          color: "#fff",
-
+          color: "#000",
           "&:hover": {
             color: "rgba(150,150,150,1)",
             background: `rgba(200,200,200,0.1)`,
           },
           "&.MuiButton-containedPrimary": {
-            color: "#000000",
+            color: "#FFFFFF",
             boxShadow: `0px 2px 7px rgba(117, 130, 235, 0.7)`,
-            background: "#ffffff",
+            background: background.menu,
             "&:hover": {
-              background: `rgba(200,200,200,0.9)`,
+              background: `${background.menu}cc`,
             },
           },
           "&.MuiButton-containedError": {
-            color: "#fff",
+            color: "#FFFFFF",
             boxShadow: `0px 2px 7px rgba(230, 57, 70, 0.7)`,
             "&:hover": {
               background: `${error.main}cc`,
             },
           },
           "&.MuiButton-containedSuccess": {
-            color: "#000000",
+            color: "#FFFFFF",
             boxShadow: `0px 2px 7px rgba(145, 230, 220, 0.7)`,
             "&:hover": {
               background: "rgb(129, 214, 210)",
@@ -148,14 +147,14 @@ export const darkThemeOptions = {
           backgroundColor: "transparent", // Change background color of the progress bar
         },
         bar: {
-          backgroundColor: text.primary, // Change the color of the progress bar itself
+          backgroundColor: background.menu, // Change the color of the progress bar itself
         },
       },
     },
     MuiCircularProgress: {
       styleOverrides: {
         colorPrimary: {
-          color: text.primary, // Change the color of the circular progress indicator
+          color: background.menu, // Change the color of the circular progress indicator
         },
         circle: {
           strokeLinecap: "round", // Make the progress circle's line cap rounded
@@ -165,7 +164,7 @@ export const darkThemeOptions = {
     MuiDivider: {
       styleOverrides: {
         root: {
-          borderColor: "rgba(100,100,100,0.4)",
+          borderColor: "rgba(120,120,120,0.4)",
         },
       },
     },
@@ -177,34 +176,15 @@ export const darkThemeOptions = {
             color: text.secondary,
           },
         },
-        root: {
-          color: text.primary,
-          borderRadius: 0,
-        },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         notchedOutline: {
-          borderColor: text.secondary,
+          borderColor: divider,
         },
         "&:hover MuiOutlinedInput-notchedOutline": {
           borderColor: "rgba(120, 120, 120, 1)",
-        },
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {},
-      },
-    },
-    MuiSelect: {
-      defaultProps: {
-        useFlexGap: true,
-      },
-      styleOverrides: {
-        root: {
-          color: text.primary,
         },
       },
     },
@@ -212,7 +192,7 @@ export const darkThemeOptions = {
       styleOverrides: {
         root: {
           "&.Mui-checked": {
-            color: "#fff", // customize the color when checked
+            color: background.menu, // customize the color when checked
           },
         },
       },
@@ -312,35 +292,7 @@ export const darkThemeOptions = {
         root: {
           "&.normal": {
             background: background.paper,
-            // boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
-          },
-          "&.outlined": {
-            background: background.paper,
-            borderColor: text.primary,
-          },
-        },
-      },
-    },
-    MuiTypography: {
-      styleOverrides: {
-        root: {
-          color: "#d7e2fa",
-          position: "relative",
-          zIndex: 2,
-          "&:after": {
-            content: `none`,
-            position: "absolute",
-            left: 0,
-            zIndex: 0,
-            top: "90%",
-            width: "100%",
-            background: `transparent`,
-            "-webkit-background-clip": "text",
-            color: "transparent",
-            transform: "scaleY(-1)",
-            opacity: 0,
-            height: "80%",
-            overflow: "hidden",
+            boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
           },
         },
       },

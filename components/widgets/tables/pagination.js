@@ -50,7 +50,7 @@ export default function Pagination({ quantity }) {
       >
         <KeyboardArrowLeft />
       </IconButton>
-      {pageSetting.page}
+      <Typography>{pageSetting.page}</Typography>
       <IconButton
         disabled={pageSetting.page * pageSetting.rows >= quantity}
         size="small"

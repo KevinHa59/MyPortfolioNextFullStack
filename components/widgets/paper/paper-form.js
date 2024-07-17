@@ -16,7 +16,7 @@ export default function PaperForm({
       <Paper
         sx={{
           maxWidth: "100vw",
-          background: "rgba(255,255,255,0.2)",
+          background: "rgba(255,255,255,0.1)",
           overflowX: "hidden",
           backdropFilter: "blur(5px)",
           ...sx,

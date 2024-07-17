@@ -157,8 +157,6 @@ export default function Resumes() {
           </ButtonDialog>
         </Stack>
       </Header>
-
-      <Divider sx={{ background: "rgba(100,100,100,1)" }} />
       <Paper
         sx={{
           height: "100%",
@@ -388,7 +386,7 @@ function ResumeCreator({ data, onRefresh, onClose }) {
   return (
     <PaperForm
       title={"New Resume"}
-      sx={{ height: "90vh" }}
+      sx={{ height: "90vh", overflow: "hidden" }}
       sx_paper={{ overflow: "hidden" }}
     >
       <Stack direction={"row"} height={"100%"}>

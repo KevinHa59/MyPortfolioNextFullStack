@@ -4,34 +4,50 @@ import React, { useEffect, useState } from "react";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
 import Input from "../../widgets/input/Input";
+import axios from "axios";
 
 export default function Summary({ data, onChange }) {
   const [input, setInput] = useState("");
   const [userInfo, setUserInfo] = useState({
-    address: null,
-    city: null,
-    state: null,
-    country: null,
-    zipCode: null,
-    cellPhone: null,
-    homePhone: null,
-    linkedIn: null,
-    github: null,
-    twitter: null,
-    facebook: null,
-    instagram: null,
-    portfolio: null,
+    address: "",
+    city: "",
+    state: "",
+    country: "",
+    zipCode: "",
+    cellPhone: "",
+    homePhone: "",
+    linkedIn: "",
+    github: "",
+    twitter: "",
+    facebook: "",
+    instagram: "",
+    portfolio: "",
   });
   const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
     setInput(data.summary);
+    setUserInfo((prev) => {
+      const newUserInfo = {
+        ...prev,
+        ...data.user,
+      };
+      delete newUserInfo.password;
+      delete newUserInfo.email;
+      delete newUserInfo.refreshToken;
+      return newUserInfo;
+    });
   }, [data]);
 
   const handleUpdateResume = async () => {
     setIsSaving(true);
-    const res = await MyAPIs.Resume().updateResume(data.id, {
-      summary: input,
-    });
+    const APIs = [
+      MyAPIs.Resume().updateResume(data.id, {
+        summary: input,
+      }),
+      MyAPIs.User().updateUser(userInfo),
+    ];
+    const res = await axios.all(APIs);
+    console.log(res);
     setIsSaving(false);
   };
 
@@ -113,6 +129,7 @@ export default function Summary({ data, onChange }) {
         <Divider />
         <Stack direction={"row"} gap={1} width={"100%"}>
           <Input
+            id="phone"
             value={userInfo.cellPhone || ""}
             label="Cell Phone"
             onChange={(event) =>
@@ -130,6 +147,7 @@ export default function Summary({ data, onChange }) {
         <Divider />
         <Stack>
           <Input
+            id="linkedin"
             value={userInfo.linkedIn || ""}
             label="LinkedIn"
             onChange={(event) =>
@@ -137,6 +155,7 @@ export default function Summary({ data, onChange }) {
             }
           />
           <Input
+            id="github"
             value={userInfo.github || ""}
             label="GitHub"
             onChange={(event) =>
@@ -144,6 +163,7 @@ export default function Summary({ data, onChange }) {
             }
           />
           <Input
+            id="twitter"
             value={userInfo.twitter || ""}
             label="Twitter"
             onChange={(event) =>
@@ -151,6 +171,7 @@ export default function Summary({ data, onChange }) {
             }
           />
           <Input
+            id="facebook"
             value={userInfo.facebook || ""}
             label="Facebook"
             onChange={(event) =>
@@ -158,6 +179,7 @@ export default function Summary({ data, onChange }) {
             }
           />
           <Input
+            id="instagram"
             value={userInfo.instagram || ""}
             label="Instagram"
             onChange={(event) =>
@@ -165,6 +187,7 @@ export default function Summary({ data, onChange }) {
             }
           />
           <Input
+            id="portfolio"
             value={userInfo.portfolio || ""}
             label="Portfolio"
             onChange={(event) =>
@@ -194,16 +217,16 @@ export default function Summary({ data, onChange }) {
   );
 }
 
-// address: null,
-// city: null,
-// state: null,
-// country: null,
-// zipCode: null,
-// cellPhone: null,
-// homePhone: null,
-// linkedIn: null,
-// github: null,
-// twitter: null,
-// facebook: null,
-// instagram: null,
-// portfolio: null,
+// address: "",
+// city: "",
+// state: "",
+// country: "",
+// zipCode: "",
+// cellPhone: "",
+// homePhone: "",
+// linkedIn: "",
+// github: "",
+// twitter: "",
+// facebook: "",
+// instagram: "",
+// portfolio: "",

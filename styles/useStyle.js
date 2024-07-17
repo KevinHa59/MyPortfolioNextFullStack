@@ -1,7 +1,14 @@
+import { getCookie } from "cookies-next";
+
 export default function useStyle() {
   return style;
 }
-
+let theme = getCookie("settings");
+let mode = "dark";
+if (theme) {
+  theme = JSON.parse(theme);
+  mode = theme.mode ? theme.mode : "dark";
+}
 const neutral = {
   100: "#F3F4F6",
   200: "#E5E7EB",

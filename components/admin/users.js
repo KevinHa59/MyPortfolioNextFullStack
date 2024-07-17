@@ -113,9 +113,7 @@ export default function Users() {
           </ButtonDialog>
         </Stack>
       </Header>
-      <Divider />
       <Paper
-        // variant="outlined"
         sx={{
           height: "100%",
           marginX: 5,

@@ -19,6 +19,7 @@ import ErrorRenderer from "../widgets/texts/error-renderer";
 import LoadingComponent from "../widgets/loading/loading-component";
 import { Circle, Clear, Delete, Edit, Label } from "@mui/icons-material";
 import Header from "./header";
+import PaperForm from "../widgets/paper/paper-form";
 
 export default function UserTypes() {
   const [userTypes, setUserTypes] = useState([]);
@@ -45,6 +46,7 @@ export default function UserTypes() {
             isCloseOnClickOut={false}
             onClick={() => setIsNewUserTypeOpen(true)}
             sx_button={{ borderRadius: 0 }}
+            paperProps={{ style: { background: "transparent" } }}
             variant={"contained"}
             button_label="Create New type"
             size="small"
@@ -62,8 +64,6 @@ export default function UserTypes() {
           </ButtonDialog>
         </Stack>
       </Header>
-
-      <Divider sx={{ background: "rgba(100,100,100,1)" }} />
       {isGettingData && <LinearProgress />}
       {!isGettingData && (
         <Stack padding={1} gap={1} paddingX={10} alignItems={"center"}>
@@ -99,7 +99,11 @@ export default function UserTypes() {
 
 function UserTypeCard({ type, index, onEditClick, onDeleteClick }) {
   return (
-    <Paper className="normal" sx={{ width: "max-content" }}>
+    <Paper
+      className="normal"
+      variant="outlined"
+      sx={{ width: "max-content", overflow: "hidden" }}
+    >
       <Stack padding={1} minWidth={"300px"} width={"max-content"} gap={1}>
         <Stack
           direction={"row"}
@@ -211,52 +215,42 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
   };
 
   return (
-    <Stack padding={1} gap={1} width={"300px"}>
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-      >
-        <FormHeader
-          title={updateType === null ? "New User Type" : "Update User Type"}
-        />
-        <IconButton size="small" color="error" onClick={onClose}>
-          <Clear />
-        </IconButton>
-      </Stack>
-      <Divider />
-      <LoadingComponent isLoading={isUserCreating}>
-        <Stack gap={1} width={"100%"}>
-          <Stack direction={"row"} gap={1}>
-            <TextField
-              fullWidth
-              value={input.type}
-              onChange={(e) => handleInputChange({ type: e.target.value })}
-              size="small"
-              autoComplete="off"
-              label="Type Name"
-            />
-            <TextField
-              value={input.color}
-              onChange={(e) => handleInputChange({ color: e.target.value })}
-              sx={{ minWidth: "50px" }}
-              type="color"
-              size="small"
-            />
-          </Stack>
+    <PaperForm
+      title={updateType === null ? "New User Type" : "Update User Type"}
+    >
+      <Stack gap={1} padding={2} width={"100%"}>
+        <Stack direction={"row"} gap={1}>
           <TextField
-            value={input.description}
-            onChange={(e) => handleInputChange({ description: e.target.value })}
+            fullWidth
+            value={input.type}
+            onChange={(e) => handleInputChange({ type: e.target.value })}
             size="small"
             autoComplete="off"
-            multiline
-            rows={3}
-            label="Description"
+            label="Type Name"
           />
-          <ErrorRenderer errors={inputErrors} />
-          <Divider />
+          <TextField
+            value={input.color}
+            onChange={(e) => handleInputChange({ color: e.target.value })}
+            sx={{ minWidth: "50px" }}
+            type="color"
+            size="small"
+          />
+        </Stack>
+        <TextField
+          value={input.description}
+          onChange={(e) => handleInputChange({ description: e.target.value })}
+          size="small"
+          autoComplete="off"
+          multiline
+          rows={3}
+          label="Description"
+        />
+        <ErrorRenderer errors={inputErrors} />
+        <Divider />
+        <Stack direction={"row"} gap={1}>
           {updateType === null ? (
             <Button
+              fullWidth
               size="small"
               disabled={
                 input.type.length === 0 ||
@@ -264,22 +258,34 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
                   (type) => type.type.toLowerCase() === input.type.toLowerCase()
                 )
               }
+              variant="contained"
               onClick={() => handleCreateUserType()}
             >
               Create
             </Button>
           ) : (
             <Button
+              fullWidth
+              variant="contained"
               size="small"
               disabled={input.type.length === 0}
               onClick={() => handleUpdateUserType()}
             >
-              {updateType === null ? "Create" : "Update"}
+              Update
             </Button>
           )}
+          <Button
+            fullWidth
+            variant="contained"
+            size="small"
+            color="error"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
         </Stack>
-      </LoadingComponent>
-    </Stack>
+      </Stack>
+    </PaperForm>
   );
 }
 

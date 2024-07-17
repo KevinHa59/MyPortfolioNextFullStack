@@ -2,9 +2,10 @@
 import { CssBaseline, Stack, ThemeProvider } from "@mui/material";
 import "../styles/globals.css";
 import Head from "next/head";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { createTheme } from "../theme";
 import Notification from "../components/widgets/notification/notification";
+import { getCookie, getCookies, setCookie } from "cookies-next";
 
 export const mainContext = createContext(null);
 
@@ -18,12 +19,33 @@ function MyApp({ Component, pageProps }) {
     timeout: 3000,
   });
 
-  // const handleUpdateNote = (note, type = "success") => {
-  //   setNote({
-  //     message: note,
-  //     type: type,
-  //   });
-  // };
+  useEffect(() => {
+    let settingCookies = getCookie("settings");
+    if (settingCookies) {
+      settingCookies = JSON.parse(settingCookies);
+      if (settingCookies.mode) {
+        handleUpdateTheme(settingCookies.mode);
+      } else {
+        setCookie("settings", {
+          ...settingCookies,
+          mode: "dark",
+        });
+      }
+    } else {
+      setCookie("settings", {
+        mode: "dark",
+      });
+    }
+  }, []);
+
+  const handleUpdateTheme = (mode = null) => {
+    setSettings((prev) => {
+      return {
+        ...prev,
+        theme: mode ? mode : prev.theme === "dark" ? "light" : "dark",
+      };
+    });
+  };
 
   const handleUpdateNote = {
     success: (message, timeout = 3000) => {
@@ -50,7 +72,13 @@ function MyApp({ Component, pageProps }) {
   };
 
   return (
-    <Stack>
+    <Stack
+      sx={
+        settings.theme === "dark"
+          ? { background: "#1a1e26", color: "#abbce0" }
+          : { background: "#fff", color: "#000" }
+      }
+    >
       <Head>
         <title>My Portfolio</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
@@ -58,6 +86,8 @@ function MyApp({ Component, pageProps }) {
       <mainContext.Provider
         value={{
           setNote: handleUpdateNote,
+          settings: settings,
+          themeToggle: handleUpdateTheme,
         }}
       >
         <ThemeProvider

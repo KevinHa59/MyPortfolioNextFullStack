@@ -45,6 +45,47 @@ class UsersAPI {
       },
     });
   }
+  async updateUser(
+    id,
+    firstName,
+    lastName,
+    dob,
+    userTypeID,
+    address,
+    city,
+    state,
+    country,
+    zipCode,
+    cellPhone,
+    homePhone,
+    linkedIn,
+    github,
+    twitter,
+    facebook,
+    instagram,
+    portfolio
+  ) {
+    return await axios.put(API.users_user, {
+      id,
+      firstName,
+      lastName,
+      dob,
+      userTypeID,
+      address,
+      city,
+      state,
+      country,
+      zipCode,
+      cellPhone,
+      homePhone,
+      linkedIn,
+      github,
+      twitter,
+      facebook,
+      instagram,
+      portfolio,
+    });
+  }
   async getUserTypes(
     isUserIncluding = false,
     isPageIncluding = false,

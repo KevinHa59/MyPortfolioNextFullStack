@@ -145,8 +145,6 @@ export default function Permissions() {
   return (
     <Stack width={"100%"} height={"100%"}>
       <Header title={"Permissions"}></Header>
-
-      <Divider sx={{ background: "rgba(100,100,100,1)" }} />
       {isGettingData && <LinearProgress />}
       {!isGettingData && (
         <Paper
@@ -159,9 +157,9 @@ export default function Permissions() {
         >
           <Stack alignItems={"flex-start"} direction={"row"} height={"100%"}>
             {/* user type */}
-            <Stack width={"300px"} height={"100%"} gap={1}>
+            <Stack width={"300px"} height={"100%"}>
               <Stack
-                height="30px"
+                minHeight="30px"
                 sx={{ background: styles.background.menu, color: "#fff" }}
               >
                 <Typography
@@ -172,36 +170,44 @@ export default function Permissions() {
                   User Types
                 </Typography>
               </Stack>
+              <Divider />
               <Stack height={"100%"} paddingX={1}>
-                {data.userTypes?.map((type, index) => {
-                  return (
-                    <Slide
-                      key={index}
-                      in={true}
-                      direction="right"
-                      style={{ transitionDelay: index * 100 }}
-                    >
-                      <Button
-                        variant={
-                          router.query.user_type === type.id
-                            ? "contained"
-                            : "text"
-                        }
-                        fullWidth
-                        onClick={() => handleTypeSelect(type)}
+                <Stack
+                  width={"100%"}
+                  height={"calc(100% - 50px)"}
+                  padding={1}
+                  sx={{ overflowY: "auto" }}
+                >
+                  {data.userTypes?.map((type, index) => {
+                    return (
+                      <Slide
+                        key={index}
+                        in={true}
+                        direction="right"
+                        style={{ transitionDelay: index * 100 }}
                       >
-                        {type.type}
-                      </Button>
-                    </Slide>
-                  );
-                })}
+                        <Button
+                          variant={
+                            router.query.user_type === type.id
+                              ? "contained"
+                              : "text"
+                          }
+                          fullWidth
+                          onClick={() => handleTypeSelect(type)}
+                        >
+                          {type.type}
+                        </Button>
+                      </Slide>
+                    );
+                  })}
+                </Stack>
               </Stack>
             </Stack>
             <Divider orientation="vertical" flexItem />
             {/* pages list */}
             <Stack width={"100%"} height={"100%"}>
               <Stack
-                height="30px"
+                minHeight="30px"
                 sx={{ background: styles.background.menu, color: "#fff" }}
               >
                 <Typography
@@ -212,6 +218,7 @@ export default function Permissions() {
                   Pages
                 </Typography>
               </Stack>
+              <Divider />
               <Stack height={"100%"}>
                 <Stack
                   width={"100%"}
