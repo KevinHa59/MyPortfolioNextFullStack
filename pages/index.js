@@ -2,11 +2,13 @@ import { Divider, Fade, Stack, Typography } from "@mui/material";
 import Splash from "../components/widgets/splash";
 import { useState } from "react";
 import LoginBox from "../components/widgets/loginBox";
+import ChatBox from "../components/chatbox/chatBox";
 export default function Home() {
   const [isSplashDone, setIsSplashDone] = useState(false);
   return (
-    <Stack>
-      <Splash
+    <Stack sx={{ position: "relative" }}>
+      <ChatBox />
+      {/* <Splash
         isDone={false}
         timeout={3000}
         onDone={() => setIsSplashDone(true)}
@@ -24,7 +26,7 @@ export default function Home() {
             body
           </Stack>
         </Stack>
-      )}
+      )} */}
     </Stack>
   );
 }
