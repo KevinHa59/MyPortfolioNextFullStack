@@ -29,7 +29,7 @@ export const baseThemeOptions = {
       styleOverrides: {
         root: {
           textTransform: "none",
-          borderRadius: 0,
+          borderRadius: "25px",
 
           "&.dark-active": {
             background: styles_dark.background.default,
@@ -55,6 +55,9 @@ export const baseThemeOptions = {
             minWidth: 0,
             display: "flex",
             justifyContent: "flex-end",
+          },
+          "&.br0": {
+            borderRadius: 0,
           },
         },
         sizeSmall: {
@@ -254,13 +257,16 @@ export const baseThemeOptions = {
             background: styles.background.menu,
             color: styles.text.primary,
           },
+          "&.reverse": {
+            background: darkStyles.background.paper,
+            color: darkStyles.text.primary,
+          },
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 0,
           backgroundImage: "none",
           position: "relative",
           color: "#000",
@@ -269,11 +275,13 @@ export const baseThemeOptions = {
             borderColor: "rgba(180,180,180,0.5)",
           },
           "&.flat": {
-            boxShadow:
-              "-5px -5px 10px rgba(255,255,255,1), 3px 3px 10px rgba(0,0,0,0.2), inset -5px -5px 10px rgba(255,255,255,1), inset 5px 5px 10px rgba(0,0,0,0.1)",
+            boxShadow: "none",
           },
           "&.br0": {
             borderRadius: 5,
+          },
+          "&.reverse": {
+            background: darkStyles.background.paper,
           },
         },
       },

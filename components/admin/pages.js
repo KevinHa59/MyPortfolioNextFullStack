@@ -204,7 +204,7 @@ function NewPage({ value = null, pages, onClose, onCreatePageSuccess }) {
   };
 
   return (
-    <PaperForm title={input?.id ? "Edit Page" : "New Pages"}>
+    <PaperForm title={input?.id ? "Edit Page" : "New Pages"} onClose={onClose}>
       <Stack
         gap={1}
         width={"clamp(500px, calc(100vw - 50px), 1000px)"}
@@ -250,7 +250,7 @@ function NewPage({ value = null, pages, onClose, onCreatePageSuccess }) {
                     label="Description"
                   />
                   <Button
-                    variant="contained"
+                    // variant="contained"
                     color="error"
                     size="small"
                     onClick={() => handleRemove(index)}
@@ -268,26 +268,21 @@ function NewPage({ value = null, pages, onClose, onCreatePageSuccess }) {
         </Stack>
         {/* <ErrorRenderer errors={inputErrors} /> */}
         <Divider />
-        <Stack direction={"row"} gap={1} paddingX={2}>
+        <Stack
+          direction={"row"}
+          justifyContent={"flex-end"}
+          gap={1}
+          paddingX={2}
+        >
           <ButtonLoading
             disabled={inputErrors !== null}
             isLoading={isCreatingPage}
-            fullWidth
             variant="contained"
             size="small"
             onClick={handleCreatePages}
           >
             Save
           </ButtonLoading>
-          <Button
-            fullWidth
-            variant="contained"
-            color="error"
-            size="small"
-            onClick={onClose}
-          >
-            Cancel
-          </Button>
         </Stack>
       </Stack>
     </PaperForm>
@@ -381,7 +376,11 @@ function EditButton({ data, pages, onRefresh }) {
         },
       }}
     >
-      <PaperForm title={"Edit Page"} sx_paper={{ width: "100%" }}>
+      <PaperForm
+        title={"Edit Page"}
+        sx_paper={{ width: "100%" }}
+        onClose={() => setIsOpen(false)}
+      >
         <Stack padding={2} gap={1} width={"100%"}>
           <Stack direction={"row"} gap={1} width={"100%"}>
             <Input
@@ -404,9 +403,8 @@ function EditButton({ data, pages, onRefresh }) {
             />
           </Stack>
           <Divider />
-          <Stack direction={"row"} gap={1}>
+          <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
             <ButtonLoading
-              sx={{ width: "100%" }}
               size="small"
               variant="contained"
               disabled={errors !== null}
@@ -414,15 +412,6 @@ function EditButton({ data, pages, onRefresh }) {
             >
               Save
             </ButtonLoading>
-            <Button
-              fullWidth
-              size="small"
-              variant="contained"
-              color="error"
-              onClick={() => setIsOpen(false)}
-            >
-              Cancel
-            </Button>
           </Stack>
         </Stack>
       </PaperForm>

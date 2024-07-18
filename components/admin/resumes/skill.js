@@ -15,6 +15,8 @@ import PublicAPI from "../../../pages/api-functions/PublicAPI";
 import useDelay from "../../../hooks/use-delay";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
+import { StyleMode } from "../../../styles/useStyle";
+import { darkStyles } from "../../../theme/dark-theme-options";
 
 export default function Skill({ data, onChange }) {
   const [isDelaying, startDelay] = useDelay(500);
@@ -138,7 +140,14 @@ export default function Skill({ data, onChange }) {
         direction={"row"}
         gap={1}
         justifyContent={"flex-end"}
-        height={"37px"}
+        height={"45px"}
+        padding={1}
+        sx={{
+          background: StyleMode(
+            darkStyles.background.default,
+            darkStyles.background.paper
+          ),
+        }}
       >
         <ButtonLoading
           size="small"

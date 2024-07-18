@@ -23,7 +23,8 @@ import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
 import ButtonLoading from "../../widgets/buttons/button-loading";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
-import { styles } from "../../../styles/useStyle";
+import { StyleMode, styles } from "../../../styles/useStyle";
+import { darkStyles } from "../../../theme/dark-theme-options";
 
 const edu_template = {
   certificationName: "",
@@ -93,11 +94,6 @@ export default function Certification({ data, onChange }) {
                     fontWeight={"bold"}
                     fontStyle={"italic"}
                     variant="body1"
-                    color={
-                      cer.id
-                        ? theme.palette.info.main
-                        : theme.palette.text.primary
-                    }
                   >
                     {cer.certificationName}
                   </Typography>
@@ -159,11 +155,18 @@ export default function Certification({ data, onChange }) {
         direction={"row"}
         gap={"1px"}
         justifyContent={"flex-end"}
-        height={"37px"}
+        height={"45px"}
+        padding={1}
+        sx={{
+          background: StyleMode(
+            darkStyles.background.default,
+            darkStyles.background.paper
+          ),
+        }}
       >
         <Button
           size="small"
-          variant="contained"
+          // variant="contained"
           startIcon={<Add />}
           color="primary"
           onClick={handleAddEducation}

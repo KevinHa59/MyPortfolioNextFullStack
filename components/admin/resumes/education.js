@@ -27,7 +27,8 @@ import AutocompleteCustom from "../../widgets/autocomplete/autocomplete";
 import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
-import { styles } from "../../../styles/useStyle";
+import { StyleMode, styles } from "../../../styles/useStyle";
+import { darkStyles } from "../../../theme/dark-theme-options";
 
 const edu_template = {
   degree: "",
@@ -101,11 +102,6 @@ export default function Education({ data, onChange }) {
                     fontWeight={"bold"}
                     fontStyle={"italic"}
                     variant="body1"
-                    color={
-                      edu.id
-                        ? theme.palette.info.main
-                        : theme.palette.text.primary
-                    }
                   >
                     {edu.schoolName}
                   </Typography>
@@ -196,12 +192,18 @@ export default function Education({ data, onChange }) {
       <Divider />
       <Stack
         direction={"row"}
-        gap={"1px"}
+        gap={1}
         justifyContent={"flex-end"}
-        height={"37px"}
+        height={"45px"}
+        padding={1}
+        sx={{
+          background: StyleMode(
+            darkStyles.background.default,
+            darkStyles.background.paper
+          ),
+        }}
       >
         <Button
-          variant="contained"
           size="small"
           startIcon={<Add />}
           color="primary"

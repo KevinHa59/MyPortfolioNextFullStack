@@ -1,4 +1,5 @@
-// Colors
+import { darkStyles } from "./dark-theme-options";
+
 const neutral = {
   100: "#F3F4F6",
   200: "#E5E7EB",
@@ -215,6 +216,13 @@ export const lightThemeOptions = {
         },
       },
     },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: text.primary,
+        },
+      },
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         notchedOutline: {
@@ -229,6 +237,16 @@ export const lightThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: 0,
+          background: "rgba(0,0,0,0.05)",
+        },
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        useFlexGap: true,
+      },
+      styleOverrides: {
+        root: {
           background: "rgba(0,0,0,0.05)",
         },
       },

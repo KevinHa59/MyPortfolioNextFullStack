@@ -43,6 +43,7 @@ import PaperForm from "../widgets/paper/paper-form";
 import ButtonLoading from "../widgets/buttons/button-loading";
 import LabelText from "../widgets/texts/label-text";
 import { mainContext } from "../../pages/_app";
+import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -178,15 +179,17 @@ function Cell({ row, header, onEdit, onRefresh }) {
         </IconButton>
         <PasswordChangeButton user={row} />
         <TokenButton user={row} onRefresh={onRefresh} />
-        <IconButton
-          sx={{ borderRadius: "20px", paddingY: 0 }}
-          variant="contained"
+        <ButtonDialogConfirm
+          sx={{ borderRadius: "20px", padding: 0, minWidth: 0 }}
           size="small"
-          color="error"
-          onClick={() => handleRemoveUser()}
+          dialog_title={"Delete User"}
+          dialog_message={"Are You Sure?"}
+          dialog_color="error"
+          color={"error"}
+          onConfirm={() => handleRemoveUser()}
         >
           <Delete />
-        </IconButton>
+        </ButtonDialogConfirm>
       </Stack>
     );
   } else return row[header];
@@ -290,7 +293,7 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
     setIsCreatingUser(false);
   };
   return (
-    <PaperForm title={input?.id ? "Edit User" : "New User"}>
+    <PaperForm title={input?.id ? "Edit User" : "New User"} onClose={onClose}>
       <Stack gap={2} width={"100%"} paddingY={2}>
         <Stack gap={1} paddingX={2}>
           <Stack direction={"row"} gap={1}>
@@ -395,23 +398,18 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
         )}
         <ErrorRenderer errors={inputErrors} />
         <Divider />
-        <Stack direction={"row"} gap={1} paddingX={2}>
+        <Stack
+          direction={"row"}
+          justifyContent={"flex-end"}
+          gap={1}
+          paddingX={2}
+        >
           <Button
-            fullWidth
             variant="contained"
             size="small"
             onClick={handleCreateAccount}
           >
             Save
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            color="error"
-            size="small"
-            onClick={onClose}
-          >
-            Cancel
           </Button>
         </Stack>
       </Stack>
@@ -481,8 +479,15 @@ function PasswordChangeButton({ user }) {
       onClick={() => setOpen(true)}
       paperProps={{ style: { background: "transparent" } }}
     >
-      <PaperForm title={"Edit Password"}>
-        <Stack gap={1}>
+      <PaperForm
+        title={"Edit Password"}
+        onClose={() => {
+          setOpen(false);
+          setInput(password_temp);
+          setErrors([]);
+        }}
+      >
+        <Stack gap={1} minWidth={"400px"}>
           <Stack padding={2} gap={1}>
             <LabelText label={"Email"}>{user.email}</LabelText>
             <Input
@@ -515,9 +520,13 @@ function PasswordChangeButton({ user }) {
           </Stack>
 
           <Divider />
-          <Stack direction={"row"} gap={"1px"} padding={2}>
+          <Stack
+            direction={"row"}
+            justifyContent={"flex-end"}
+            gap={"1px"}
+            padding={2}
+          >
             <ButtonLoading
-              sx={{ width: "100%" }}
               variant={"contained"}
               isLoading={isUpdating}
               size="small"
@@ -525,19 +534,6 @@ function PasswordChangeButton({ user }) {
             >
               Confirm
             </ButtonLoading>
-            <Button
-              size="small"
-              fullWidth
-              variant="contained"
-              color="error"
-              onClick={() => {
-                setOpen(false);
-                setInput(password_temp);
-                setErrors([]);
-              }}
-            >
-              Cancel
-            </Button>
           </Stack>
         </Stack>
       </PaperForm>
@@ -580,7 +576,7 @@ function TokenButton({ user, onRefresh }) {
         },
       }}
     >
-      <PaperForm title={"Token"}>
+      <PaperForm title={"Token"} onClose={() => setIsOpen(false)}>
         <Stack padding={2} gap={1} width={"100%"}>
           <LabelText label={"Email"}>{user.email}</LabelText>
           {user.refreshToken === null ? (
@@ -615,18 +611,6 @@ function TokenButton({ user, onRefresh }) {
               </LabelText>
             </Stack>
           )}
-        </Stack>
-        <Stack width={"100%"} alignItems={"flex-end"}>
-          <Divider flexItem />
-          <Button
-            sx={{ width: "max-content" }}
-            size="small"
-            variant="contained"
-            color="error"
-            onClick={() => setIsOpen(false)}
-          >
-            Close
-          </Button>
         </Stack>
       </PaperForm>
     </ButtonDialog>

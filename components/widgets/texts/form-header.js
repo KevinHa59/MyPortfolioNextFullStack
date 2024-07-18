@@ -18,6 +18,7 @@ export default function FormHeader({
           data-text={title}
           sx={{
             width: "100%",
+            color: color,
             ...sx,
           }}
         >

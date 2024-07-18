@@ -23,7 +23,8 @@ import React, { useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
-import { styles } from "../../../styles/useStyle";
+import { StyleMode, styles } from "../../../styles/useStyle";
+import { darkStyles } from "../../../theme/dark-theme-options";
 
 const project_template = {
   title: "",
@@ -100,11 +101,6 @@ export default function Project({ data, onChange }) {
                     fontWeight={"bold"}
                     fontStyle={"italic"}
                     variant="body1"
-                    color={
-                      project.id
-                        ? theme.palette.info.main
-                        : theme.palette.text.primary
-                    }
                   >
                     {project.title}
                   </Typography>
@@ -173,11 +169,17 @@ export default function Project({ data, onChange }) {
         direction={"row"}
         gap={"1px"}
         justifyContent={"flex-end"}
-        height={"37px"}
+        height={"45px"}
+        padding={1}
+        sx={{
+          background: StyleMode(
+            darkStyles.background.default,
+            darkStyles.background.paper
+          ),
+        }}
       >
         <Button
           size="small"
-          variant="contained"
           startIcon={<Add />}
           color="primary"
           onClick={handleAddProject}

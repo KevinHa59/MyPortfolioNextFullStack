@@ -12,6 +12,8 @@ import SelectCustom from "../../widgets/select/select-custom";
 import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
+import { StyleMode } from "../../../styles/useStyle";
+import { darkStyles } from "../../../theme/dark-theme-options";
 
 export default function Language({ data, onRefresh, onChange }) {
   const [input, setInput] = useState([]);
@@ -119,7 +121,14 @@ export default function Language({ data, onRefresh, onChange }) {
         direction={"row"}
         gap={"1px"}
         justifyContent={"flex-end"}
-        height={"37px"}
+        height={"45px"}
+        padding={1}
+        sx={{
+          background: StyleMode(
+            darkStyles.background.default,
+            darkStyles.background.paper
+          ),
+        }}
       >
         <ButtonLoading
           size="small"

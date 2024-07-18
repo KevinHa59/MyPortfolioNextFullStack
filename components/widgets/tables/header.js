@@ -11,7 +11,10 @@ export default function Header({ headers, sortSetting, onSortChange }) {
     <Grid
       container
       sx={{
-        background: StyleMode(lightStyles.text.primary, styles.background.menu),
+        background: StyleMode(
+          lightStyles.background.paper,
+          styles.background.menu
+        ),
       }}
     >
       {headers?.map((header, index) => {

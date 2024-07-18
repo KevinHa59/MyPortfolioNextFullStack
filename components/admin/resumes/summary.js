@@ -1,10 +1,20 @@
-import { Check } from "@mui/icons-material";
+import {
+  Check,
+  Facebook,
+  GitHub,
+  Instagram,
+  LinkedIn,
+  Public,
+  Twitter,
+} from "@mui/icons-material";
 import { Button, Divider, IconButton, Stack, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
 import Input from "../../widgets/input/Input";
 import axios from "axios";
+import { StyleMode } from "../../../styles/useStyle";
+import { darkStyles } from "../../../theme/dark-theme-options";
 
 export default function Summary({ data, onChange }) {
   const [input, setInput] = useState("");
@@ -145,11 +155,14 @@ export default function Summary({ data, onChange }) {
           />
         </Stack>
         <Divider />
-        <Stack>
+        <Stack gap={1}>
           <Input
             id="linkedin"
             value={userInfo.linkedIn || ""}
             label="LinkedIn"
+            inputProps={{
+              startAdornment: <LinkedIn sx={{ paddingRight: 1 }} />,
+            }}
             onChange={(event) =>
               handleUpdateUserInfo({ linkedIn: event.target.value })
             }
@@ -158,6 +171,7 @@ export default function Summary({ data, onChange }) {
             id="github"
             value={userInfo.github || ""}
             label="GitHub"
+            inputProps={{ startAdornment: <GitHub sx={{ paddingRight: 1 }} /> }}
             onChange={(event) =>
               handleUpdateUserInfo({ github: event.target.value })
             }
@@ -166,6 +180,9 @@ export default function Summary({ data, onChange }) {
             id="twitter"
             value={userInfo.twitter || ""}
             label="Twitter"
+            inputProps={{
+              startAdornment: <Twitter sx={{ paddingRight: 1 }} />,
+            }}
             onChange={(event) =>
               handleUpdateUserInfo({ twitter: event.target.value })
             }
@@ -174,6 +191,9 @@ export default function Summary({ data, onChange }) {
             id="facebook"
             value={userInfo.facebook || ""}
             label="Facebook"
+            inputProps={{
+              startAdornment: <Facebook sx={{ paddingRight: 1 }} />,
+            }}
             onChange={(event) =>
               handleUpdateUserInfo({ facebook: event.target.value })
             }
@@ -182,6 +202,9 @@ export default function Summary({ data, onChange }) {
             id="instagram"
             value={userInfo.instagram || ""}
             label="Instagram"
+            inputProps={{
+              startAdornment: <Instagram sx={{ paddingRight: 1 }} />,
+            }}
             onChange={(event) =>
               handleUpdateUserInfo({ instagram: event.target.value })
             }
@@ -190,6 +213,7 @@ export default function Summary({ data, onChange }) {
             id="portfolio"
             value={userInfo.portfolio || ""}
             label="Portfolio"
+            inputProps={{ startAdornment: <Public sx={{ paddingRight: 1 }} /> }}
             onChange={(event) =>
               handleUpdateUserInfo({ portfolio: event.target.value })
             }
@@ -201,7 +225,14 @@ export default function Summary({ data, onChange }) {
         direction={"row"}
         gap={"1px"}
         justifyContent={"flex-end"}
-        height={"37px"}
+        height={"45px"}
+        padding={1}
+        sx={{
+          background: StyleMode(
+            darkStyles.background.default,
+            darkStyles.background.paper
+          ),
+        }}
       >
         <ButtonLoading
           size="small"

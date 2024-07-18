@@ -17,9 +17,20 @@ import ButtonDialog from "../widgets/buttons/button_dialog";
 import FormHeader from "../widgets/texts/form-header";
 import ErrorRenderer from "../widgets/texts/error-renderer";
 import LoadingComponent from "../widgets/loading/loading-component";
-import { Circle, Clear, Delete, Edit, Hub, Label } from "@mui/icons-material";
+import {
+  Circle,
+  Clear,
+  Delete,
+  DeleteForever,
+  Edit,
+  Hub,
+  Label,
+} from "@mui/icons-material";
 import Header from "./header";
 import PaperForm from "../widgets/paper/paper-form";
+import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
+import Table from "../widgets/tables/table";
+import MyAPIs from "../../pages/api-functions/MyAPIs";
 
 export default function UserTypes() {
   const [userTypes, setUserTypes] = useState([]);
@@ -38,14 +49,13 @@ export default function UserTypes() {
   }
 
   return (
-    <Stack width={"100%"}>
+    <Stack width={"100%"} height={"100%"} gap={"1px"}>
       <Header title={"User Types"} icon={<Hub />}>
         <Stack direction={"row"} gap={1}>
           <ButtonDialog
             open={isNewUserTypeOpen}
             isCloseOnClickOut={false}
             onClick={() => setIsNewUserTypeOpen(true)}
-            sx_button={{ borderRadius: 0 }}
             paperProps={{
               style: { background: "transparent" },
             }}
@@ -66,38 +76,104 @@ export default function UserTypes() {
           </ButtonDialog>
         </Stack>
       </Header>
-      {isGettingData && <LinearProgress />}
-      {!isGettingData && (
-        <Stack padding={1} gap={1} alignItems={"center"}>
-          {userTypes?.length === 0 || userTypes === undefined
-            ? "No Data"
-            : userTypes.map((type, index) => {
-                return (
-                  <Slide
-                    direction="right"
-                    key={index}
-                    in={true}
-                    timeout={500}
-                    style={{ transitionDelay: index * 50 }}
-                  >
-                    <Stack>
-                      <UserTypeCard
-                        index={index}
-                        type={type}
-                        onEditClick={() => {
-                          setUpdateType(type);
-                          setIsNewUserTypeOpen(true);
-                        }}
-                      />
-                    </Stack>
-                  </Slide>
-                );
-              })}
-        </Stack>
-      )}
+      <Paper
+        // variant="outlined"
+        sx={{
+          height: "100%",
+          overflow: "hidden",
+        }}
+      >
+        <Table
+          isLoading={isGettingData}
+          data={userTypes}
+          headers={headers}
+          callback_cell={(row, key) => (
+            <Cell
+              row={row}
+              header={key}
+              onEditClick={() => {
+                setUpdateType(row);
+                setIsNewUserTypeOpen(true);
+              }}
+            />
+          )}
+        />
+      </Paper>
     </Stack>
   );
 }
+
+function Cell({ row, header, onEditClick }) {
+  if (header === "quantity") {
+    return row.users?.length || 0;
+  } else if (header === "color") {
+    return (
+      <Circle
+        sx={{
+          color: row.color || "transparent",
+          borderRadius: "50%",
+        }}
+      />
+    );
+  } else if (header === "actions") {
+    // handle remove user type
+    const handleRemoveUserType = async () => {};
+
+    return (
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"flex-end"}
+        gap={"1px"}
+      >
+        <IconButton color="warning" onClick={onEditClick}>
+          <Edit />
+        </IconButton>
+        <ButtonDialogConfirm
+          color={"error"}
+          dialog_title={"Delete User Type"}
+          dialog_message={"Are You Sure?"}
+          dialog_color={"error"}
+          size={"small"}
+          sx={{ padding: 0, minWidth: 0 }}
+          onConfirm={handleRemoveUserType}
+        >
+          <DeleteForever />
+        </ButtonDialogConfirm>
+      </Stack>
+    );
+  } else return row[header];
+}
+
+const headers = [
+  {
+    name: "User Type",
+    key: "type",
+    xs: 2,
+  },
+  {
+    name: "Color",
+    key: "color",
+    xs: 2,
+  },
+  {
+    name: "Quantity",
+    key: "quantity",
+    xs: 2,
+    align: "center",
+  },
+  {
+    name: "Description",
+    key: "description",
+    xs: 4,
+  },
+  {
+    name: "",
+    key: "actions",
+    xs: 2,
+    align: "right",
+  },
+];
 
 function UserTypeCard({ type, index, onEditClick, onDeleteClick }) {
   return (
@@ -133,20 +209,23 @@ function UserTypeCard({ type, index, onEditClick, onDeleteClick }) {
             color="warning"
             size="small"
             startIcon={<Edit />}
-            variant="outlined"
+            variant="contained"
             onClick={onEditClick}
           >
             Edit
           </Button>
-          <Button
+          <ButtonDialogConfirm
             disabled={index === 0 || type.users.length > 0}
-            color="error"
+            dialog_color="error"
+            dialog_title={"Delete User Type"}
+            dialog_message={"Are You Sure?"}
+            color={"error"}
             size="small"
             startIcon={<Delete />}
-            variant="outlined"
+            variant="contained"
           >
             Delete
-          </Button>
+          </ButtonDialogConfirm>
         </Stack>
       </Stack>
     </Paper>
@@ -219,6 +298,7 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
   return (
     <PaperForm
       title={updateType === null ? "New User Type" : "Update User Type"}
+      onClose={onClose}
     >
       <Stack gap={1} padding={2} width={"100%"}>
         <Stack direction={"row"} gap={1}>
@@ -249,10 +329,9 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
         />
         <ErrorRenderer errors={inputErrors} />
         <Divider />
-        <Stack direction={"row"} gap={1}>
+        <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
           {updateType === null ? (
             <Button
-              fullWidth
               size="small"
               disabled={
                 input.type.length === 0 ||
@@ -267,7 +346,6 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
             </Button>
           ) : (
             <Button
-              fullWidth
               variant="contained"
               size="small"
               disabled={input.type.length === 0}
@@ -276,15 +354,6 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
               Update
             </Button>
           )}
-          <Button
-            fullWidth
-            variant="contained"
-            size="small"
-            color="error"
-            onClick={onClose}
-          >
-            Cancel
-          </Button>
         </Stack>
       </Stack>
     </PaperForm>

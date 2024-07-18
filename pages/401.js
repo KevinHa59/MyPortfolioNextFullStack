@@ -40,7 +40,7 @@ export default function Index() {
 
             <BackHand sx={{ fontSize: "100px", color: Styles().error.main }} />
           </Stack>
-          <Stack gap={"1px"} direction={"row"} minWidth={"400px"}>
+          <Stack gap={1} direction={"row"} minWidth={"400px"} padding={2}>
             <Button fullWidth variant="contained" onClick={handleHome}>
               Home
             </Button>

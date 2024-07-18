@@ -137,7 +137,6 @@ export default function Resumes() {
             open={isNewUserOpen}
             isCloseOnClickOut={false}
             onClick={() => setIsNewUserOpen(true)}
-            sx_button={{ borderRadius: 0 }}
             variant={"contained"}
             button_label="Create New Resume"
             size="small"
@@ -282,7 +281,7 @@ function UserSelection({ users, onChange, onClose }) {
   };
 
   return (
-    <PaperForm title={"Create New Resume"}>
+    <PaperForm title={"Create New Resume"} onClose={onClose}>
       <Stack width={"400px"} padding={2} gap={2}>
         <Autocomplete
           size="small"
@@ -301,9 +300,8 @@ function UserSelection({ users, onChange, onClose }) {
           onChange={(e) => handleInputChange({ title: e.target.value })}
         />
         <Divider />
-        <Stack direction={"row"} gap={1}>
+        <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
           <ButtonLoading
-            sx={{ width: "100%" }}
             variant={"contained"}
             size="small"
             isLoading={isCreateResume}
@@ -311,16 +309,6 @@ function UserSelection({ users, onChange, onClose }) {
           >
             Create
           </ButtonLoading>
-          <Button
-            fullWidth
-            disabled={isCreateResume}
-            variant="contained"
-            size="small"
-            color="error"
-            onClick={onClose}
-          >
-            Cancel
-          </Button>
         </Stack>
       </Stack>
     </PaperForm>
@@ -391,6 +379,7 @@ function ResumeCreator({ data, onRefresh, onClose }) {
       title={"New Resume"}
       sx={{ height: "90vh", overflow: "hidden" }}
       sx_paper={{ overflow: "hidden" }}
+      onClose={onClose}
     >
       <Stack direction={"row"} height={"100%"}>
         <Stack
@@ -406,13 +395,17 @@ function ResumeCreator({ data, onRefresh, onClose }) {
           <Stack
             sx={{
               padding: 1,
-              color: "#fff",
+              color: darkStyles.text.primary,
             }}
           >
             <Typography
+              sx={{ color: "inherit" }}
               fontWeight={"bold"}
             >{`${data.user.firstName} ${data.user.lastName}`}</Typography>
-            <Typography variant="body2">{`${data.user.email}`}</Typography>
+            <Typography
+              sx={{ color: "inherit" }}
+              variant="body2"
+            >{`${data.user.email}`}</Typography>
           </Stack>
           <Divider />
           <Stack height={"100%"} justifyContent={"center"}>
@@ -440,7 +433,7 @@ function ResumeCreator({ data, onRefresh, onClose }) {
                       paddingLeft: step?.name === _step.name ? 3 : 2,
                       transition: "ease 0.3s",
                       textTransform: "none",
-                      color: "#fff",
+                      color: darkStyles.text.primary,
                       "&:hover": {
                         paddingLeft: 3,
                       },
@@ -453,10 +446,6 @@ function ResumeCreator({ data, onRefresh, onClose }) {
               );
             })}
           </Stack>
-          <Divider />
-          <Button variant="contained" color="error" onClick={onClose}>
-            Close
-          </Button>
         </Stack>
         <Divider flexItem orientation="vertical" />
         <Stack minWidth={"1000px"} height={"100%"}>

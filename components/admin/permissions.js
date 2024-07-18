@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import ButtonLoading from "../widgets/buttons/button-loading";
 import { mainContext } from "../../pages/_app";
 import { getCookie, getCookies } from "cookies-next";
-import { AdminPanelSettings } from "@mui/icons-material";
+import { AdminPanelSettings, Save } from "@mui/icons-material";
 
 export default function Permissions() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function Permissions() {
         handleRoute(null);
       }
     } else {
-      if (res[0].length > 0) {
+      if (res[0]?.length > 0) {
         const _type = res[0][0];
         setSelectedUserType(_type);
         handleRoute(_type.id);
@@ -151,21 +151,35 @@ export default function Permissions() {
         <Paper
           sx={{
             height: "100%",
-
             overflow: "hidden",
           }}
         >
+          <Stack>
+            <ButtonLoading
+              startIcon={<Save />}
+              className={"br0"}
+              isLoading={isSaving}
+              sx={{ width: "max-content", padding: 1, minWidth: 0 }}
+              size="small"
+              onClick={handleSave}
+            >
+              Save
+            </ButtonLoading>
+          </Stack>
+          <Divider />
           <Stack alignItems={"flex-start"} direction={"row"} height={"100%"}>
             {/* user type */}
             <Stack width={"300px"} height={"100%"}>
               <Stack
+                className="reverse"
                 minHeight="30px"
-                sx={{ background: styles.background.menu, color: "#fff" }}
+                sx={{ background: styles.background.menu }}
               >
                 <Typography
                   variant="body1"
                   fontWeight={"bold"}
                   textAlign={"center"}
+                  sx={{ color: "inherit" }}
                 >
                   User Types
                 </Typography>
@@ -208,12 +222,14 @@ export default function Permissions() {
             <Stack width={"100%"} height={"100%"}>
               <Stack
                 minHeight="30px"
-                sx={{ background: styles.background.menu, color: "#fff" }}
+                className="reverse"
+                sx={{ background: styles.background.menu }}
               >
                 <Typography
                   variant="body1"
                   fontWeight={"bold"}
                   textAlign={"center"}
+                  sx={{ color: "inherit" }}
                 >
                   Pages
                 </Typography>
@@ -280,18 +296,6 @@ export default function Permissions() {
                       No UserType Selected
                     </Typography>
                   )}
-                </Stack>
-                <Stack height={"50px"} gap={1} alignItems={"flex-end"}>
-                  <Divider flexItem />
-                  <ButtonLoading
-                    isLoading={isSaving}
-                    variant={"contained"}
-                    sx={{ width: "max-content", marginX: 1 }}
-                    size="small"
-                    onClick={handleSave}
-                  >
-                    Save
-                  </ButtonLoading>
                 </Stack>
               </Stack>
             </Stack>

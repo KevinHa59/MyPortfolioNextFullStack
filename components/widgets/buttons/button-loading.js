@@ -4,6 +4,7 @@ import React from "react";
 export default function ButtonLoading({
   isLoading = false,
   loadingText = "Loading",
+  className,
   disabled,
   sx,
   size = "large",
@@ -24,6 +25,7 @@ export default function ButtonLoading({
       variant={variant}
       onClick={onClick}
       startIcon={startIcon}
+      className={className}
     >
       {isLoading ? (
         <Stack direction={"row"} gap={1} sx={{ whiteSpace: "nowrap" }}>

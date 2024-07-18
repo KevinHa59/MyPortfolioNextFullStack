@@ -91,7 +91,7 @@ function Index() {
   }, [router]);
   return (
     <Stack height={"100vh"} gap={"1px"}>
-      <Paper sx={{ zIndex: 2 }}>
+      <Paper className="flat" sx={{ zIndex: 2 }}>
         <Stack
           height={"40px"}
           direction={"row"}
@@ -103,7 +103,7 @@ function Index() {
           <ButtonAccount />
         </Stack>
       </Paper>
-      {/* <Divider /> */}
+      <Divider />
       <Stack
         zIndex={1}
         direction={"row"}
@@ -114,7 +114,13 @@ function Index() {
           <Menu />
         </Stack>
         <Divider orientation="vertical" />
-        <Stack height={"100%"} width={"100%"} sx={{ overflowY: "auto" }}>
+        <Stack
+          height={"100%"}
+          width={"100%"}
+          paddingX={2}
+          paddingBottom={"15px"}
+          sx={{ overflowY: "auto" }}
+        >
           {menu_data.find((menu) => menu.param === section)?.Comp}
         </Stack>
       </Stack>
@@ -145,7 +151,7 @@ function Menu() {
         paddingY={3}
         // className={"dark"}
         sx={{
-          color: "#fff",
+          // color: "#fff",
           overflowY: "auto",
         }}
       >
@@ -174,7 +180,6 @@ function Menu() {
               >
                 {menu.Icon}
                 <Typography
-                  fontWeight={"bold"}
                   variant="body2"
                   sx={{
                     color: "inherit",

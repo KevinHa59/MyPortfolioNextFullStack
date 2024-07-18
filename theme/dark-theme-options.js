@@ -1,5 +1,3 @@
-// Colors
-
 import { lightStyles } from "./light-theme-options";
 
 const neutral = {
@@ -153,6 +151,39 @@ export const darkThemeOptions = {
               color: "#fff",
             },
           },
+          "&.MuiButton-textSecondary": {
+            color: `${secondary.main}`,
+            "&:hover": {
+              background: `${secondary.main}1A`,
+            },
+          },
+
+          "&.MuiButton-textError": {
+            color: `${error.main}`,
+            "&:hover": {
+              background: `${error.main}1A`,
+            },
+          },
+
+          "&.MuiButton-textWarning": {
+            color: `${warning.main}`,
+            "&:hover": {
+              background: `${warning.main}1A`,
+            },
+          },
+
+          "&.MuiButton-textSuccess": {
+            color: `${success.main}`,
+            "&:hover": {
+              background: `${success.main}1A`,
+            },
+          },
+          "&.MuiButton-textInfo": {
+            color: `${info.main}`,
+            "&:hover": {
+              background: `${info.main}1A`,
+            },
+          },
           "&.Mui-disabled": {
             color: "rgba(150,150,150,0.5)", // Color when the IconButton is disabled
             opacity: 0.5, // Opacity when disabled (optional)
@@ -212,14 +243,21 @@ export const darkThemeOptions = {
     MuiInputBase: {
       styleOverrides: {
         input: {
-          "&::placeholder": {
+          "&:placeholder": {
             opacity: 1,
-            color: text.secondary,
+            color: text.primary,
           },
         },
         root: {
           color: text.primary,
           borderRadius: 0,
+        },
+      },
+    },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: text.primary,
         },
       },
     },
@@ -247,6 +285,17 @@ export const darkThemeOptions = {
       styleOverrides: {
         root: {
           color: text.primary,
+          background: "rgba(0,0,0,0.2)",
+        },
+      },
+    },
+    MuiPopper: {
+      styleOverrides: {
+        root: {
+          "& .MuiPaper-root": {
+            color: text.primary,
+          },
+          // Styles for the root container if needed
         },
       },
     },
@@ -265,6 +314,13 @@ export const darkThemeOptions = {
           borderColor: divider,
           borderStyle: "solid",
           borderWidth: 1,
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          color: text.primary,
         },
       },
     },
@@ -348,6 +404,7 @@ export const darkThemeOptions = {
           color: text.primary,
           "&.reverse": {
             background: lightStyles.background.default,
+            color: lightStyles.text.primary,
           },
         },
       },
@@ -362,6 +419,9 @@ export const darkThemeOptions = {
           "&.MuiPaper-outlined": {
             // background: background.paper,
             borderColor: divider,
+          },
+          "&.reverse": {
+            background: lightStyles.background.paper,
           },
         },
       },

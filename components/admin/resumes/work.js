@@ -23,7 +23,8 @@ import Input from "../../widgets/input/Input";
 import ButtonLoading from "../../widgets/buttons/button-loading";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
-import { styles } from "../../../styles/useStyle";
+import { StyleMode, styles } from "../../../styles/useStyle";
+import { darkStyles } from "../../../theme/dark-theme-options";
 
 const work_template = {
   jobTitle: "",
@@ -195,11 +196,17 @@ export default function WorkExperience({ data, onRefresh, onChange }) {
         direction={"row"}
         gap={"1px"}
         justifyContent={"flex-end"}
-        height={"37px"}
+        height={"45px"}
+        padding={1}
+        sx={{
+          background: StyleMode(
+            darkStyles.background.default,
+            darkStyles.background.paper
+          ),
+        }}
       >
         <Button
           size="small"
-          variant="contained"
           startIcon={<Add />}
           color="primary"
           onClick={handleAddWork}
