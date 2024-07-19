@@ -1,48 +1,38 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-// let socket;
-// class socketUtils {
-//   async init({ socketApi, serverURL }) {
-//     await fetch(socketApi); // Initialize the server-side socket
-//     socket = io(serverURL); // Connect to the server
-//     socket.on("connect", () => {
-//       console.log("Connected to Socket.IO server");
-//     });
-
-//     socket.on("connect_error", (err) => {
-//       console.error("Connection error: ", err);
-//     });
-//     // return socket;
-//   }
-//   receiveMessage(callbackMessage) {
-//     socket.on("receive-message", (data) => {
-//       callbackMessage && callbackMessage(data);
-//     });
-//   }
-//   sendMessage(roomID, data) {
-//     socket.emit("send-message", { roomKey: roomID, ...data });
-//   }
-//   leaveRoom(roomID) {
-//     socket.emit("leave-room", roomID);
-//   }
-//   joinRoom(roomID, data) {
-//     socket.emit("join-room", {
-//       roomKey: roomID,
-//       ...data,
-//     });
-//   }
-//   getHistoryMessages(callbackHistoryMessages) {
-//     socket.on("message-history", (historyMessages) => {
-//       callbackHistoryMessages(historyMessages);
-//     });
-//   }
-// }
-
-// export default new socketUtils();
-
-export default function useSocket({ socketApi, serverURL }, onReceiveMessage) {
+export default function useSocket({
+  socketApi = "/api/socket",
+  serverURL = "http://localhost:443",
+  events: {
+    joinRoom,
+    leaveRoom,
+    sendMessage,
+    sendData,
+    receiveMessage,
+    receiveData,
+    userJoin,
+    userLeft,
+    messageHistory,
+  },
+  defaultRoom = null,
+  onReceiveData,
+  onReceiveMessage,
+  onUserJoin,
+  onUserLeft,
+}) {
   const [socket, setSocket] = useState(null);
+  const events = {
+    joinRoom: joinRoom || "join-room",
+    leaveRoom: leaveRoom || "leave-room",
+    sendMessage: sendMessage || "send-message",
+    sendData: sendData || "send-data",
+    receiveMessage: receiveMessage || "receive-message",
+    receiveData: receiveData || "receive-data",
+    userJoin: userJoin || "user-join",
+    userLeft: userLeft || "user-left",
+    messageHistory: messageHistory || "message-history",
+  };
   useEffect(() => {
     init();
 
@@ -59,67 +49,51 @@ export default function useSocket({ socketApi, serverURL }, onReceiveMessage) {
     socket.on("connect", () => {
       console.log("Connected to Socket.IO server");
     });
-    socket.on("receive-message", onReceiveMessage);
+    socket.on(events.receiveMessage, onReceiveMessage);
+    onReceiveData && socket.on(events.receiveData, onReceiveData);
+    onUserJoin && socket.on(events.userJoin, onUserJoin);
+    onUserLeft && socket.on(events.userLeft, onUserLeft);
     socket.on("connect_error", (err) => {
       console.error("Connection error: ", err);
     });
-
+    if (defaultRoom) {
+      socket.emit(events.joinRoom, { roomID: defaultRoom });
+    }
     setSocket(socket);
-    // const socketFeatures = {
-    //   receiveMessage: (callbackMessage) => {
-    //     socket.on("receive-message", (data) => {
-    //       callbackMessage && callbackMessage(data);
-    //     });
-    //   },
-    //   sendMessage: (roomID, data) => {
-    //     socket.emit("send-message", { roomKey: roomID, ...data });
-    //   },
-    //   leaveRoom: (roomID) => {
-    //     socket.emit("leave-room", roomID);
-    //   },
-    //   joinRoom: (roomID, data) => {
-    //     socket.emit("join-room", {
-    //       roomKey: roomID,
-    //       ...data,
-    //     });
-    //   },
-    //   getHistoryMessages: (callbackHistoryMessages) => {
-    //     socket.on("message-history", (historyMessages) => {
-    //       callbackHistoryMessages(historyMessages);
-    //     });
-    //   },
-    // };
-    // setSocket({
-    //   receiveMessage: socketFeatures.receiveMessage,
-    //   sendMessage: socketFeatures.sendMessage,
-    //   leaveRoom: socketFeatures.leaveRoom,
-    //   joinRoom: socketFeatures.joinRoom,
-    //   getHistoryMessages: socketFeatures.getHistoryMessages,
-    // });
   }
 
   return {
     features: socket
       ? {
           receiveMessage: (callbackMessage) => {
-            socket.on("receive-message", (data) => {
+            socket.on(events.receiveMessage, (data) => {
               callbackMessage && callbackMessage(data);
             });
           },
-          sendMessage: (roomID, data) => {
-            socket.emit("send-message", { roomKey: roomID, ...data });
+          sendMessage: (roomID, message, senderInfo) => {
+            socket.emit(events.sendMessage, {
+              roomID: roomID,
+              ...senderInfo,
+              message: message,
+            });
           },
-          leaveRoom: (roomID) => {
-            socket.emit("leave-room", roomID);
+          sendData: (roomID, data) => {
+            socket.emit(events.sendData, {
+              roomID: roomID,
+              data: data,
+            });
           },
-          joinRoom: (roomID, data) => {
-            socket.emit("join-room", {
-              roomKey: roomID,
-              ...data,
+          leaveRoom: (roomID, userInfo) => {
+            socket.emit(events.leaveRoom, { roomID: roomID, ...userInfo });
+          },
+          joinRoom: (roomID, userInfo) => {
+            socket.emit(events.joinRoom, {
+              roomID: roomID,
+              ...userInfo,
             });
           },
           getHistoryMessages: (callbackHistoryMessages) => {
-            socket.on("message-history", (historyMessages) => {
+            socket.on(events.messageHistory, (historyMessages) => {
               callbackHistoryMessages(historyMessages);
             });
           },

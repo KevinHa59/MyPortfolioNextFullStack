@@ -59,6 +59,10 @@ export const baseThemeOptions = {
           "&.br0": {
             borderRadius: 0,
           },
+          "&.bw": {
+            filter: "grayScale(1)",
+            opacity: 0.7,
+          },
         },
         sizeSmall: {
           padding: "6px 16px",

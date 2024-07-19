@@ -30,39 +30,14 @@ export default async function handler(req, res) {
       // connect and define message types
       io.on("connection", (socket) => {
         console.log("New client connected");
-
-        // type: join-room
-        // join a room by roomKey, public room by default
-        socket.on("join-room", (data) => {
-          const { roomKey, ...userInfo } = data;
-          //  join room
-          socket.join(roomKey);
-          // retrieve all messages from that room key
-          if (rooms[roomKey] && rooms[roomKey].messages.length > 0) {
-            socket.emit("message-history", rooms[roomKey].messages);
-          }
-
-          // send notification
-          socket.to(roomKey).emit("user-join", { joinUser: userInfo });
-        });
-
-        socket.on("leave-room", (roomKey) => {
-          socket.leave(roomKey);
-          socket.to(roomKey).emit("user-left", { userId: socket.id });
-        });
-
-        // type: send message
-        // send message to other people in the same room key
-        socket.on("send-message", (obj) => {
-          const { roomKey, ...rest } = obj;
-          if (!rooms[roomKey]) {
-            rooms[roomKey] = { messages: [] };
-          }
-          rooms[roomKey].messages.push(rest);
-          // type receive-message
-          // receive signal with type "receive-message" from all users when "send-message" done
-          io.to(roomKey).emit("receive-message", { roomKey, ...rest }); // Emit to all connected sockets
-        });
+        // join room and get message history
+        joinRoomAndGetMessageHistory(socket, rooms);
+        // leave room
+        leaveRoom(socket);
+        // send and broadcast message
+        sendAndBroadcastMessage(io, socket, rooms);
+        // send and broadcast data
+        sendAndBroadcastData(io, socket);
 
         socket.on("disconnect", () => {
           console.log("Client disconnected");
@@ -78,4 +53,64 @@ export default async function handler(req, res) {
   }
 
   res.end();
+}
+/**
+ * @param {import('socket.io').Server} io
+ * @param {import('socket.io').Socket} socket
+ */
+// join room and get history message
+function joinRoomAndGetMessageHistory(socket, rooms) {
+  socket.on("join-room", (data) => {
+    const { roomID, ...userInfo } = data;
+    //  join room
+    socket.join(roomID);
+    // retrieve all messages from that room key
+    if (rooms[roomID] && rooms[roomID].messages.length > 0) {
+      socket.emit("message-history", rooms[roomID].messages);
+    }
+
+    // send notification
+    socket.to(roomID).emit("user-join", { user: data });
+  });
+}
+
+/**
+ * @param {import('socket.io').Server} io
+ * @param {import('socket.io').Socket} socket
+ */
+// leave room
+function leaveRoom(socket) {
+  socket.on("leave-room", (data) => {
+    const { roomID, ...userInfo } = data;
+    socket.to(roomID).emit("user-left", { user: data });
+  });
+}
+
+/**
+ * @param {import('socket.io').Server} io
+ * @param {import('socket.io').Socket} socket
+ */
+// send message
+function sendAndBroadcastMessage(io, socket, rooms) {
+  socket.on("send-message", (obj) => {
+    const { roomID, ...rest } = obj;
+    if (!rooms[roomID]) {
+      rooms[roomID] = { messages: [] };
+    }
+    rooms[roomID].messages.push(rest);
+    // type receive-message
+    // receive signal with type "receive-message" from all users when "send-message" done
+    io.to(roomID).emit("receive-message", { roomID, ...rest }); // Emit to all connected sockets
+  });
+}
+
+/**
+ * @param {import('socket.io').Server} io
+ * @param {import('socket.io').Socket} socket
+ */
+function sendAndBroadcastData(io, socket) {
+  socket.on("send-data", (obj) => {
+    const { roomID, data } = obj;
+    io.to(roomID).emit("receive-data", data);
+  });
 }

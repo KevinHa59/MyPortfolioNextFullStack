@@ -8,31 +8,30 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { getCookie } from "cookies-next";
 import React, { useEffect, useRef, useState } from "react";
 import { darkStyles } from "../../theme/dark-theme-options";
 import { AccountCircle } from "@mui/icons-material";
 import _ from "lodash";
-import socketUtils from "../../hooks/use-socket";
 import useSocket from "../../hooks/use-socket";
+import useChatNote from "./components/user-notifications";
 
 export default function ChatBox() {
-  const { features } = useSocket(
-    {
-      socketApi: "/api/socket",
-      serverURL: "http://localhost:443",
-    },
-    handleReceiveMessage
-  );
+  const { features } = useSocket({
+    events: {},
+    onReceiveMessage: onReceiveMessage,
+    onUserJoin: onUserJoin,
+    onUserLeft: onUserLeft,
+  });
+  const { setNote, Note } = useChatNote();
   const [allMessages, setAllMessages] = useState([]);
   const [userInput, setUserInput] = useState({
-    room: "public",
+    roomID: "public",
     senderName: null,
     senderID: null,
-    message: "",
   });
   const userInputRef = useRef(userInput);
   const messagesRef = useRef(null);
+  const messageInputRef = useRef(null);
 
   const handleUpdateUserInput = (newValue) => {
     setUserInput((prev) => {
@@ -45,15 +44,54 @@ export default function ChatBox() {
     });
   };
 
+  // handle send message
   const handleSend = () => {
-    features.sendMessage(userInput.room, userInput);
-    handleUpdateUserInput({ message: "" });
+    // extract value from textfield
+    const _message = messageInputRef.current.value;
+    if (_message && _message.length > 0) {
+      // send message to socket server (roomID, message, senderInfo)
+      features.sendMessage(userInputRef.current.roomID, _message, userInput);
+      // reset textfield
+      messageInputRef.current.value = "";
+    }
   };
 
-  const handleJoinRoom = (roomKey) => {
+  // on an user join a room alert
+  function onUserJoin(data) {
+    // only note users in the room that is going to join
+    if (userInputRef.current.roomID === data.user.roomID) {
+      setNote({
+        message: `${data.user.senderName} has joined`,
+        color: "info",
+      });
+    }
+  }
+
+  // on an user left room alert
+  function onUserLeft(data) {
+    // no need to self notification
+    // only note users in the the room is going to leave
+    if (
+      userInputRef.current.senderName !== data.user.senderName &&
+      userInputRef.current.roomID === data.user.roomID
+    ) {
+      setNote({
+        message: `${data.user.senderName} has left`,
+        color: "error",
+      });
+    }
+  }
+
+  // handle user leave room
+  const handleLeaveRoom = (roomID) => {
+    features.leaveRoom(roomID, userInputRef.current);
+  };
+
+  // handle user join room
+  const handleJoinRoom = (roomID) => {
     setAllMessages([]);
-    features.leaveRoom(userInputRef.current.room);
-    features.joinRoom(roomKey, userInput);
+    features.joinRoom(roomID, userInputRef.current);
+
     features.getHistoryMessages((historyMessages) => {
       setAllMessages(historyMessages);
       if (messagesRef.current) {
@@ -63,9 +101,9 @@ export default function ChatBox() {
       }
     });
   };
-  async function handleReceiveMessage(data) {
+  async function onReceiveMessage(data) {
     if (
-      data.roomKey === userInputRef.current.room ||
+      data.roomID === userInputRef.current.roomID ||
       userInputRef.current.senderName === data.senderName
     ) {
       setAllMessages((prev) => [...prev, data]);
@@ -79,9 +117,10 @@ export default function ChatBox() {
     }
   }
 
-  const handleChangeRoom = (roomKey) => {
-    handleUpdateUserInput({ room: roomKey });
-    handleJoinRoom(roomKey);
+  const handleChangeRoom = (roomID) => {
+    handleLeaveRoom(userInputRef.current.roomID);
+    handleUpdateUserInput({ roomID: roomID });
+    handleJoinRoom(roomID);
   };
   return (
     <Stack
@@ -90,6 +129,7 @@ export default function ChatBox() {
         // background: darkStyles.background.default,
       }}
     >
+      <Note />
       {userInput.senderName ? (
         <>
           <Stack
@@ -102,20 +142,6 @@ export default function ChatBox() {
               position: "relative",
             }}
           >
-            {/* <Fade in={userJoinNotification !== null}>
-              <Typography
-                textAlign={"right"}
-                variant="body2"
-                sx={{
-                  opacity: 0.3,
-                  position: "fixed",
-                  top: 0,
-                  left: "50%",
-                }}
-              >
-                {userJoinNotification || ""}
-              </Typography>
-            </Fade> */}
             {allMessages.map((ms, index) => {
               return (
                 <Stack
@@ -156,14 +182,14 @@ export default function ChatBox() {
             <Stack direction={"row"} gap={1} height={"40px"} padding={1}>
               <Button
                 size="small"
-                variant={userInput.room === "public" && "contained"}
+                variant={userInput.roomID === "public" && "contained"}
                 onClick={() => handleChangeRoom("public")}
               >
                 public
               </Button>
               <Button
                 size="small"
-                variant={userInput.room === "private" && "contained"}
+                variant={userInput.roomID === "private" && "contained"}
                 onClick={() => handleChangeRoom("private")}
               >
                 private
@@ -174,7 +200,7 @@ export default function ChatBox() {
               <TextField
                 size="small"
                 fullWidth
-                value={userInput.message}
+                inputRef={messageInputRef}
                 InputProps={{
                   startAdornment: (
                     <Paper
@@ -184,9 +210,6 @@ export default function ChatBox() {
                     </Paper>
                   ),
                 }}
-                onChange={(e) =>
-                  handleUpdateUserInput({ message: e.target.value })
-                }
                 onKeyPress={(e) => {
                   if (e.key === "Enter") {
                     handleSend();

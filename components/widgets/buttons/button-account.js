@@ -31,7 +31,7 @@ export default function ButtonAccount() {
       }}
     >
       <Stack padding={1} minWidth={"150px"}>
-        <UserSettingButton router={router} />
+        <UserProfileButton router={router} />
         <UserChangingPasswordButton router={router} />
         <Divider />
         <LogoutButton router={router} />
@@ -40,11 +40,11 @@ export default function ButtonAccount() {
   );
 }
 // user setting button
-function UserSettingButton({ router }) {
+function UserProfileButton({ router }) {
   const user = JSON.parse(getCookie("user"));
   const handleViewUserSettings = () => {
     router.push({
-      pathname: "/authentication/user",
+      pathname: "/profile",
       query: {
         id: user.id,
       },
@@ -57,7 +57,7 @@ function UserSettingButton({ router }) {
       startIcon={<Person />}
       onClick={handleViewUserSettings}
     >
-      User Account
+      User Profile
     </Button>
   );
 }

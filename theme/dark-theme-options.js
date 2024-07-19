@@ -412,6 +412,7 @@ export const darkThemeOptions = {
     MuiPaper: {
       styleOverrides: {
         root: {
+          color: text.primary,
           "&.normal": {
             background: background.paper,
             // boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",

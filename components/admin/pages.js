@@ -16,13 +16,19 @@ import PaperForm from "../widgets/paper/paper-form";
 import ButtonLoading from "../widgets/buttons/button-loading";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import { mainContext } from "../../pages/_app";
+import useSocket from "../../hooks/use-socket";
 
 export default function Pages() {
   const [pages, setPages] = useState([]);
-  const [userTypes, setUserTypes] = useState([]);
   const [isGettingData, setIsGettingData] = useState(true);
   const [isNewPageOpen, setIsNewPageOpen] = useState(false);
   const [editPage, setEditPage] = useState(null);
+  const { features } = useSocket({
+    events: {},
+    defaultRoom: "pages",
+    onReceiveData: onReceiveNewData,
+  });
+
   useEffect(() => {
     initData();
   }, []);
@@ -30,8 +36,13 @@ export default function Pages() {
   async function initData() {
     setIsGettingData(true);
     let data = await MyAPIs.Page().getPages();
+    features?.sendData("pages", data);
     setPages(data);
     setIsGettingData(false);
+  }
+
+  function onReceiveNewData(newData) {
+    setPages(newData);
   }
 
   return (
