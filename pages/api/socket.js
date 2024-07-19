@@ -33,7 +33,8 @@ export default async function handler(req, res) {
 
         // type: join-room
         // join a room by roomKey, public room by default
-        socket.on("join-room", ({ roomKey = "public", userInfo = null }) => {
+        socket.on("join-room", (data) => {
+          const { roomKey, ...userInfo } = data;
           //  join room
           socket.join(roomKey);
           // retrieve all messages from that room key
@@ -43,6 +44,11 @@ export default async function handler(req, res) {
 
           // send notification
           socket.to(roomKey).emit("user-join", { joinUser: userInfo });
+        });
+
+        socket.on("leave-room", (roomKey) => {
+          socket.leave(roomKey);
+          socket.to(roomKey).emit("user-left", { userId: socket.id });
         });
 
         // type: send message

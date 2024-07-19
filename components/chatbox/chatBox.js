@@ -10,70 +10,51 @@ import {
 } from "@mui/material";
 import { getCookie } from "cookies-next";
 import React, { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
 import { darkStyles } from "../../theme/dark-theme-options";
-import {
-  AccountBoxRounded,
-  AccountCircle,
-  Person,
-  Person2Rounded,
-} from "@mui/icons-material";
+import { AccountCircle } from "@mui/icons-material";
+import _ from "lodash";
+import socketUtils from "../../hooks/use-socket";
+import useSocket from "../../hooks/use-socket";
 
-let socket;
 export default function ChatBox() {
+  const { features } = useSocket(
+    {
+      socketApi: "/api/socket",
+      serverURL: "http://localhost:443",
+    },
+    handleReceiveMessage
+  );
   const [allMessages, setAllMessages] = useState([]);
   const [userInput, setUserInput] = useState({
-    roomKey: "public",
+    room: "public",
     senderName: null,
     senderID: null,
     message: "",
   });
-  const [userJoinNotification, setUserJoinNotification] = useState(null);
+  const userInputRef = useRef(userInput);
   const messagesRef = useRef(null);
-  useEffect(() => {
-    // initUser();
-    socketInit();
-  }, []);
-
-  //   const initUser = () => {
-  //     let userInfo = getCookie("user");
-  //     if (userInfo) {
-  //       userInfo = JSON.parse(userInfo);
-  //       handleUpdateUserInput({
-  //         senderName: `${userInfo.firstName} ${userInfo.lastName}`,
-  //         senderID: userInfo.id,
-  //       });
-  //     }
-  //   };
 
   const handleUpdateUserInput = (newValue) => {
     setUserInput((prev) => {
-      return {
+      const newInput = {
         ...prev,
         ...newValue,
       };
+      userInputRef.current = newInput;
+      return newInput;
     });
   };
 
   const handleSend = () => {
-    console.log(userInput);
-    socket.emit("send-message", userInput);
-    setUserInput((prev) => ({
-      ...prev,
-      message: "",
-    }));
+    features.sendMessage(userInput.room, userInput);
+    handleUpdateUserInput({ message: "" });
   };
 
-  const handleJoinRoom = (roomKey, user = null) => {
+  const handleJoinRoom = (roomKey) => {
     setAllMessages([]);
-    setUserJoinNotification(null);
-    console.log(userInput.senderName, roomKey);
-    socket.emit("join-room", {
-      roomKey,
-      userInfo: user ? user : userInput.senderName,
-    });
-
-    socket.on("message-history", (historyMessages) => {
+    features.leaveRoom(userInputRef.current.room);
+    features.joinRoom(roomKey, userInput);
+    features.getHistoryMessages((historyMessages) => {
       setAllMessages(historyMessages);
       if (messagesRef.current) {
         setTimeout(() => {
@@ -81,45 +62,26 @@ export default function ChatBox() {
         }, 0);
       }
     });
-
-    socket.on("user-join", ({ joinUser }) => {
-      if (roomKey === userInput.roomKey) {
-        setUserJoinNotification(`${joinUser} joined room`);
-        setTimeout(() => {
-          setUserJoinNotification(null);
-        }, 3000);
-      }
-    });
   };
+  async function handleReceiveMessage(data) {
+    if (
+      data.roomKey === userInputRef.current.room ||
+      userInputRef.current.senderName === data.senderName
+    ) {
+      setAllMessages((prev) => [...prev, data]);
 
-  async function socketInit() {
-    await fetch("/api/socket"); // Initialize the server-side socket
-    socket = io("http://localhost:443"); // Connect to the server
-    socket.on("connect", () => {
-      console.log("Connected to Socket.IO server");
-    });
-    socket.on("receive-message", (data) => {
-      console.log("receive", data, userInput);
-      if (data.roomKey === userInput.roomKey) {
-        setAllMessages((prev) => [...prev, data]);
-
-        setTimeout(() => {
-          messagesRef.current.scrollTo({
-            top: messagesRef.current.scrollHeight,
-            behavior: "smooth",
-          });
-        }, 100);
-      }
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Connection error: ", err);
-    });
+      setTimeout(() => {
+        messagesRef.current.scrollTo({
+          top: messagesRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 100);
+    }
   }
 
   const handleChangeRoom = (roomKey) => {
-    handleUpdateUserInput({ roomKey: roomKey });
-    handleJoinRoom(roomKey, userInput.senderName);
+    handleUpdateUserInput({ room: roomKey });
+    handleJoinRoom(roomKey);
   };
   return (
     <Stack
@@ -140,7 +102,7 @@ export default function ChatBox() {
               position: "relative",
             }}
           >
-            <Fade in={userJoinNotification !== null}>
+            {/* <Fade in={userJoinNotification !== null}>
               <Typography
                 textAlign={"right"}
                 variant="body2"
@@ -153,7 +115,7 @@ export default function ChatBox() {
               >
                 {userJoinNotification || ""}
               </Typography>
-            </Fade>
+            </Fade> */}
             {allMessages.map((ms, index) => {
               return (
                 <Stack
@@ -194,14 +156,14 @@ export default function ChatBox() {
             <Stack direction={"row"} gap={1} height={"40px"} padding={1}>
               <Button
                 size="small"
-                variant={userInput.roomKey === "public" && "contained"}
+                variant={userInput.room === "public" && "contained"}
                 onClick={() => handleChangeRoom("public")}
               >
                 public
               </Button>
               <Button
                 size="small"
-                variant={userInput.roomKey === "private" && "contained"}
+                variant={userInput.room === "private" && "contained"}
                 onClick={() => handleChangeRoom("private")}
               >
                 private
@@ -251,7 +213,7 @@ export default function ChatBox() {
             onKeyPress={(e) => {
               if (e.key === "Enter") {
                 handleUpdateUserInput({ senderName: e.target.value });
-                handleJoinRoom("public", e.target.value);
+                handleJoinRoom("public");
               }
             }}
           />
