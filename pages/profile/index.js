@@ -1,10 +1,21 @@
 import { Button, Paper, Stack } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { darkStyles } from "../../theme/dark-theme-options";
 import { Article, Dashboard, Password, People } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import { getCookie } from "cookies-next";
 
 export default function Index() {
   const [menu, setMenu] = useState(menus[0].name);
+
+  useEffect(() => {
+    let userData = getCookie("user");
+    if (userData) {
+      userData = JSON.parse(userData);
+      console.log(userData);
+    }
+  }, []);
+
   return (
     <Paper sx={{ height: "100vh" }}>
       <Stack height={"60px"}>main menu</Stack>
