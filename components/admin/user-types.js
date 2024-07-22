@@ -30,7 +30,7 @@ import Header from "./header";
 import PaperForm from "../widgets/paper/paper-form";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import Table from "../widgets/tables/table";
-import MyAPIs from "../../pages/api-functions/MyAPIs";
+import Input from "../widgets/input/Input";
 
 export default function UserTypes() {
   const [userTypes, setUserTypes] = useState([]);
@@ -56,12 +56,11 @@ export default function UserTypes() {
             open={isNewUserTypeOpen}
             isCloseOnClickOut={false}
             onClick={() => setIsNewUserTypeOpen(true)}
-            paperProps={{
-              style: { background: "transparent" },
-            }}
             variant={"contained"}
             button_label="Create New type"
             size="small"
+            title={updateType === null ? "New User Type" : "Update User Type"}
+            onClose={() => setIsNewUserTypeOpen(false)}
           >
             <NewUserType
               types={userTypes}
@@ -76,7 +75,7 @@ export default function UserTypes() {
           </ButtonDialog>
         </Stack>
       </Header>
-      <Paper
+      <Stack
         // variant="outlined"
         sx={{
           height: "100%",
@@ -98,7 +97,7 @@ export default function UserTypes() {
             />
           )}
         />
-      </Paper>
+      </Stack>
     </Stack>
   );
 }
@@ -296,67 +295,62 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
   };
 
   return (
-    <PaperForm
-      title={updateType === null ? "New User Type" : "Update User Type"}
-      onClose={onClose}
-    >
-      <Stack gap={1} padding={2} width={"100%"}>
-        <Stack direction={"row"} gap={1}>
-          <TextField
-            fullWidth
-            value={input.type}
-            onChange={(e) => handleInputChange({ type: e.target.value })}
-            size="small"
-            autoComplete="off"
-            label="Type Name"
-          />
-          <TextField
-            value={input.color}
-            onChange={(e) => handleInputChange({ color: e.target.value })}
-            sx={{ minWidth: "50px" }}
-            type="color"
-            size="small"
-          />
-        </Stack>
-        <TextField
-          value={input.description}
-          onChange={(e) => handleInputChange({ description: e.target.value })}
+    <Stack gap={2} padding={2} minWidth={"400px"}>
+      <Stack direction={"row"} alignItems={"flex-end"} gap={1}>
+        <Input
+          fullWidth
+          value={input.type}
+          onChange={(e) => handleInputChange({ type: e.target.value })}
           size="small"
           autoComplete="off"
-          multiline
-          rows={3}
-          label="Description"
+          label="User Type Name"
         />
-        <ErrorRenderer errors={inputErrors} />
-        <Divider />
-        <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
-          {updateType === null ? (
-            <Button
-              size="small"
-              disabled={
-                input.type.length === 0 ||
-                types.some(
-                  (type) => type.type.toLowerCase() === input.type.toLowerCase()
-                )
-              }
-              variant="contained"
-              onClick={() => handleCreateUserType()}
-            >
-              Create
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              size="small"
-              disabled={input.type.length === 0}
-              onClick={() => handleUpdateUserType()}
-            >
-              Update
-            </Button>
-          )}
-        </Stack>
+        <Input
+          value={input.color}
+          onChange={(e) => handleInputChange({ color: e.target.value })}
+          sx={{ minWidth: "50px" }}
+          type="color"
+          size="small"
+        />
       </Stack>
-    </PaperForm>
+      <Input
+        value={input.description}
+        onChange={(e) => handleInputChange({ description: e.target.value })}
+        size="small"
+        autoComplete="off"
+        multiline
+        rows={3}
+        label="Description"
+      />
+      <ErrorRenderer errors={inputErrors} />
+      <Divider />
+      <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
+        {updateType === null ? (
+          <Button
+            size="small"
+            disabled={
+              input.type.length === 0 ||
+              types.some(
+                (type) => type.type.toLowerCase() === input.type.toLowerCase()
+              )
+            }
+            variant="contained"
+            onClick={() => handleCreateUserType()}
+          >
+            Create
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            size="small"
+            disabled={input.type.length === 0}
+            onClick={() => handleUpdateUserType()}
+          >
+            Update
+          </Button>
+        )}
+      </Stack>
+    </Stack>
   );
 }
 

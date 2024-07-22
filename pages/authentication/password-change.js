@@ -1,4 +1,4 @@
-import { Button, Divider, Paper, Stack } from "@mui/material";
+import { Button, Divider, Paper, Stack, Typography } from "@mui/material";
 import React, { useContext, useState } from "react";
 import PaperForm from "../../components/widgets/paper/paper-form";
 import Input from "../../components/widgets/input/Input";
@@ -58,66 +58,64 @@ export default function PasswordChange() {
   };
   return (
     <Stack alignItems={"center"} justifyContent={"center"} height={"100vh"}>
-      <PaperForm title={"Change Password"}>
-        <Stack gap={1} minWidth={"300px"}>
-          <Stack padding={2} gap={1}>
-            <Input
-              id="email"
-              value={input.email}
-              onChange={(e) => handleUpdateInput({ email: e.target.value })}
-              label={"Email"}
-            />
-            <Input
-              id={"password"}
-              type={"password"}
-              value={input.currentPassword}
-              onChange={(e) =>
-                handleUpdateInput({ currentPassword: e.target.value })
-              }
-              label={"Current Password"}
-            />
-            <Divider />
-            <Input
-              type={"password"}
-              value={input.newPassword}
-              onChange={(e) =>
-                handleUpdateInput({ newPassword: e.target.value })
-              }
-              label={"New Password"}
-            />
-            <Input
-              type={"password"}
-              value={input.confirmPassword}
-              onChange={(e) =>
-                handleUpdateInput({ confirmPassword: e.target.value })
-              }
-              label={"Confirm New Password"}
-            />
-            <ErrorRenderer errors={errors} />
-          </Stack>
-
+      <Paper sx={{ padding: 2, minWidth: "300px" }}>
+        <Typography fontWeight={"bold"}>Change Password</Typography>
+        <Divider />
+        <Stack padding={2} gap={1}>
+          <Input
+            id="email"
+            value={input.email}
+            onChange={(e) => handleUpdateInput({ email: e.target.value })}
+            label={"Email"}
+          />
+          <Input
+            id={"password"}
+            type={"password"}
+            value={input.currentPassword}
+            onChange={(e) =>
+              handleUpdateInput({ currentPassword: e.target.value })
+            }
+            label={"Current Password"}
+          />
           <Divider />
-          <Stack direction={"row"} gap={1} width={"100%"}>
-            <ButtonLoading
-              isLoading={isLoading}
-              onClick={handleUpdatePassword}
-              sx={{ width: "100%" }}
-              size="small"
-              variant="contained"
-            >
-              Change
-            </ButtonLoading>
-            <Button
-              onClick={handleBackHome}
-              fullWidth
-              size="small"
-              variant="contained"
-            >
-              Home
-            </Button>
-          </Stack>
+          <Input
+            type={"password"}
+            value={input.newPassword}
+            onChange={(e) => handleUpdateInput({ newPassword: e.target.value })}
+            label={"New Password"}
+          />
+          <Input
+            type={"password"}
+            value={input.confirmPassword}
+            onChange={(e) =>
+              handleUpdateInput({ confirmPassword: e.target.value })
+            }
+            label={"Confirm New Password"}
+          />
+          <ErrorRenderer errors={errors} />
         </Stack>
-      </PaperForm>
+
+        <Divider />
+        <Stack direction={"row"} gap={1} padding={1} width={"100%"}>
+          <ButtonLoading
+            isLoading={isLoading}
+            onClick={handleUpdatePassword}
+            sx={{ width: "100%" }}
+            size="small"
+            variant="contained"
+          >
+            Change
+          </ButtonLoading>
+          <Button
+            onClick={handleBackHome}
+            fullWidth
+            size="small"
+            variant="contained"
+          >
+            Home
+          </Button>
+        </Stack>
+      </Paper>
     </Stack>
   );
 }

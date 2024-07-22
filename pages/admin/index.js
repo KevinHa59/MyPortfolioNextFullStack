@@ -2,6 +2,7 @@ import {
   Button,
   Collapse,
   Divider,
+  Fade,
   Link,
   Paper,
   Slide,
@@ -17,6 +18,7 @@ import Resumes from "../../components/admin/resumes";
 import useStyle, { styles } from "../../styles/useStyle";
 import {
   AdminPanelSettings,
+  ArrowRight,
   Article,
   DashboardCustomize,
   Hub,
@@ -36,37 +38,37 @@ const menu_data = [
   {
     title: "Dashboard",
     param: "dashboard",
-    Icon: <DashboardCustomize />,
+    Icon: DashboardCustomize,
     Comp: <Dashboard />,
   },
   {
     title: "User Types",
     param: "userTypes",
-    Icon: <Hub />,
+    Icon: Hub,
     Comp: <UserTypes />,
   },
   {
     title: "Pages",
     param: "pages",
-    Icon: <PagesRounded />,
+    Icon: PagesRounded,
     Comp: <Pages />,
   },
   {
     title: "Permissions",
     param: "permissions",
-    Icon: <AdminPanelSettings />,
+    Icon: AdminPanelSettings,
     Comp: <Permissions />,
   },
   {
     title: "Users",
     param: "users",
-    Icon: <People />,
+    Icon: People,
     Comp: <Users />,
   },
   {
     title: "Resumes",
     param: "resumes",
-    Icon: <Article />,
+    Icon: Article,
     Comp: <Resumes />,
   },
 ];
@@ -91,29 +93,12 @@ function Index() {
   }, [router]);
   return (
     <Stack height={"100vh"} gap={"1px"}>
-      <Paper className="flat" sx={{ zIndex: 2 }}>
-        <Stack
-          height={"40px"}
-          direction={"row"}
-          justifyContent={"flex-end"}
-          alignItems={"center"}
-          paddingX={2}
-        >
-          <ThemeButton />
-          <ButtonAccount />
+      <Stack zIndex={1} direction={"row"} height={"100%"}>
+        <Stack height={"100%"} width="300px" padding={2}>
+          <Paper className="flat" sx={{ zIndex: 2, height: "100%" }}>
+            <Menu />
+          </Paper>
         </Stack>
-      </Paper>
-      <Divider />
-      <Stack
-        zIndex={1}
-        direction={"row"}
-        height={"calc(100vh - 40px)"}
-        // gap={"1px"}
-      >
-        <Stack height={"100%"} width="250px">
-          <Menu />
-        </Stack>
-        <Divider orientation="vertical" />
         <Stack
           height={"100%"}
           width={"100%"}
@@ -121,7 +106,19 @@ function Index() {
           paddingBottom={"15px"}
           sx={{ overflowY: "auto" }}
         >
-          {menu_data.find((menu) => menu.param === section)?.Comp}
+          <Stack
+            height={"60px"}
+            direction={"row"}
+            justifyContent={"flex-end"}
+            alignItems={"center"}
+            paddingX={2}
+          >
+            <ThemeButton />
+            <ButtonAccount />
+          </Stack>
+          <Stack height={"calc(100% - 60px)"} sx={{ overflowY: "auto" }}>
+            {menu_data.find((menu) => menu.param === section)?.Comp}
+          </Stack>
         </Stack>
       </Stack>
     </Stack>
@@ -141,23 +138,24 @@ function Menu() {
   };
 
   return (
-    <Slide
-      in={true}
-      direction="right"
-      height="100%"
-      style={{ transitionDelay: 100 }}
+    <Stack
+      paddingY={3}
+      gap={2}
+      alignItems={"center"}
+      sx={{
+        overflowY: "auto",
+      }}
     >
-      <Stack
-        paddingY={3}
-        // className={"dark"}
-        sx={{
-          // color: "#fff",
-          overflowY: "auto",
-        }}
-      >
-        {menu_data.map((menu, index) => {
-          return (
-            <>
+      {menu_data.map((menu, index) => {
+        return (
+          <Slide
+            key={index}
+            in={true}
+            direction="right"
+            height="100%"
+            style={{ transitionDelay: 50 * index }}
+          >
+            <Stack>
               <Button
                 key={index}
                 color="inherit"
@@ -167,33 +165,38 @@ function Menu() {
                 sx={{
                   display: "flex",
                   gap: 1,
-                  // flexDirection: "column",
                   justifyContent: "flex-start",
                   transition: "ease 0.1s",
-                  paddingX: 2,
-                  minWidth: 0,
-                  borderRadius: 0,
-                  whiteSpace: "nowrap",
-                  textTransform: "none",
+                  width: "150px",
+                  position: "relative",
                 }}
                 onClick={() => handleRoute(menu.param)}
               >
-                {menu.Icon}
+                <Slide
+                  direction="right"
+                  in={router.query.section === menu.param}
+                >
+                  <ArrowRight sx={{ position: "absolute", right: "100%" }} />
+                </Slide>
+                {/* {router.query.section === menu.param && (
+                  
+                )} */}
+                <menu.Icon fontSize="15px" />
                 <Typography
-                  variant="body2"
+                  variant="subtitle2"
                   sx={{
                     color: "inherit",
+                    fontWeight: "inherit",
                   }}
                 >
                   {menu.title}
                 </Typography>
               </Button>
-              {/* {index < menu_data.length && <Divider />} */}
-            </>
-          );
-        })}
-      </Stack>
-    </Slide>
+            </Stack>
+          </Slide>
+        );
+      })}
+    </Stack>
   );
 }
 

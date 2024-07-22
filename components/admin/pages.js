@@ -57,10 +57,14 @@ export default function Pages() {
             button_label="Create New Pages"
             size="small"
             paperProps={{
-              style: {
-                background: "transparent",
-                minWidth: "max-content",
-              },
+              style: { minWidth: "clamp(500px, calc(100vw - 50px), 1000px)" },
+            }}
+            title={editPage ? "Edit Page" : "New Pages"}
+            onClose={() => {
+              setIsNewPageOpen(false);
+              setTimeout(() => {
+                setEditPage(null);
+              }, 200);
             }}
           >
             <NewPage
@@ -80,7 +84,7 @@ export default function Pages() {
           </ButtonDialog>
         </Stack>
       </Header>
-      <Paper
+      <Stack
         // variant="outlined"
         sx={{
           height: "100%",
@@ -102,7 +106,7 @@ export default function Pages() {
             />
           )}
         />
-      </Paper>
+      </Stack>
     </Stack>
   );
 }
@@ -215,88 +219,81 @@ function NewPage({ value = null, pages, onClose, onCreatePageSuccess }) {
   };
 
   return (
-    <PaperForm title={input?.id ? "Edit Page" : "New Pages"} onClose={onClose}>
-      <Stack
-        gap={1}
-        width={"clamp(500px, calc(100vw - 50px), 1000px)"}
-        paddingY={2}
-      >
-        <Stack gap={1} paddingX={2}>
-          <Stack
-            gap={1}
-            sx={{ overflowY: "auto", maxHeight: "calc(100vh - 300px)" }}
-          >
-            {input.map((page, index) => {
-              return (
-                <Stack
-                  key={index}
-                  direction={"row"}
-                  alignItems={"flex-end"}
-                  gap={1}
-                >
-                  <Input
-                    value={page?.path}
-                    onChange={(e) =>
-                      handleInputChange({ path: e.target.value }, index)
-                    }
-                    isInvalidInput={
-                      inputErrors !== null &&
-                      inputErrors.pathErrors.includes(page?.path)
-                    }
-                    inputErrorMessage="Path Existing"
-                    sx={{ width: "40%" }}
-                    autoComplete="off"
-                    size="small"
-                    label="Path"
-                  />
-                  <Input
-                    value={page?.description}
-                    onChange={(e) =>
-                      handleInputChange({ description: e.target.value }, index)
-                    }
-                    fullWidth={true}
-                    sx={{ width: "60%" }}
-                    autoComplete="off"
-                    size="small"
-                    label="Description"
-                  />
-                  <Button
-                    // variant="contained"
-                    color="error"
-                    size="small"
-                    onClick={() => handleRemove(index)}
-                  >
-                    <Clear />
-                  </Button>
-                </Stack>
-              );
-            })}
-          </Stack>
-          <Divider />
-          <Button startIcon={<Add />} onClick={handleAddPage}>
-            Add Page
-          </Button>
-        </Stack>
-        {/* <ErrorRenderer errors={inputErrors} /> */}
-        <Divider />
+    <Stack
+      gap={1}
+      width={"clamp(500px, calc(100vw - 50px), 1000px)"}
+      paddingY={2}
+    >
+      <Stack gap={1} paddingX={2}>
         <Stack
-          direction={"row"}
-          justifyContent={"flex-end"}
           gap={1}
-          paddingX={2}
+          sx={{ overflowY: "auto", maxHeight: "calc(100vh - 300px)" }}
         >
-          <ButtonLoading
-            disabled={inputErrors !== null}
-            isLoading={isCreatingPage}
-            variant="contained"
-            size="small"
-            onClick={handleCreatePages}
-          >
-            Save
-          </ButtonLoading>
+          {input.map((page, index) => {
+            return (
+              <Stack
+                key={index}
+                direction={"row"}
+                alignItems={"flex-end"}
+                gap={1}
+              >
+                <Input
+                  value={page?.path}
+                  onChange={(e) =>
+                    handleInputChange({ path: e.target.value }, index)
+                  }
+                  isInvalidInput={
+                    inputErrors !== null &&
+                    inputErrors.pathErrors.includes(page?.path)
+                  }
+                  inputErrorMessage="Path Existing"
+                  sx={{ width: "40%" }}
+                  autoComplete="off"
+                  size="small"
+                  label="Path"
+                />
+                <Input
+                  value={page?.description}
+                  onChange={(e) =>
+                    handleInputChange({ description: e.target.value }, index)
+                  }
+                  fullWidth={true}
+                  sx={{ width: "60%" }}
+                  autoComplete="off"
+                  size="small"
+                  label="Description"
+                />
+                <Button
+                  // variant="contained"
+                  color="error"
+                  size="small"
+                  onClick={() => handleRemove(index)}
+                >
+                  <Clear />
+                </Button>
+              </Stack>
+            );
+          })}
         </Stack>
+        <Divider />
+        <Button startIcon={<Add />} onClick={handleAddPage}>
+          Add Page
+        </Button>
       </Stack>
-    </PaperForm>
+      {/* <ErrorRenderer errors={inputErrors} /> */}
+      <Divider />
+      <Stack direction={"row"} justifyContent={"flex-end"} gap={1} paddingX={2}>
+        <ButtonLoading
+          disabled={inputErrors !== null}
+          isLoading={isCreatingPage}
+          variant="contained"
+          size="small"
+          onClick={handleCreatePages}
+        >
+          Save
+        </ButtonLoading>
+      </Stack>
+    </Stack>
   );
 }
 
@@ -378,54 +375,47 @@ function EditButton({ data, pages, onRefresh }) {
         setIsOpen(true);
         setInput(data);
       }}
+      title={"Edit Page"}
+      onClose={() => setIsOpen(false)}
       paperProps={{
         style: {
-          background: "transparent",
           minWidth: "max-content",
           maxWidth: "100%",
           width: "clamp(600px, 100%, 1000px)",
         },
       }}
     >
-      <PaperForm
-        title={"Edit Page"}
-        sx_paper={{ width: "100%" }}
-        onClose={() => setIsOpen(false)}
-      >
-        <Stack padding={2} gap={1} width={"100%"}>
-          <Stack direction={"row"} gap={1} width={"100%"}>
-            <Input
-              isInvalidInput={errors !== null}
-              inputErrorMessage="Path Existed"
-              sx={{ width: "40%" }}
-              value={input?.path}
-              label={"Path"}
-              size="small"
-              onChange={(e) => handleInputChange({ path: e.target.value })}
-            />
-            <Input
-              sx={{ width: "60%" }}
-              value={input?.description}
-              label={"Description"}
-              size="small"
-              onChange={(e) =>
-                handleInputChange({ description: e.target.value })
-              }
-            />
-          </Stack>
-          <Divider />
-          <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
-            <ButtonLoading
-              size="small"
-              variant="contained"
-              disabled={errors !== null}
-              onClick={handleSave}
-            >
-              Save
-            </ButtonLoading>
-          </Stack>
+      <Stack padding={2} gap={1} width={"100%"}>
+        <Stack direction={"row"} gap={1} width={"100%"}>
+          <Input
+            isInvalidInput={errors !== null}
+            inputErrorMessage="Path Existed"
+            sx={{ width: "40%" }}
+            value={input?.path}
+            label={"Path"}
+            size="small"
+            onChange={(e) => handleInputChange({ path: e.target.value })}
+          />
+          <Input
+            sx={{ width: "60%" }}
+            value={input?.description}
+            label={"Description"}
+            size="small"
+            onChange={(e) => handleInputChange({ description: e.target.value })}
+          />
         </Stack>
-      </PaperForm>
+        <Divider />
+        <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
+          <ButtonLoading
+            size="small"
+            variant="contained"
+            disabled={errors !== null}
+            onClick={handleSave}
+          >
+            Save
+          </ButtonLoading>
+        </Stack>
+      </Stack>
     </ButtonDialog>
   );
 }

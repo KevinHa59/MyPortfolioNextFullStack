@@ -1,10 +1,10 @@
 import { Stack, TextField, Typography } from "@mui/material";
 import React from "react";
 
-export default function LabelText({ label, subLabel, sx, children }) {
+export default function LabelText({ label, subLabel, sx, sx_typo, children }) {
   return (
-    <Stack sx={sx}>
-      <Stack direction={"row"} width={"100%"} gap={1}>
+    <Stack width={"100%"} sx={sx}>
+      <Stack direction={"row"} width="max-content" gap={1}>
         <Typography variant="body2" fontWeight={"bold"}>
           {label}
         </Typography>
@@ -12,7 +12,7 @@ export default function LabelText({ label, subLabel, sx, children }) {
           {subLabel}
         </Typography>
       </Stack>
-      <Typography>{children}</Typography>
+      <Typography sx={sx_typo}>{children}</Typography>
     </Stack>
   );
 }

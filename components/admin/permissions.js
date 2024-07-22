@@ -148,82 +148,81 @@ export default function Permissions() {
       <Header title={"Permissions"} icon={<AdminPanelSettings />}></Header>
       {isGettingData && <LinearProgress />}
       {!isGettingData && (
-        <Paper
+        <Stack
           sx={{
             height: "100%",
             overflow: "hidden",
           }}
         >
-          <Stack>
-            <ButtonLoading
-              startIcon={<Save />}
-              className={"br0"}
-              isLoading={isSaving}
-              sx={{ width: "max-content", padding: 1, minWidth: 0 }}
-              size="small"
-              onClick={handleSave}
-            >
-              Save
-            </ButtonLoading>
-          </Stack>
-          <Divider />
-          <Stack alignItems={"flex-start"} direction={"row"} height={"100%"}>
+          <Stack></Stack>
+          {/* <Divider /> */}
+          <Stack
+            alignItems={"flex-start"}
+            gap={4}
+            direction={"row"}
+            height={"100%"}
+          >
             {/* user type */}
             <Stack width={"300px"} height={"100%"}>
-              <Stack
-                className="reverse"
-                minHeight="30px"
-                sx={{ background: styles.background.menu }}
-              >
-                <Typography
-                  variant="body1"
-                  fontWeight={"bold"}
-                  textAlign={"center"}
-                  sx={{ color: "inherit" }}
-                >
-                  User Types
-                </Typography>
-              </Stack>
-              <Divider />
-              <Stack height={"100%"} paddingX={1}>
-                <Stack
-                  width={"100%"}
-                  height={"calc(100% - 50px)"}
-                  padding={1}
-                  sx={{ overflowY: "auto" }}
-                >
+              {/* <Divider /> */}
+              <Paper height={"100%"} sx={{ height: "max-content" }}>
+                <Stack minHeight="30px" padding={1}>
+                  <Typography
+                    variant="body1"
+                    fontWeight={"bold"}
+                    textAlign={"left"}
+                    sx={{ color: "inherit" }}
+                  >
+                    User Types
+                  </Typography>
+                </Stack>
+                {/* <Divider /> */}
+                <Stack width={"100%"} padding={1} sx={{ overflowY: "auto" }}>
                   {data.userTypes?.map((type, index) => {
                     return (
                       <Slide
                         key={index}
                         in={true}
                         direction="right"
-                        style={{ transitionDelay: index * 100 }}
+                        style={{ transitionDelay: index * 50 }}
                       >
-                        <Button
-                          variant={
-                            router.query.user_type === type.id
-                              ? "contained"
-                              : "text"
-                          }
-                          fullWidth
-                          onClick={() => handleTypeSelect(type)}
-                        >
-                          {type.type}
-                        </Button>
+                        <Stack>
+                          <Button
+                            className={
+                              router.query.user_type === type.id
+                                ? "active"
+                                : "inactive"
+                            }
+                            color="inherit"
+                            sx={{
+                              display: "flex",
+                              gap: 1,
+                              justifyContent: "flex-start",
+                              transition: "ease 0.1s",
+                              // width: "150px",
+                            }}
+                            fullWidth
+                            onClick={() => handleTypeSelect(type)}
+                          >
+                            {type.type}
+                          </Button>
+                        </Stack>
                       </Slide>
                     );
                   })}
                 </Stack>
-              </Stack>
+              </Paper>
             </Stack>
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
             {/* pages list */}
-            <Stack width={"100%"} height={"100%"}>
+            <Stack width={"100%"} height={"100%"} gap={1}>
               <Stack
                 minHeight="30px"
-                className="reverse"
-                sx={{ background: styles.background.menu }}
+                direction={"row"}
+                alignItems={"center"}
+                gap={2}
+                // className="reverse"
+                // sx={{ background: styles.background.menu }}
               >
                 <Typography
                   variant="body1"
@@ -233,6 +232,17 @@ export default function Permissions() {
                 >
                   Pages
                 </Typography>
+                <ButtonLoading
+                  startIcon={<Save />}
+                  variant={"contained"}
+                  // className={"br0"}
+                  isLoading={isSaving}
+                  sx={{ width: "max-content", minWidth: 0 }}
+                  size="small"
+                  onClick={handleSave}
+                >
+                  Save
+                </ButtonLoading>
               </Stack>
               <Divider />
               <Stack height={"100%"}>
@@ -300,7 +310,7 @@ export default function Permissions() {
               </Stack>
             </Stack>
           </Stack>
-        </Paper>
+        </Stack>
       )}
     </Stack>
   );

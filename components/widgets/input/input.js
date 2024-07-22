@@ -26,10 +26,8 @@ export default function Input({
   const [visible, setVisible] = useState(false);
   return (
     <Stack sx={sx}>
-      <Stack direction={"row"} gap={1}>
-        <Typography variant="body2" fontWeight={"bold"}>
-          {label}
-        </Typography>
+      <Stack direction={"row"} paddingX={1} gap={1} sx={{ opacity: 0.7 }}>
+        <Typography variant="body2">{label}</Typography>
         <Typography variant="body2" fontStyle={"italic"}>
           {subLabel}
         </Typography>

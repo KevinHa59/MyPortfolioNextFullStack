@@ -1,3 +1,4 @@
+import colorUtil from "../utils/colorUtil";
 import { lightStyles } from "./light-theme-options";
 
 const neutral = {
@@ -13,10 +14,11 @@ const neutral = {
 };
 
 const background = {
-  default: "#1a1e26",
-  paper: "#2b3240",
-  menu: "#ffffff",
-  subMenu: "#E5E7EB",
+  default: "#221741",
+  paper: "#251f4b",
+  menu: "#1f1d45",
+  subMenu: "#241d49",
+  button: "#ff0f50",
 };
 
 const divider = "#42464e";
@@ -64,10 +66,10 @@ const error = {
 };
 
 const text = {
-  primary: "#e0eaff",
+  primary: "#e0eaffcc",
   secondary: "#4A5568",
-  white: "#000",
-  black: "#fff",
+  white: "#fff",
+  black: "#000",
   disabled: "rgba(0, 0, 0, 0.48)",
 };
 
@@ -104,18 +106,19 @@ export const darkThemeOptions = {
     MuiButton: {
       styleOverrides: {
         root: {
-          color: "#fff",
+          color: text.primary,
 
           "&:hover": {
             color: "rgba(150,150,150,1)",
             background: `rgba(200,200,200,0.1)`,
           },
           "&.MuiButton-containedPrimary": {
-            color: "#000000",
-            boxShadow: `0px 2px 7px rgba(255, 255, 255, 0.4)`,
-            background: background.menu,
+            color: text.white,
+            boxShadow: `${background.button}cc`,
+            background: background.button,
             "&:hover": {
-              background: `${background.menu}cc`,
+              color: text.white,
+              background: `${background.button}cc`,
             },
           },
           "&.MuiButton-containedSecondary": {
@@ -189,8 +192,7 @@ export const darkThemeOptions = {
             opacity: 0.5, // Opacity when disabled (optional)
           },
           "&.active": {
-            background: background.paper,
-            color: "#fff",
+            // background: background.paper,
           },
         },
       },
@@ -264,7 +266,7 @@ export const darkThemeOptions = {
     MuiOutlinedInput: {
       styleOverrides: {
         notchedOutline: {
-          borderColor: text.secondary,
+          borderColor: "rgba(255,255,255,0.1)",
         },
         "&:hover MuiOutlinedInput-notchedOutline": {
           borderColor: "rgba(120, 120, 120, 1)",
@@ -413,16 +415,44 @@ export const darkThemeOptions = {
       styleOverrides: {
         root: {
           color: text.primary,
+          background: `${background.paper}`,
+          backdropFilter: "blur(5px)",
           "&.normal": {
-            background: background.paper,
-            // boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
+            boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
           },
           "&.MuiPaper-outlined": {
             // background: background.paper,
-            borderColor: divider,
+            // borderColor: divider,
           },
           "&.reverse": {
             background: lightStyles.background.paper,
+          },
+          "&.bgt10": {
+            background: colorUtil.hexToRgba(background.paper, 0.1),
+          },
+          "&.bgt20": {
+            background: colorUtil.hexToRgba(background.paper, 0.2),
+          },
+          "&.bgt30": {
+            background: colorUtil.hexToRgba(background.paper, 0.3),
+          },
+          "&.bgt40": {
+            background: colorUtil.hexToRgba(background.paper, 0.4),
+          },
+          "&.bgt50": {
+            background: colorUtil.hexToRgba(background.paper, 0.5),
+          },
+          "&.bgt60": {
+            background: colorUtil.hexToRgba(background.paper, 0.6),
+          },
+          "&.bgt70": {
+            background: colorUtil.hexToRgba(background.paper, 0.7),
+          },
+          "&.bgt80": {
+            background: colorUtil.hexToRgba(background.paper, 0.8),
+          },
+          "&.bgt90": {
+            background: colorUtil.hexToRgba(background.paper, 0.9),
           },
         },
       },

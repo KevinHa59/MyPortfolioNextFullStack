@@ -8,17 +8,15 @@ import {
   IconButton,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import Input from "../../widgets/input/Input";
 import PublicAPI from "../../../pages/api-functions/PublicAPI";
 import useDelay from "../../../hooks/use-delay";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
-import { StyleMode } from "../../../styles/useStyle";
-import { darkStyles } from "../../../theme/dark-theme-options";
 
-export default function Skill({ data, onChange }) {
+export default function Skill({ data, step, onChange }) {
   const [isDelaying, startDelay] = useDelay(500);
   const [skills, setSkills] = useState([]);
   const [skillSuggestions, setSkillSuggestions] = useState([]);
@@ -80,10 +78,35 @@ export default function Skill({ data, onChange }) {
   return (
     <Stack height={"100%"} width={"100%"}>
       <Stack
+        direction={"row"}
+        gap={"1px"}
+        justifyContent={"space-between"}
+        height={"45px"}
+        padding={1}
+      >
+        <Stack alignItems={"center"} direction={"row"} gap={1}>
+          {step.Icon}
+          <Typography>{step.name}</Typography>
+        </Stack>
+        <Stack direction={"row"} gap={1} justifyContent={"flex-end"}>
+          <ButtonLoading
+            size="small"
+            variant={"contained"}
+            isLoading={isSaving}
+            onClick={handleSave}
+            startIcon={<Check />}
+          >
+            Save
+          </ButtonLoading>
+        </Stack>
+      </Stack>
+      <Divider />
+      <Stack
         height={"calc(100% - 37px)"}
         sx={{ overflowY: "auto" }}
         gap={1}
-        padding={5}
+        padding={1}
+        paddingX={5}
       >
         <Stack direction={"row"} gap={1}>
           <Autocomplete
@@ -134,30 +157,6 @@ export default function Skill({ data, onChange }) {
             );
           })}
         </Stack>
-      </Stack>
-      <Divider />
-      <Stack
-        direction={"row"}
-        gap={1}
-        justifyContent={"flex-end"}
-        height={"45px"}
-        padding={1}
-        sx={{
-          background: StyleMode(
-            darkStyles.background.default,
-            darkStyles.background.paper
-          ),
-        }}
-      >
-        <ButtonLoading
-          size="small"
-          variant={"contained"}
-          isLoading={isSaving}
-          onClick={handleSave}
-          startIcon={<Check />}
-        >
-          Save
-        </ButtonLoading>
       </Stack>
     </Stack>
   );

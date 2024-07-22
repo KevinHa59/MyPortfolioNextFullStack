@@ -10,12 +10,12 @@ export default function Header({ headers, sortSetting, onSortChange }) {
   return (
     <Grid
       container
-      sx={{
-        background: StyleMode(
-          lightStyles.background.paper,
-          styles.background.menu
-        ),
-      }}
+      // sx={{
+      //   background: StyleMode(
+      //     lightStyles.background.paper,
+      //     styles.background.menu
+      //   ),
+      // }}
     >
       {headers?.map((header, index) => {
         const justify = header.align
@@ -33,10 +33,10 @@ export default function Header({ headers, sortSetting, onSortChange }) {
               alignItems={"center"}
               justifyContent={justify}
               width={"100%"}
-              sx={{
-                color:
-                  settings.theme === "light" ? "#fff" : styles.background.menu,
-              }}
+              // sx={{
+              //   color:
+              //     settings.theme === "light" ? "#fff" : styles.background.menu,
+              // }}
             >
               <Button
                 size="small"

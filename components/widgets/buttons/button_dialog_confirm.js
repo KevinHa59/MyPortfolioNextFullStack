@@ -123,10 +123,11 @@ export function AlertDialog({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       PaperProps={{
+        className: "bgt60",
         variant: dialog_variant,
         style: {
           minWidth: "300px",
-          borderColor: dialog_style(dialog_color).shadowColor,
+          // borderColor: dialog_style(dialog_color).shadowColor,
         },
       }}
     >
@@ -180,7 +181,6 @@ export function AlertDialog({
                 onClick={handleConfirm}
                 size="small"
                 sx={{
-                  borderRadius: "3px",
                   boxShadow: `0px 2px 7px ${
                     dialog_style(dialog_color).buttonShadowColor
                   }`,
@@ -189,12 +189,7 @@ export function AlertDialog({
               >
                 {button_agree_label}
               </Button>
-              <Button
-                variant={"text"}
-                onClick={handleClose}
-                size="small"
-                sx={{ borderRadius: "3px" }}
-              >
+              <Button variant={"text"} onClick={handleClose} size="small">
                 {button_disagree_label}
               </Button>
             </Stack>

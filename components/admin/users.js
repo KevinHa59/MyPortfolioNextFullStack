@@ -92,10 +92,12 @@ export default function Users() {
             variant={"contained"}
             button_label="Create New User"
             size="small"
-            paperProps={{
-              style: {
-                background: "transparent",
-              },
+            title={editUser ? "Edit User" : "New User"}
+            onClose={() => {
+              setIsNewUserOpen(false);
+              setTimeout(() => {
+                setEditUser(null);
+              }, 200);
             }}
           >
             <NewUser
@@ -115,7 +117,7 @@ export default function Users() {
           </ButtonDialog>
         </Stack>
       </Header>
-      <Paper
+      <Stack
         sx={{
           height: "100%",
           overflow: "hidden",
@@ -135,7 +137,7 @@ export default function Users() {
             />
           )}
         />
-      </Paper>
+      </Stack>
     </Stack>
   );
 }
@@ -293,127 +295,114 @@ function NewUser({ value = null, userTypes, onClose, onCreateUserSuccess }) {
     setIsCreatingUser(false);
   };
   return (
-    <PaperForm title={input?.id ? "Edit User" : "New User"} onClose={onClose}>
-      <Stack gap={2} width={"100%"} paddingY={2}>
-        <Stack gap={1} paddingX={2}>
-          <Stack direction={"row"} gap={1}>
-            <Input
-              value={input?.firstName}
-              onChange={(e) => handleInputChange({ firstName: e.target.value })}
-              autoComplete="off"
-              size="small"
-              label="First Name"
-            />
-            <Input
-              value={input?.lastName}
-              onChange={(e) => handleInputChange({ lastName: e.target.value })}
-              autoComplete="off"
-              size="small"
-              label="Last Name"
-            />
-          </Stack>
-          <Stack direction={"row"} gap={1}>
-            <Input
-              InputProps={{
-                startAdornment: <DateRange sx={{ paddingRight: 1 }} />,
-              }}
-              value={input?.dob.split("T")[0]}
-              onChange={(e) => handleInputChange({ dob: e.target.value })}
-              autoComplete="off"
-              size="small"
-              type="date"
-              label="Date of Birth"
-            />
-            <SelectCustom
-              label={"User Type"}
-              data={userTypes}
-              selected_value={input?.userTypeID}
-              item_field={"type"}
-              value_field={"id"}
-              size="small"
-              sx={{ width: "100%" }}
-              onChange={(value) => handleInputChange({ userTypeID: value })}
-            />
-          </Stack>
-        </Stack>
-        {value === null && (
-          <>
-            <Divider />
-            <Stack gap={1} paddingX={2}>
-              <Input
-                value={input?.email}
-                onChange={(e) => handleInputChange({ email: e.target.value })}
-                type="email"
-                InputProps={{
-                  startAdornment: <Email sx={{ paddingRight: 1 }} />,
-                }}
-                autoComplete="off"
-                size="small"
-                label="Email"
-              />
-              <Input
-                value={input?.confirmEmail}
-                onChange={(e) =>
-                  handleInputChange({ confirmEmail: e.target.value })
-                }
-                type="email"
-                InputProps={{
-                  startAdornment: <Email sx={{ paddingRight: 1 }} />,
-                }}
-                autoComplete="off"
-                size="small"
-                label="Confirm Email"
-              />
-            </Stack>
-            <Divider />
-            <Stack gap={1} paddingX={2}>
-              <Input
-                value={input?.password}
-                onChange={(e) =>
-                  handleInputChange({ password: e.target.value })
-                }
-                type="password"
-                InputProps={{
-                  startAdornment: <Password sx={{ paddingRight: 1 }} />,
-                }}
-                autoComplete="off"
-                size="small"
-                label="Password"
-              />
-              <Input
-                value={input?.confirmPassword}
-                onChange={(e) =>
-                  handleInputChange({ confirmPassword: e.target.value })
-                }
-                type="password"
-                InputProps={{
-                  startAdornment: <Password sx={{ paddingRight: 1 }} />,
-                }}
-                autoComplete="off"
-                size="small"
-                label="Confirm Password"
-              />
-            </Stack>
-          </>
-        )}
-        <ErrorRenderer errors={inputErrors} />
-        <Divider />
-        <Stack
-          direction={"row"}
-          justifyContent={"flex-end"}
-          gap={1}
-          paddingX={2}
-        >
-          <Button
-            variant="contained"
+    <Stack gap={2} width={"100%"} padding={2}>
+      <Stack gap={1} paddingX={2}>
+        <Stack direction={"row"} gap={1}>
+          <Input
+            value={input?.firstName}
+            onChange={(e) => handleInputChange({ firstName: e.target.value })}
+            autoComplete="off"
             size="small"
-            onClick={handleCreateAccount}
-          >
-            Save
-          </Button>
+            label="First Name"
+          />
+          <Input
+            value={input?.lastName}
+            onChange={(e) => handleInputChange({ lastName: e.target.value })}
+            autoComplete="off"
+            size="small"
+            label="Last Name"
+          />
+        </Stack>
+        <Stack direction={"row"} gap={1}>
+          <Input
+            InputProps={{
+              startAdornment: <DateRange sx={{ paddingRight: 1 }} />,
+            }}
+            value={input?.dob.split("T")[0]}
+            onChange={(e) => handleInputChange({ dob: e.target.value })}
+            autoComplete="off"
+            size="small"
+            type="date"
+            label="Date of Birth"
+          />
+          <SelectCustom
+            label={"User Type"}
+            data={userTypes}
+            selected_value={input?.userTypeID}
+            item_field={"type"}
+            value_field={"id"}
+            size="small"
+            sx={{ width: "100%" }}
+            onChange={(value) => handleInputChange({ userTypeID: value })}
+          />
         </Stack>
       </Stack>
-    </PaperForm>
+      {value === null && (
+        <>
+          <Divider />
+          <Stack gap={1} paddingX={2}>
+            <Input
+              value={input?.email}
+              onChange={(e) => handleInputChange({ email: e.target.value })}
+              type="email"
+              InputProps={{
+                startAdornment: <Email sx={{ paddingRight: 1 }} />,
+              }}
+              autoComplete="off"
+              size="small"
+              label="Email"
+            />
+            <Input
+              value={input?.confirmEmail}
+              onChange={(e) =>
+                handleInputChange({ confirmEmail: e.target.value })
+              }
+              type="email"
+              InputProps={{
+                startAdornment: <Email sx={{ paddingRight: 1 }} />,
+              }}
+              autoComplete="off"
+              size="small"
+              label="Confirm Email"
+            />
+          </Stack>
+          <Divider />
+          <Stack gap={1} paddingX={2}>
+            <Input
+              value={input?.password}
+              onChange={(e) => handleInputChange({ password: e.target.value })}
+              type="password"
+              InputProps={{
+                startAdornment: <Password sx={{ paddingRight: 1 }} />,
+              }}
+              autoComplete="off"
+              size="small"
+              label="Password"
+            />
+            <Input
+              value={input?.confirmPassword}
+              onChange={(e) =>
+                handleInputChange({ confirmPassword: e.target.value })
+              }
+              type="password"
+              InputProps={{
+                startAdornment: <Password sx={{ paddingRight: 1 }} />,
+              }}
+              autoComplete="off"
+              size="small"
+              label="Confirm Password"
+            />
+          </Stack>
+        </>
+      )}
+      <ErrorRenderer errors={inputErrors} />
+      <Divider />
+      <Stack direction={"row"} justifyContent={"flex-end"} gap={1} paddingX={2}>
+        <Button variant="contained" size="small" onClick={handleCreateAccount}>
+          Save
+        </Button>
+      </Stack>
+    </Stack>
   );
 }
 
@@ -477,66 +466,62 @@ function PasswordChangeButton({ user }) {
       open={open}
       isCloseOnClickOut={false}
       onClick={() => setOpen(true)}
-      paperProps={{ style: { background: "transparent" } }}
+      title={"Edit Password"}
+      onClose={() => {
+        setOpen(false);
+        setInput(password_temp);
+        setErrors([]);
+      }}
     >
-      <PaperForm
-        title={"Edit Password"}
-        onClose={() => {
-          setOpen(false);
-          setInput(password_temp);
-          setErrors([]);
-        }}
-      >
-        <Stack gap={1} minWidth={"400px"}>
-          <Stack padding={2} gap={1}>
-            <LabelText label={"Email"}>{user.email}</LabelText>
-            <Input
-              type={"password"}
-              value={input.currentPassword}
-              label={"Current Password"}
-              size="small"
-              onChange={(e) =>
-                handleInputChange({ currentPassword: e.target.value })
-              }
-            />
-            <Divider />
-            <Input
-              type={"password"}
-              value={input.password}
-              label={"New Password"}
-              size="small"
-              onChange={(e) => handleInputChange({ password: e.target.value })}
-            />
-            <Input
-              type={"password"}
-              value={input.confirmPassword}
-              label={"Confirm New Password"}
-              size="small"
-              onChange={(e) =>
-                handleInputChange({ confirmPassword: e.target.value })
-              }
-            />
-            <ErrorRenderer errors={errors} />
-          </Stack>
-
+      <Stack gap={1} minWidth={"400px"}>
+        <Stack padding={2} gap={1}>
+          <LabelText label={"Email"}>{user.email}</LabelText>
+          <Input
+            type={"password"}
+            value={input.currentPassword}
+            label={"Current Password"}
+            size="small"
+            onChange={(e) =>
+              handleInputChange({ currentPassword: e.target.value })
+            }
+          />
           <Divider />
-          <Stack
-            direction={"row"}
-            justifyContent={"flex-end"}
-            gap={"1px"}
-            padding={2}
-          >
-            <ButtonLoading
-              variant={"contained"}
-              isLoading={isUpdating}
-              size="small"
-              onClick={handleUpdatePassword}
-            >
-              Confirm
-            </ButtonLoading>
-          </Stack>
+          <Input
+            type={"password"}
+            value={input.password}
+            label={"New Password"}
+            size="small"
+            onChange={(e) => handleInputChange({ password: e.target.value })}
+          />
+          <Input
+            type={"password"}
+            value={input.confirmPassword}
+            label={"Confirm New Password"}
+            size="small"
+            onChange={(e) =>
+              handleInputChange({ confirmPassword: e.target.value })
+            }
+          />
+          <ErrorRenderer errors={errors} />
         </Stack>
-      </PaperForm>
+
+        <Divider />
+        <Stack
+          direction={"row"}
+          justifyContent={"flex-end"}
+          gap={"1px"}
+          padding={2}
+        >
+          <ButtonLoading
+            variant={"contained"}
+            isLoading={isUpdating}
+            size="small"
+            onClick={handleUpdatePassword}
+          >
+            Confirm
+          </ButtonLoading>
+        </Stack>
+      </Stack>
     </ButtonDialog>
   );
 }
@@ -570,49 +555,48 @@ function TokenButton({ user, onRefresh }) {
       onClick={() => setIsOpen(true)}
       paperProps={{
         style: {
-          background: "transparent",
           width: "clamp(400px, 100%, 600px)",
           maxWidth: "100%",
         },
       }}
+      title={"User Token"}
+      onClose={() => setIsOpen(false)}
     >
-      <PaperForm title={"Token"} onClose={() => setIsOpen(false)}>
-        <Stack padding={2} gap={1} width={"100%"}>
-          <LabelText label={"Email"}>{user.email}</LabelText>
-          {user.refreshToken === null ? (
-            <ButtonLoading
-              isLoading={isGenerateToken}
-              onClick={handleCreateToken}
-              variant="contained"
-              size="small"
+      <Stack padding={2} gap={1} width={"100%"}>
+        <LabelText label={"Email"}>{user.email}</LabelText>
+        {user.refreshToken === null ? (
+          <ButtonLoading
+            isLoading={isGenerateToken}
+            onClick={handleCreateToken}
+            variant="contained"
+            size="small"
+          >
+            Create Refresh and Access Token
+          </ButtonLoading>
+        ) : (
+          <Stack width={"100%"} gap={2}>
+            <LabelText
+              label={
+                <Stack direction={"row"} alignItems={"center"}>
+                  Token{" "}
+                  <IconButton
+                    size="small"
+                    onClick={() =>
+                      handleCopy("Copied Refresh Token", user.refreshToken)
+                    }
+                  >
+                    <CopyAll fontSize={"10px"} />
+                  </IconButton>
+                </Stack>
+              }
             >
-              Create Refresh and Access Token
-            </ButtonLoading>
-          ) : (
-            <Stack width={"100%"} gap={2}>
-              <LabelText
-                label={
-                  <Stack direction={"row"} alignItems={"center"}>
-                    Token{" "}
-                    <IconButton
-                      size="small"
-                      onClick={() =>
-                        handleCopy("Copied Refresh Token", user.refreshToken)
-                      }
-                    >
-                      <CopyAll fontSize={"10px"} />
-                    </IconButton>
-                  </Stack>
-                }
-              >
-                <Typography noWrap sx={{ width: "100%", overflowY: "auto" }}>
-                  {user.refreshToken}
-                </Typography>
-              </LabelText>
-            </Stack>
-          )}
-        </Stack>
-      </PaperForm>
+              <Typography noWrap sx={{ width: "100%", overflowY: "auto" }}>
+                {user.refreshToken}
+              </Typography>
+            </LabelText>
+          </Stack>
+        )}
+      </Stack>
     </ButtonDialog>
   );
 }

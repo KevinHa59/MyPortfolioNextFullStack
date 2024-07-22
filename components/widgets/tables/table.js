@@ -78,7 +78,7 @@ export default function Table({
 
   return (
     <Stack sx={{ width: "100%", position: "relative", ...sx }} gap={"1px"}>
-      <Paper sx={{ borderRadius: 0, background: "transparent" }}>
+      <Stack sx={{ borderRadius: 0, background: "transparent" }}>
         <Stack
           direction={"row"}
           padding={1}
@@ -107,7 +107,7 @@ export default function Table({
           sortSetting={sort}
           onSortChange={handleSortRows}
         />
-      </Paper>
+      </Stack>
       {isLoading ? (
         <Typography
           textAlign={"center"}

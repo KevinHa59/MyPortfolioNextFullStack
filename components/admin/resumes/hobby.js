@@ -7,6 +7,7 @@ import {
   IconButton,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
@@ -14,7 +15,7 @@ import ButtonLoading from "../../widgets/buttons/button-loading";
 import { StyleMode } from "../../../styles/useStyle";
 import { darkStyles } from "../../../theme/dark-theme-options";
 
-export default function Hobby({ data, onRefresh, onChange }) {
+export default function Hobby({ data, step, onRefresh, onChange }) {
   const [input, setInput] = useState([]);
   const [hobbies, setHobbies] = useState(interests);
   const [isSaving, setIsSaving] = useState(false);
@@ -65,10 +66,35 @@ export default function Hobby({ data, onRefresh, onChange }) {
   return (
     <Stack height={"100%"} width={"100%"}>
       <Stack
+        direction={"row"}
+        gap={"1px"}
+        justifyContent={"space-between"}
+        height={"45px"}
+        padding={1}
+      >
+        <Stack alignItems={"center"} direction={"row"} gap={1}>
+          {step.Icon}
+          <Typography>{step.name}</Typography>
+        </Stack>
+        <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
+          <ButtonLoading
+            size="small"
+            variant="contained"
+            isLoading={isSaving}
+            onClick={handleSave}
+            startIcon={<Check />}
+          >
+            Save
+          </ButtonLoading>
+        </Stack>
+      </Stack>
+      <Divider />
+      <Stack
         height={"calc(100% - 37px)"}
         sx={{ overflowY: "auto" }}
         gap={3}
-        padding={5}
+        padding={1}
+        paddingX={5}
       >
         <Stack direction={"row"} gap={1} alignItems={"flex-end"}>
           <Autocomplete
@@ -98,30 +124,6 @@ export default function Hobby({ data, onRefresh, onChange }) {
             );
           })}
         </Stack>
-      </Stack>
-      <Divider />
-      <Stack
-        direction={"row"}
-        gap={"1px"}
-        justifyContent={"flex-end"}
-        height={"45px"}
-        padding={1}
-        sx={{
-          background: StyleMode(
-            darkStyles.background.default,
-            darkStyles.background.paper
-          ),
-        }}
-      >
-        <ButtonLoading
-          size="small"
-          variant="contained"
-          isLoading={isSaving}
-          onClick={handleSave}
-          startIcon={<Check />}
-        >
-          Save
-        </ButtonLoading>
       </Stack>
     </Stack>
   );

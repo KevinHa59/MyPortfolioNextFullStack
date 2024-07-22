@@ -1,4 +1,12 @@
-import { Button, Dialog, IconButton, Stack } from "@mui/material";
+import { Clear } from "@mui/icons-material";
+import {
+  Button,
+  Dialog,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
 
 export default function ButtonDialog({
@@ -12,6 +20,7 @@ export default function ButtonDialog({
   paperProps,
   icon,
   children,
+  title,
   size = "large",
   color,
   variant,
@@ -60,10 +69,25 @@ export default function ButtonDialog({
       )}
       <Dialog
         sx={sx_dialog}
-        PaperProps={paperProps}
+        PaperProps={{ className: "bgt60", ...paperProps }}
         open={!isCloseOnClickOut ? open : isOpen}
         onClose={() => (isCloseOnClickOut ? handleOpen(false) : null)}
       >
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <Typography sx={{ padding: 1 }} fontWeight={"bold"}>
+            {title}
+          </Typography>
+          {onClose && (
+            <IconButton size="small" color="error" onClick={onClose}>
+              <Clear />
+            </IconButton>
+          )}
+        </Stack>
+        <Divider />
         {children}
       </Dialog>
     </Stack>

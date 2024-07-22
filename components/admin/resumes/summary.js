@@ -7,7 +7,14 @@ import {
   Public,
   Twitter,
 } from "@mui/icons-material";
-import { Button, Divider, IconButton, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
@@ -16,7 +23,7 @@ import axios from "axios";
 import { StyleMode } from "../../../styles/useStyle";
 import { darkStyles } from "../../../theme/dark-theme-options";
 
-export default function Summary({ data, onChange }) {
+export default function Summary({ data, step, onChange }) {
   const [input, setInput] = useState("");
   const [userInfo, setUserInfo] = useState({
     address: "",
@@ -73,10 +80,32 @@ export default function Summary({ data, onChange }) {
   return (
     <Stack height={"100%"} width={"100%"}>
       <Stack
+        direction={"row"}
+        gap={"1px"}
+        justifyContent={"space-between"}
+        height={"45px"}
+        padding={1}
+      >
+        <Stack alignItems={"center"} direction={"row"} gap={1}>
+          {step.Icon}
+          <Typography>{step.name}</Typography>
+        </Stack>
+        <ButtonLoading
+          size="small"
+          isLoading={isSaving}
+          variant="contained"
+          startIcon={<Check />}
+          onClick={handleUpdateResume}
+        >
+          Save
+        </ButtonLoading>
+      </Stack>
+      <Divider />
+      <Stack
         height={"calc(100% - 37px)"}
         sx={{ overflowY: "auto" }}
         gap={3}
-        padding={5}
+        paddingX={5}
       >
         <Input
           value={input}
@@ -220,44 +249,6 @@ export default function Summary({ data, onChange }) {
           />
         </Stack>
       </Stack>
-      <Divider />
-      <Stack
-        direction={"row"}
-        gap={"1px"}
-        justifyContent={"flex-end"}
-        height={"45px"}
-        padding={1}
-        sx={{
-          background: StyleMode(
-            darkStyles.background.default,
-            darkStyles.background.paper
-          ),
-        }}
-      >
-        <ButtonLoading
-          size="small"
-          isLoading={isSaving}
-          variant="contained"
-          startIcon={<Check />}
-          onClick={handleUpdateResume}
-        >
-          Save
-        </ButtonLoading>
-      </Stack>
     </Stack>
   );
 }
-
-// address: "",
-// city: "",
-// state: "",
-// country: "",
-// zipCode: "",
-// cellPhone: "",
-// homePhone: "",
-// linkedIn: "",
-// github: "",
-// twitter: "",
-// facebook: "",
-// instagram: "",
-// portfolio: "",

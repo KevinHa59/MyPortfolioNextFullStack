@@ -134,7 +134,7 @@ function StatsItem({ index = 0, title, value }) {
     <Grid item xs={3}>
       <Zoom in={true} style={{ transitionDelay: index * 50 }}>
         <Paper
-          className="normal"
+          // className="normal"
           variant="outlined"
           sx={{ overflow: "hidden" }}
         >
@@ -145,7 +145,7 @@ function StatsItem({ index = 0, title, value }) {
             sx={{ position: "relative" }}
             justifyContent={"space-between"}
           >
-            <Stack
+            {/* <Stack
               sx={{
                 position: "absolute",
                 width: "200%",
@@ -157,7 +157,7 @@ function StatsItem({ index = 0, title, value }) {
                 rotate: "-25deg",
                 transformOrigin: "top left",
               }}
-            />
+            /> */}
             <FormHeader title={title} variant="h3" sx={{ height: "100%" }} />
             <Typography variant="h4" textAlign={"right"} fontWeight={200}>
               {value}

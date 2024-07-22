@@ -34,7 +34,7 @@ const project_template = {
   achievements: "",
 };
 
-export default function Project({ data, onChange }) {
+export default function Project({ data, step, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([project_template]);
   const [isSaving, setIsSaving] = useState(false);
@@ -80,10 +80,43 @@ export default function Project({ data, onChange }) {
   return (
     <Stack height={"100%"} width={"100%"}>
       <Stack
+        direction={"row"}
+        gap={"1px"}
+        justifyContent={"space-between"}
+        height={"45px"}
+        padding={1}
+      >
+        <Stack alignItems={"center"} direction={"row"} gap={1}>
+          {step.Icon}
+          <Typography>{step.name}</Typography>
+        </Stack>
+        <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
+          <Button
+            size="small"
+            startIcon={<Add />}
+            color="primary"
+            onClick={handleAddProject}
+          >
+            Add Project
+          </Button>
+          <ButtonLoading
+            size="small"
+            variant="contained"
+            isLoading={isSaving}
+            onClick={handleSave}
+            startIcon={<Check />}
+          >
+            Save
+          </ButtonLoading>
+        </Stack>
+      </Stack>
+      <Divider />
+      <Stack
         height={"calc(100% - 37px)"}
         sx={{ overflowY: "auto" }}
         gap={3}
-        padding={5}
+        padding={1}
+        paddingX={5}
       >
         {input.map((project, index) => {
           return (
@@ -93,7 +126,6 @@ export default function Project({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
-                sx={{ background: styles.background.menu, color: "#fff" }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
                   <TipsAndUpdates sx={{ color: "#fff" }} />{" "}
@@ -163,38 +195,6 @@ export default function Project({ data, onChange }) {
             </Paper>
           );
         })}
-      </Stack>
-      <Divider />
-      <Stack
-        direction={"row"}
-        gap={"1px"}
-        justifyContent={"flex-end"}
-        height={"45px"}
-        padding={1}
-        sx={{
-          background: StyleMode(
-            darkStyles.background.default,
-            darkStyles.background.paper
-          ),
-        }}
-      >
-        <Button
-          size="small"
-          startIcon={<Add />}
-          color="primary"
-          onClick={handleAddProject}
-        >
-          Add Project
-        </Button>
-        <ButtonLoading
-          size="small"
-          variant="contained"
-          isLoading={isSaving}
-          onClick={handleSave}
-          startIcon={<Check />}
-        >
-          Save
-        </ButtonLoading>
       </Stack>
     </Stack>
   );

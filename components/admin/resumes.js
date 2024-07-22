@@ -17,6 +17,7 @@ import {
   Work,
   Language as LanguageIcon,
   Article,
+  ArrowRight,
 } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -45,20 +46,13 @@ import VolunteerExperience from "./resumes/volunteer";
 import Award from "./resumes/award";
 import Language from "./resumes/language";
 import Hobby from "./resumes/hobby";
-import UsersAPI from "../../pages/api-functions/UsersAPI";
 import Input from "../widgets/input/Input";
 import ResumesAPI from "../../pages/api-functions/ResumesAPI";
 import ButtonLoading from "../widgets/buttons/button-loading";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import Table from "../widgets/tables/table";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
-import PaperForm from "../widgets/paper/paper-form";
-import SelectCustom from "../widgets/select/select-custom";
-import FormHeader from "../widgets/texts/form-header";
 import Header from "./header";
-import { StyleMode, styles } from "../../styles/useStyle";
-import { darkStyles } from "../../theme/dark-theme-options";
-import { lightStyles } from "../../theme/light-theme-options";
 
 const resume_template = {
   user: null,
@@ -132,7 +126,6 @@ export default function Resumes() {
           <ButtonDialog
             paperProps={{
               sx: { minWidth: "max-content", overflow: "hidden" },
-              style: { background: "transparent" },
             }}
             open={isNewUserOpen}
             isCloseOnClickOut={false}
@@ -140,6 +133,11 @@ export default function Resumes() {
             variant={"contained"}
             button_label="Create New Resume"
             size="small"
+            title={"Resume"}
+            onClose={() => {
+              setIsNewUserOpen(false);
+              handleResumeChange(resume_template);
+            }}
           >
             {newResumeData.user === null ? (
               <UserSelection
@@ -160,7 +158,7 @@ export default function Resumes() {
           </ButtonDialog>
         </Stack>
       </Header>
-      <Paper
+      <Stack
         sx={{
           height: "100%",
 
@@ -180,7 +178,7 @@ export default function Resumes() {
             />
           )}
         />
-      </Paper>
+      </Stack>
     </Stack>
   );
 }
@@ -281,37 +279,33 @@ function UserSelection({ users, onChange, onClose }) {
   };
 
   return (
-    <PaperForm title={"Create New Resume"} onClose={onClose}>
-      <Stack width={"400px"} padding={2} gap={2}>
-        <Autocomplete
+    <Stack width={"400px"} padding={2} gap={2}>
+      <Autocomplete
+        size="small"
+        value={input.user}
+        options={users}
+        getOptionLabel={(option) =>
+          `${option.firstName} ${option.lastName} - ${option.email}`
+        }
+        onChange={(event, newValue) => handleInputChange({ user: newValue })}
+        renderInput={(params) => <TextField {...params} label="Search User" />}
+      />
+      <Input
+        label={"Resume Title"}
+        onChange={(e) => handleInputChange({ title: e.target.value })}
+      />
+      <Divider />
+      <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
+        <ButtonLoading
+          variant={"contained"}
           size="small"
-          value={input.user}
-          options={users}
-          getOptionLabel={(option) =>
-            `${option.firstName} ${option.lastName} - ${option.email}`
-          }
-          onChange={(event, newValue) => handleInputChange({ user: newValue })}
-          renderInput={(params) => (
-            <TextField {...params} label="Search User" />
-          )}
-        />
-        <Input
-          label={"Resume Title"}
-          onChange={(e) => handleInputChange({ title: e.target.value })}
-        />
-        <Divider />
-        <Stack direction={"row"} justifyContent={"flex-end"} gap={1}>
-          <ButtonLoading
-            variant={"contained"}
-            size="small"
-            isLoading={isCreateResume}
-            onClick={handleCreateResume}
-          >
-            Create
-          </ButtonLoading>
-        </Stack>
+          isLoading={isCreateResume}
+          onClick={handleCreateResume}
+        >
+          Create
+        </ButtonLoading>
       </Stack>
-    </PaperForm>
+    </Stack>
   );
 }
 
@@ -375,108 +369,89 @@ const steps = [
 function ResumeCreator({ data, onRefresh, onClose }) {
   const [step, setStep] = useState(steps[0]);
   return (
-    <PaperForm
-      title={"New Resume"}
-      sx={{ height: "90vh", overflow: "hidden" }}
-      sx_paper={{ overflow: "hidden" }}
-      onClose={onClose}
-    >
-      <Stack direction={"row"} height={"100%"}>
+    <Stack direction={"row"} height={"calc(100vh - 120px)"} padding={2}>
+      <Paper
+        sx={{
+          width: "250px",
+        }}
+      >
         <Stack
-          width={"250px"}
-          justifyContent={"space-evenly"}
           sx={{
-            background: StyleMode(
-              darkStyles.background.default,
-              darkStyles.background.paper
-            ),
+            padding: 1,
           }}
         >
-          <Stack
-            sx={{
-              padding: 1,
-              color: darkStyles.text.primary,
-            }}
-          >
-            <Typography
-              sx={{ color: "inherit" }}
-              fontWeight={"bold"}
-            >{`${data.user.firstName} ${data.user.lastName}`}</Typography>
-            <Typography
-              sx={{ color: "inherit" }}
-              variant="body2"
-            >{`${data.user.email}`}</Typography>
-          </Stack>
-          <Divider />
-          <Stack height={"100%"} justifyContent={"center"}>
-            <Divider sx={{ opacity: 0.5 }} />
-            {steps.map((_step, index) => {
-              return (
-                <>
-                  <Button
-                    key={index}
-                    onClick={() => {
-                      setStep(null);
-                      setTimeout(() => {
-                        setStep(_step);
-                      }, 100);
-                    }}
-                    startIcon={_step.Icon}
-                    sx={{
-                      borderRadius: 0,
-                      display: "flex",
-                      justifyContent: "flex-start",
-                      background:
-                        step?.name === _step.name
-                          ? "rgba(200,200,200,0.1)"
-                          : "transparent",
-                      paddingLeft: step?.name === _step.name ? 3 : 2,
-                      transition: "ease 0.3s",
-                      textTransform: "none",
-                      color: darkStyles.text.primary,
-                      "&:hover": {
-                        paddingLeft: 3,
-                      },
-                    }}
-                  >
-                    {_step.name}
-                  </Button>
-                  <Divider sx={{ opacity: 0.5 }} />
-                </>
-              );
-            })}
-          </Stack>
+          <Typography
+            fontWeight={"bold"}
+          >{`${data.user.firstName} ${data.user.lastName}`}</Typography>
+          <Typography variant="body2">{`${data.user.email}`}</Typography>
         </Stack>
-        <Divider flexItem orientation="vertical" />
-        <Stack minWidth={"1000px"} height={"100%"}>
-          <Stack
-            width={"100%"}
-            sx={{
-              height: "100%",
-              borderRadius: 0,
-              overflowX: "hidden",
-            }}
-          >
-            {step?.Comp && (
-              <Fade
-                in={true}
-                direction="right"
-                timeout={500}
-                style={{ transition: "ease", width: "100%" }}
-              >
-                <Stack height={"100%"} width={"100%"}>
-                  <step.Comp
-                    data={data}
-                    onRefresh={onRefresh}
-                    onChange={null}
-                  />
-                </Stack>
-              </Fade>
-            )}
-          </Stack>
+
+        <Stack
+          height={"100%"}
+          gap={1}
+          padding={2}
+          sx={{ overflowY: "auto", overflowX: "hidden" }}
+        >
+          {steps.map((_step, index) => {
+            return (
+              <>
+                <Button
+                  key={index}
+                  onClick={() => {
+                    setStep(null);
+                    setTimeout(() => {
+                      setStep(_step);
+                    }, 100);
+                  }}
+                  startIcon={_step.Icon}
+                  className={step?.name === _step.name ? "active" : "inactive"}
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    justifyContent: "flex-start",
+                    transition: "ease 0.1s",
+                    position: "relative",
+                  }}
+                >
+                  <Slide direction="right" in={step?.name === _step.name}>
+                    <ArrowRight sx={{ position: "absolute", left: "-15px" }} />
+                  </Slide>
+                  {_step.name}
+                </Button>
+              </>
+            );
+          })}
+        </Stack>
+      </Paper>
+      <Stack minWidth={"1000px"} height={"100%"}>
+        <Stack
+          width={"100%"}
+          sx={{
+            height: "100%",
+            borderRadius: 0,
+            overflowX: "hidden",
+          }}
+        >
+          {step?.Comp && (
+            <Fade
+              in={true}
+              direction="right"
+              timeout={500}
+              style={{ transition: "ease", width: "100%" }}
+            >
+              <Stack height={"100%"} width={"100%"}>
+                <step.Comp
+                  data={data}
+                  onRefresh={onRefresh}
+                  onChange={null}
+                  step={step}
+                />
+              </Stack>
+            </Fade>
+          )}
         </Stack>
       </Stack>
-    </PaperForm>
+    </Stack>
   );
 }
 

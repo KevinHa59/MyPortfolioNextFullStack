@@ -32,7 +32,7 @@ const edu_template = {
   dateObtained: "",
 };
 
-export default function Certification({ data, onChange }) {
+export default function Certification({ data, step, onChange }) {
   const theme = useTheme();
   const [input, setInput] = useState([edu_template]);
   const [isSaving, setIsSaving] = useState(false);
@@ -73,10 +73,43 @@ export default function Certification({ data, onChange }) {
   return (
     <Stack height={"100%"} width={"100%"}>
       <Stack
+        direction={"row"}
+        gap={"1px"}
+        justifyContent={"space-between"}
+        height={"45px"}
+        padding={1}
+      >
+        <Stack alignItems={"center"} direction={"row"} gap={1}>
+          {step.Icon}
+          <Typography>{step.name}</Typography>
+        </Stack>
+        <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
+          <Button
+            size="small"
+            startIcon={<Add />}
+            color="primary"
+            onClick={handleAddEducation}
+          >
+            Add Certification
+          </Button>
+          <ButtonLoading
+            size="small"
+            variant="contained"
+            isLoading={isSaving}
+            onClick={handleSave}
+            startIcon={<Check />}
+          >
+            Save
+          </ButtonLoading>
+        </Stack>
+      </Stack>
+      <Divider />
+      <Stack
         height={"calc(100% - 37px)"}
         sx={{ overflowY: "auto" }}
         gap={3}
-        padding={5}
+        padding={1}
+        paddingX={5}
       >
         {input.map((cer, index) => {
           return (
@@ -86,7 +119,6 @@ export default function Certification({ data, onChange }) {
                 paddingX={2}
                 alignItems={"center"}
                 justifyContent={"space-between"}
-                sx={{ background: styles.background.menu, color: "#fff" }}
               >
                 <Stack direction={"row"} gap={1} alignItems={"center"}>
                   <HistoryEdu sx={{ color: "#fff" }} />{" "}
@@ -149,39 +181,6 @@ export default function Certification({ data, onChange }) {
             </Paper>
           );
         })}
-      </Stack>
-      <Divider />
-      <Stack
-        direction={"row"}
-        gap={"1px"}
-        justifyContent={"flex-end"}
-        height={"45px"}
-        padding={1}
-        sx={{
-          background: StyleMode(
-            darkStyles.background.default,
-            darkStyles.background.paper
-          ),
-        }}
-      >
-        <Button
-          size="small"
-          // variant="contained"
-          startIcon={<Add />}
-          color="primary"
-          onClick={handleAddEducation}
-        >
-          Add Certification
-        </Button>
-        <ButtonLoading
-          size="small"
-          variant="contained"
-          isLoading={isSaving}
-          onClick={handleSave}
-          startIcon={<Check />}
-        >
-          Save
-        </ButtonLoading>
       </Stack>
     </Stack>
   );

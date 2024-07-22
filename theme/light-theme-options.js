@@ -17,6 +17,7 @@ const background = {
   paper: "#ffffff",
   menu: "#2b3240",
   subMenu: "#304152",
+  button: "#ff0f50",
 };
 
 const divider = "#2D3748";
@@ -64,7 +65,7 @@ const error = {
 };
 
 const text = {
-  primary: "#000000",
+  primary: "#000000cc",
   secondary: "#A0AEC0",
   disabled: "rgba(255, 255, 255, 0.48)",
 };
@@ -156,7 +157,6 @@ export const lightThemeOptions = {
           },
           "&.active": {
             background: background.paper,
-            color: "#000",
           },
         },
       },
@@ -236,7 +236,7 @@ export const lightThemeOptions = {
     MuiTextField: {
       styleOverrides: {
         root: {
-          borderRadius: 0,
+          borderRadius: "25px",
           background: "rgba(0,0,0,0.05)",
         },
       },

@@ -1,18 +1,26 @@
 import { Button, Paper, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { darkStyles } from "../../theme/dark-theme-options";
-import { Article, Dashboard, Password, People } from "@mui/icons-material";
+import {
+  Article,
+  Dashboard as DashboardIcon,
+  Password,
+  People,
+} from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
+import Dashboard from "../../components/profile/dashboard";
+import { StyleMode } from "../../styles/useStyle";
+import { lightStyles } from "../../theme/light-theme-options";
 
 export default function Index() {
-  const [menu, setMenu] = useState(menus[0].name);
-
+  const [menu, setMenu] = useState(menus[0]);
+  const [user, setUser] = useState(null);
   useEffect(() => {
     let userData = getCookie("user");
     if (userData) {
       userData = JSON.parse(userData);
-      console.log(userData);
+      setUser(userData);
     }
   }, []);
 
@@ -27,13 +35,17 @@ export default function Index() {
           <Paper
             className="flat"
             sx={{
-              background: darkStyles.background.default,
+              background: StyleMode(
+                darkStyles.background.default,
+                lightStyles.background.default
+              ),
               width: "100%",
               height: "100%",
-              padding: 2,
+              padding: 4,
+              boxShadow: "inset 0 0 10px rgba(0,0,0,0.5)",
             }}
           >
-            right
+            {user && menu.Comp && <menu.Comp data={user} />}
           </Paper>
         </Stack>
       </Stack>
@@ -42,8 +54,9 @@ export default function Index() {
 }
 const menus = [
   {
-    icon: <Dashboard color="error" />,
+    icon: <DashboardIcon color="error" />,
     name: "Dashboard",
+    Comp: Dashboard,
   },
   {
     icon: <People color="info" />,
@@ -64,9 +77,9 @@ function Menu({ selectedMenu, onMenuChange }) {
       {menus.map((m, index) => {
         return (
           <Button
-            onClick={() => onMenuChange(m.name)}
+            onClick={() => onMenuChange(m)}
             size="large"
-            className={`br0 flex-start ${selectedMenu !== m.name && "bw"}`}
+            className={`br0 flex-start ${selectedMenu.name !== m.name && "bw"}`}
             fullWidth
             key={index}
             startIcon={m.icon}

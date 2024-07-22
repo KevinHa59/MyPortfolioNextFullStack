@@ -30,7 +30,11 @@ export const baseThemeOptions = {
         root: {
           textTransform: "none",
           borderRadius: "25px",
-
+          fontWeight: 400,
+          "&.active": {
+            color: "#ff0f50",
+            fontWeight: "bold",
+          },
           "&.dark-active": {
             background: styles_dark.background.default,
             color: darkStyles.text.primary,
@@ -46,6 +50,7 @@ export const baseThemeOptions = {
             background: "#000",
             color: "#fff",
           },
+
           "&.flex-start": {
             minWidth: 0,
             display: "flex",
@@ -89,14 +94,14 @@ export const baseThemeOptions = {
       styleOverrides: {
         root: {
           color: "#000",
-          borderRadius: 0,
+          borderRadius: "25px",
         },
       },
     },
     MuiTextField: {
       styleOverrides: {
         root: {
-          borderRadius: 0,
+          borderRadius: "20px",
         },
       },
     },
@@ -201,7 +206,7 @@ export const baseThemeOptions = {
     MuiIconButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          // borderRadius: 8,
           padding: 8,
           "&.Mui-disabled": {
             color: "rgba(150,150,150,0.5)", // Color when the IconButton is disabled
@@ -243,7 +248,7 @@ export const baseThemeOptions = {
           fontWeight: 500,
         },
         root: {
-          borderRadius: 0, // Set your desired border radius here
+          borderRadius: "25px", // Set your desired border radius here
         },
       },
     },
@@ -274,15 +279,19 @@ export const baseThemeOptions = {
           backgroundImage: "none",
           position: "relative",
           color: "#000",
-          boxShadow: "0px 0px 10px rgba(0,0,0,0.5)",
+          boxShadow:
+            "inset 0px 0px 100px rgba(255,255,255,0.02), 0px 0px 10px rgba(0,0,0,0.2)",
           "&.MuiPaper-outlined": {
-            borderColor: "rgba(180,180,180,0.5)",
+            borderColor: "rgba(180,180,180,0.1)",
           },
           "&.flat": {
             boxShadow: "none",
           },
           "&.br0": {
             borderRadius: 5,
+          },
+          "&.brMAX": {
+            borderRadius: "100%",
           },
           "&.reverse": {
             background: darkStyles.background.paper,
