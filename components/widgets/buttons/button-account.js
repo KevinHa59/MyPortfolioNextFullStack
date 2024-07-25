@@ -2,6 +2,7 @@ import React from "react";
 import ButtonPopover from "./button_popover";
 import {
   AccountCircle,
+  AdminPanelSettings,
   Logout,
   Password,
   PeopleAlt,
@@ -13,51 +14,71 @@ import { deleteCookie, getCookie } from "cookies-next";
 
 export default function ButtonAccount() {
   const router = useRouter();
+  let user = getCookie("user");
+  if (user) {
+    user = JSON.parse(user);
+  }
   return (
-    <ButtonPopover
-      size="large"
-      label={
-        <Button sx={{ padding: 0, minWidth: 0, borderRadius: "50%" }}>
-          <AccountCircle sx={{ fontSize: "35px" }} />
-        </Button>
-      }
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-    >
-      <Stack padding={1} minWidth={"150px"}>
-        <UserProfileButton router={router} />
-        <UserChangingPasswordButton router={router} />
-        <Divider />
-        <LogoutButton router={router} />
-      </Stack>
-    </ButtonPopover>
+    <Stack>
+      <ButtonPopover
+        size="large"
+        label={<AccountCircle sx={{ fontSize: "35px" }} />}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <Stack padding={1} minWidth={"150px"}>
+          <RoutingButton
+            Icon={Person}
+            path={"/profile"}
+            query={{ section: "dashboard", id: user?.id }}
+            title={"User Profile"}
+            router={router}
+          />
+          {/* <UserChangingPasswordButton router={router} /> */}
+          <RoutingButton
+            Icon={Password}
+            path={"/profile"}
+            query={{ section: "changePassword" }}
+            title={"Change Password"}
+            router={router}
+          />
+          <Divider />
+          <RoutingButton
+            Icon={AdminPanelSettings}
+            path={"/admin"}
+            query={{ section: "dashboard" }}
+            title={"Admin"}
+            router={router}
+          />
+          <Divider />
+          <LogoutButton router={router} />
+        </Stack>
+      </ButtonPopover>
+    </Stack>
   );
 }
 // user setting button
-function UserProfileButton({ router }) {
-  const user = JSON.parse(getCookie("user"));
-  const handleViewUserSettings = () => {
+function RoutingButton({ Icon, path, query, title, router }) {
+  const handleRoute = () => {
     router.push({
-      pathname: "/profile",
-      query: {
-        id: user.id,
-      },
+      pathname: path,
+      query: query,
     });
   };
   return (
     <Button
       className="flex-start"
       size="small"
-      startIcon={<Person />}
-      onClick={handleViewUserSettings}
+      startIcon={<Icon />}
+      onClick={handleRoute}
     >
-      User Profile
+      {title}
     </Button>
   );
 }

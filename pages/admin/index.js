@@ -125,7 +125,7 @@ function Index() {
   );
 }
 
-function Menu() {
+export function Menu() {
   const router = useRouter();
 
   const handleRoute = (section) => {

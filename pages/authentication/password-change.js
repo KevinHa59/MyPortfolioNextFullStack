@@ -8,12 +8,17 @@ import { validateChangePasswordForm } from "../../utils/account";
 import ErrorRenderer from "../../components/widgets/texts/error-renderer";
 import ButtonLoading from "../../components/widgets/buttons/button-loading";
 import { mainContext } from "../_app";
+import { getCookie } from "cookies-next";
 
-export default function PasswordChange() {
+export default function PasswordChange({ useLoggedInUser = false }) {
+  let user = getCookie("user");
+  if (user) {
+    user = JSON.parse(user);
+  }
   const router = useRouter();
   const { setNote } = useContext(mainContext);
   const [input, setInput] = useState({
-    email: "",
+    email: useLoggedInUser ? user.email : "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -106,14 +111,16 @@ export default function PasswordChange() {
           >
             Change
           </ButtonLoading>
-          <Button
-            onClick={handleBackHome}
-            fullWidth
-            size="small"
-            variant="contained"
-          >
-            Home
-          </Button>
+          {useLoggedInUser === false && (
+            <Button
+              onClick={handleBackHome}
+              fullWidth
+              size="small"
+              variant="contained"
+            >
+              Home
+            </Button>
+          )}
         </Stack>
       </Paper>
     </Stack>

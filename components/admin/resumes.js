@@ -68,8 +68,50 @@ const resume_template = {
   languages: [],
   hobbies: [],
 };
+const headers = [
+  {
+    name: "Resume Title",
+    key: "title",
+    xs: 3,
+  },
+  {
+    name: "First Name",
+    key: "userFirstName",
+    xs: 2,
+  },
+  {
+    name: "Last Name",
+    key: "userLastName",
+    xs: 2,
+  },
+  {
+    name: "Email",
+    key: "userEmail",
+    xs: 3,
+  },
+  {
+    name: "",
+    key: "actions",
+    xs: 2,
+    align: "right",
+  },
+];
 
-export default function Resumes() {
+const userHeaders = [
+  {
+    name: "Resume Title",
+    key: "title",
+    xs: 9,
+  },
+  {
+    name: "",
+    key: "actions",
+    xs: 3,
+    align: "right",
+  },
+];
+
+export default function Resumes({ defaultUser }) {
   const [generalData, setGeneralData] = useState({
     users: [],
     resumes: [],
@@ -77,7 +119,7 @@ export default function Resumes() {
   const [isGettingData, setIsGettingData] = useState(false);
   const [isNewUserOpen, setIsNewUserOpen] = useState(false);
   const [newResumeData, setNewResumeData] = useState(resume_template);
-
+  const [tableHeader, setTableHeader] = useState(headers);
   useEffect(() => {
     initData();
   }, []);
@@ -86,9 +128,14 @@ export default function Resumes() {
     setIsGettingData(true);
     const APIs = [MyAPIs.User().getUsers(), MyAPIs.Resume().getResumes()];
     const res = await axios.all(APIs);
+    let _resumes = res[1];
+    if (defaultUser) {
+      _resumes = _resumes.filter((res) => res.user.id === defaultUser.id);
+      setTableHeader(userHeaders);
+    }
     handleUpdateGeneralData({
       users: res[0],
-      resumes: res[1],
+      resumes: _resumes,
     });
     setIsGettingData(false);
   };
@@ -168,7 +215,7 @@ export default function Resumes() {
         <Table
           isLoading={isGettingData}
           data={generalData?.resumes}
-          headers={headers}
+          headers={tableHeader}
           callback_cell={(row, key) => (
             <Cell
               row={row}
@@ -182,35 +229,6 @@ export default function Resumes() {
     </Stack>
   );
 }
-
-const headers = [
-  {
-    name: "Resume Title",
-    key: "title",
-    xs: 3,
-  },
-  {
-    name: "First Name",
-    key: "userFirstName",
-    xs: 2,
-  },
-  {
-    name: "Last Name",
-    key: "userLastName",
-    xs: 2,
-  },
-  {
-    name: "Email",
-    key: "userEmail",
-    xs: 3,
-  },
-  {
-    name: "",
-    key: "actions",
-    xs: 2,
-    align: "right",
-  },
-];
 
 function Cell({ row, header, onEdit, onRemoveSuccess }) {
   const [isRemoving, setIsRemoving] = useState(false);

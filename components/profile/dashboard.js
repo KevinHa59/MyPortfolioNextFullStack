@@ -1,10 +1,13 @@
 import { AccountBoxRounded, Email, Phone } from "@mui/icons-material";
 import { Divider, Fade, Paper, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import LabelText from "../widgets/texts/label-text";
 import { phoneFormat } from "../../utils/stringUtil";
+import { profileContext } from "../../pages/profile";
 
-export default function Dashboard({ data }) {
+export default function Dashboard() {
+  const { mainData } = useContext(profileContext);
+
   return (
     <Fade in={true}>
       <Stack gap={2} height={"100%"}>
@@ -24,7 +27,7 @@ export default function Dashboard({ data }) {
           //   fontWeight={"bold"}
           textAlign={"center"}
           sx={{ fontSize: "3vw" }}
-        >{`${data.firstName} ${data.lastName}`}</Typography>
+        >{`${mainData.user?.firstName} ${mainData.user?.lastName}`}</Typography>
         <Divider />
         <Stack direction={"row"} justifyContent={"center"} gap={3}>
           <Stack alignItems={"flex-end"} sx={{ paddingX: 2, width: "50%" }}>
@@ -38,7 +41,7 @@ export default function Dashboard({ data }) {
               sx_typo={{ fontSize: "clamp(13px, 1vw, 17px)" }}
               label={<Email sx={{ fontSize: "clamp(13px, 1vw, 18px)" }} />}
             >
-              {data.email}
+              {mainData.user?.email}
             </LabelText>
           </Stack>
           <Divider orientation="vertical" />
@@ -53,7 +56,7 @@ export default function Dashboard({ data }) {
               sx_typo={{ fontSize: "clamp(13px, 1vw, 17px)" }}
               label={<Phone sx={{ fontSize: "clamp(13px, 1vw, 18px)" }} />}
             >
-              {phoneFormat(data.cellPhone)}
+              {phoneFormat(mainData.user?.cellPhone)}
             </LabelText>
           </Stack>
         </Stack>
