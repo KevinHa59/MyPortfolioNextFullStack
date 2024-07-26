@@ -92,7 +92,7 @@ function Index() {
     }
   }, [router]);
   return (
-    <Stack height={"100vh"} gap={"1px"}>
+    <Stack height={"100vh"} gap={"1px"} width={"clamp(500px, 100%,1280px)"}>
       <Stack zIndex={1} direction={"row"} height={"100%"}>
         <Stack height={"100%"} width="300px" padding={2}>
           <Paper className="flat" sx={{ zIndex: 2, height: "100%" }}>

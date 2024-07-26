@@ -17,6 +17,7 @@ export default function ButtonAccount() {
   let user = getCookie("user");
   if (user) {
     user = JSON.parse(user);
+    console.log(user);
   }
   return (
     <Stack>
@@ -36,11 +37,10 @@ export default function ButtonAccount() {
           <RoutingButton
             Icon={Person}
             path={"/profile"}
-            query={{ section: "dashboard", id: user?.id }}
+            query={{ section: "profile", id: user?.id }}
             title={"User Profile"}
             router={router}
           />
-          {/* <UserChangingPasswordButton router={router} /> */}
           <RoutingButton
             Icon={Password}
             path={"/profile"}

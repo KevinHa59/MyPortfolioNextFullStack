@@ -1,4 +1,11 @@
-import { Button, Paper, Slide, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  Paper,
+  Slide,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { createContext, useEffect, useState } from "react";
 import {
   ArrowRight,
@@ -9,23 +16,19 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
-import Dashboard from "../../components/profile/dashboard";
+import Dashboard from "../../components/profile/profile";
 import ThemeButton from "../../components/widgets/themeButton";
 import ButtonAccount from "../../components/widgets/buttons/button-account";
 import PasswordChange from "../authentication/password-change";
 import Resume from "../../components/profile/resume";
+import Profile from "../../components/profile/profile";
 
 const menu_data = [
-  {
-    Icon: DashboardIcon,
-    title: "Dashboard",
-    param: "dashboard",
-    Comp: <Dashboard />,
-  },
   {
     Icon: People,
     title: "Profile",
     param: "profile",
+    Comp: <Profile />,
   },
   {
     Icon: Article,
@@ -63,11 +66,11 @@ export default function Index() {
           },
         });
       } else if (section === undefined) {
-        setSection("dashboard");
+        setSection(menu_data[0].param);
         router.push({
           pathname: router.pathname,
           query: {
-            section: "dashboard",
+            section: menu_data[0].param,
           },
         });
       }
@@ -93,7 +96,7 @@ export default function Index() {
 
   return (
     <profileContext.Provider value={{ mainData: mainData }}>
-      <Stack height={"100vh"} gap={"1px"}>
+      <Stack height={"100vh"} gap={"1px"} width={"clamp(500px, 100%,1280px)"}>
         <Stack zIndex={1} direction={"row"} height={"100%"}>
           <Stack height={"100%"} width="300px" padding={2}>
             <Paper className="flat" sx={{ zIndex: 2, height: "100%" }}>
@@ -103,7 +106,6 @@ export default function Index() {
           <Stack
             height={"100%"}
             width={"100%"}
-            paddingX={2}
             paddingBottom={"15px"}
             sx={{ overflowY: "auto" }}
           >
@@ -117,7 +119,12 @@ export default function Index() {
               <ThemeButton />
               <ButtonAccount />
             </Stack>
-            <Stack height={"calc(100% - 60px)"} sx={{ overflowY: "auto" }}>
+            <Divider />
+            <Stack
+              height={"calc(100% - 60px)"}
+              sx={{ overflowY: "auto" }}
+              paddingY={2}
+            >
               {menu_data.find((menu) => menu.param === section)?.Comp}
             </Stack>
           </Stack>

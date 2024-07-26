@@ -188,6 +188,7 @@ export default function Resumes({ defaultUser }) {
           >
             {newResumeData.user === null ? (
               <UserSelection
+                defaultUser={defaultUser}
                 users={generalData.users}
                 onChange={(resume) => handleResumeChange(resume)}
                 onClose={() => setIsNewUserOpen(false)}
@@ -273,9 +274,9 @@ function Cell({ row, header, onEdit, onRemoveSuccess }) {
 }
 
 // select user
-function UserSelection({ users, onChange, onClose }) {
+function UserSelection({ users, defaultUser = null, onChange, onClose }) {
   const [input, setInput] = useState({
-    user: null,
+    user: defaultUser,
     title: "",
   });
   const [isCreateResume, setIsCreateResume] = useState(false);
@@ -298,16 +299,21 @@ function UserSelection({ users, onChange, onClose }) {
 
   return (
     <Stack width={"400px"} padding={2} gap={2}>
-      <Autocomplete
-        size="small"
-        value={input.user}
-        options={users}
-        getOptionLabel={(option) =>
-          `${option.firstName} ${option.lastName} - ${option.email}`
-        }
-        onChange={(event, newValue) => handleInputChange({ user: newValue })}
-        renderInput={(params) => <TextField {...params} label="Search User" />}
-      />
+      {defaultUser === null && (
+        <Autocomplete
+          size="small"
+          value={input.user}
+          options={users}
+          getOptionLabel={(option) =>
+            `${option.firstName} ${option.lastName} - ${option.email}`
+          }
+          onChange={(event, newValue) => handleInputChange({ user: newValue })}
+          renderInput={(params) => (
+            <TextField {...params} label="Search User" />
+          )}
+        />
+      )}
+
       <Input
         label={"Resume Title"}
         onChange={(e) => handleInputChange({ title: e.target.value })}

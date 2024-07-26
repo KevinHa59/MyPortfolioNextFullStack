@@ -76,6 +76,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <Stack
+      alignItems={"center"}
       className={settings.theme}
       sx={StyleMode(
         { background: darkStyles.background.default, color: "#abbce0" },
