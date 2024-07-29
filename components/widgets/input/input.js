@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { styles } from "../../../styles/useStyle";
 
 export default function Input({
+  autoComplete = "off",
   id,
   label,
   subLabel,
@@ -46,6 +47,7 @@ export default function Input({
         rows={rows}
         size={size}
         sx={sx_input}
+        autoComplete={autoComplete}
         InputProps={
           type === "password"
             ? {

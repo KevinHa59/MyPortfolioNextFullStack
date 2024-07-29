@@ -1,5 +1,6 @@
 import { Fade, Grid, Paper, Slide, Stack, Typography } from "@mui/material";
 import React from "react";
+import { styles } from "../../../styles/useStyle";
 
 export default function Rows({ data, headers, callback_cell = null }) {
   return (
@@ -23,8 +24,6 @@ export default function Rows({ data, headers, callback_cell = null }) {
                 justifyContent={"center"}
                 sx={{
                   borderRadius: "25px",
-                  // background:
-                  //   index % 2 === 0 ? "transparent" : "rgba(150,150,150,0.2)",
                   ":hover": {
                     background: "rgba(150,150,150,0.1)",
                   },

@@ -14,11 +14,11 @@ const neutral = {
 };
 
 const background = {
-  default: "#221741",
-  paper: "#251f4b",
-  menu: "#1f1d45",
+  default: "#151719",
+  paper: "#1c1e20",
+  menu: "#23262b",
   subMenu: "#241d49",
-  button: "#ff0f50",
+  button: "#fff",
 };
 
 const divider = "#42464e";
@@ -66,8 +66,8 @@ const error = {
 };
 
 const text = {
-  primary: "#e0eaffcc",
-  secondary: "#4A5568",
+  primary: "#ffffff",
+  secondary: "#ffffffE6",
   white: "#fff",
   black: "#000",
   disabled: "rgba(0, 0, 0, 0.48)",
@@ -113,11 +113,11 @@ export const darkThemeOptions = {
             background: `rgba(200,200,200,0.1)`,
           },
           "&.MuiButton-containedPrimary": {
-            color: text.white,
+            color: text.black,
             boxShadow: `${background.button}cc`,
             background: background.button,
             "&:hover": {
-              color: text.white,
+              color: text.black,
               background: `${background.button}cc`,
             },
           },
@@ -416,7 +416,7 @@ export const darkThemeOptions = {
         root: {
           color: text.primary,
           background: `${background.paper}`,
-          backdropFilter: "blur(5px)",
+          // backdropFilter: "blur(5px)",
           "&.normal": {
             boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
           },

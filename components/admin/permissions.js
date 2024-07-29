@@ -24,6 +24,7 @@ import ButtonLoading from "../widgets/buttons/button-loading";
 import { mainContext } from "../../pages/_app";
 import { getCookie, getCookies } from "cookies-next";
 import { AdminPanelSettings, Save } from "@mui/icons-material";
+import Table from "../widgets/tables/table";
 
 export default function Permissions() {
   const router = useRouter();
@@ -253,54 +254,19 @@ export default function Permissions() {
                   sx={{ overflowY: "auto" }}
                 >
                   {selectedUserType ? (
-                    data.pages?.map((page, index) => {
-                      const existPage = selectedUserType.pages.find(
-                        (_page) => _page.id === page.id
-                      );
-                      const isChecked = existPage !== undefined;
-                      return (
-                        <Slide
-                          key={index}
-                          in={true}
-                          direction="right"
-                          style={{ transitionDelay: index * 100 }}
-                        >
-                          <Stack width={"100%"}>
-                            <Stack
-                              direction={"row"}
-                              width={"100%"}
-                              sx={{
-                                alignItems: "center",
-                              }}
-                            >
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    defaultChecked={isChecked}
-                                    className="pageItem"
-                                    data-page={JSON.stringify({
-                                      defaultChecked: isChecked,
-                                      id: page.id,
-                                      linkID: isChecked
-                                        ? existPage.linkID
-                                        : null,
-                                    })}
-                                  />
-                                }
-                                label={page.path}
-                                sx={{ width: "40%" }}
-                              />
-                              <Typography sx={{ width: "60%" }}>
-                                {page.description}
-                              </Typography>
-                            </Stack>
-                            {index < data.pages.length - 1 && (
-                              <Divider flexItem />
-                            )}
-                          </Stack>
-                        </Slide>
-                      );
-                    })
+                    <Table
+                      isLoading={isGettingData}
+                      data={data.pages}
+                      headers={headers}
+                      callback_cell={(row, key) => (
+                        <Cell
+                          row={row}
+                          header={key}
+                          pages={data.pages}
+                          selectedUserType={selectedUserType}
+                        />
+                      )}
+                    />
                   ) : (
                     <Typography textAlign={"center"}>
                       No UserType Selected
@@ -315,3 +281,49 @@ export default function Permissions() {
     </Stack>
   );
 }
+function Cell({ row, header, selectedUserType }) {
+  if (header === "path") {
+    const existPage = selectedUserType.pages.find(
+      (_page) => _page.id === row.id
+    );
+    const isChecked = existPage !== undefined;
+    return (
+      <Stack
+        direction={"row"}
+        width={"100%"}
+        sx={{
+          alignItems: "center",
+        }}
+      >
+        <FormControlLabel
+          control={
+            <Checkbox
+              defaultChecked={isChecked}
+              className="pageItem"
+              data-page={JSON.stringify({
+                defaultChecked: isChecked,
+                id: row.id,
+                linkID: isChecked ? existPage.linkID : null,
+              })}
+            />
+          }
+          label={row.path}
+          sx={{ width: "40%" }}
+        />
+      </Stack>
+    );
+  } else return row[header];
+}
+
+const headers = [
+  {
+    name: "Path",
+    key: "path",
+    xs: 5,
+  },
+  {
+    name: "Description",
+    key: "description",
+    xs: 7,
+  },
+];

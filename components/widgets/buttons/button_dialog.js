@@ -69,7 +69,7 @@ export default function ButtonDialog({
       )}
       <Dialog
         sx={sx_dialog}
-        PaperProps={{ className: "bgt60", ...paperProps }}
+        PaperProps={{ ...paperProps }}
         open={!isCloseOnClickOut ? open : isOpen}
         onClose={() => (isCloseOnClickOut ? handleOpen(false) : null)}
       >

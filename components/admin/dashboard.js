@@ -131,11 +131,11 @@ export default function Dashboard() {
 
 function StatsItem({ index = 0, title, value }) {
   return (
-    <Grid item xs={3}>
+    <Grid item xs={6}>
       <Zoom in={true} style={{ transitionDelay: index * 50 }}>
         <Paper
           // className="normal"
-          variant="outlined"
+          // variant="outlined"
           sx={{ overflow: "hidden" }}
         >
           <Stack
