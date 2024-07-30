@@ -32,8 +32,8 @@ const menu_data = [
   },
   {
     Icon: Article,
-    title: "Resume",
-    param: "resume",
+    title: "My Resumes",
+    param: "myResumes",
     Comp: <Resume />,
   },
   {
@@ -96,7 +96,7 @@ export default function Index() {
 
   return (
     <profileContext.Provider value={{ mainData: mainData }}>
-      <Stack height={"100vh"} gap={"1px"} width={"clamp(500px, 100%,1280px)"}>
+      <Stack height={"100vh"} gap={"1px"} width={"clamp(500px, 100%,100%)"}>
         <Stack zIndex={1} direction={"row"} height={"100%"}>
           <Stack height={"100%"} width="300px" padding={2}>
             <Paper className="flat" sx={{ zIndex: 2, height: "100%" }}>

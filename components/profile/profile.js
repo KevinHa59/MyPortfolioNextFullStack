@@ -30,20 +30,21 @@ import Link from "next/link";
 
 export default function Profile() {
   const { mainData } = useContext(profileContext);
+  console.log(mainData.user);
   const [isDelaying, startDelay] = useDelay(500);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [profileData, setProfileData] = useState({
     basic: {
-      email: "",
-      cellPhone: "",
-      dob: "",
+      email: mainData.user.email,
+      cellPhone: mainData.user.cellPhone,
+      dob: mainData.user.dob,
     },
     address: {
-      address: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
+      address: mainData.user.address,
+      city: mainData.user.city,
+      state: mainData.user.state,
+      zipCode: mainData.user.zipCode,
+      country: mainData.user.country,
     },
   });
   const [addresses, setAddresses] = useState(null);
@@ -104,7 +105,9 @@ export default function Profile() {
         paddingX={2}
         position={"relative"}
       >
-        <Paper sx={{ width: "50%", height: "max-content" }}>
+        <Paper
+          sx={{ minWidth: "clamp(300px, 30vw, 400px)", height: "max-content" }}
+        >
           <Stack padding={1}>
             <Stack height={"300px"}>
               <Stack
@@ -126,12 +129,12 @@ export default function Profile() {
             <Divider />
 
             <Stack gap={2} sx={{ padding: 2 }}>
-              <Input label={"Email"} value={mainData.user.email} />
-              <Input label={"Cell Phone"} value={mainData.user.cellPhone} />
+              <Input label={"Email"} value={profileData.basic.email} />
+              <Input label={"Cell Phone"} value={profileData.basic.cellPhone} />
               <Input
                 type={"date"}
                 label={"Date of Birth"}
-                value={mainData.user.dob.split("T")[0]}
+                value={profileData.basic.dob.split("T")[0]}
               />
               <Stack direction={"row"} justifyContent={"flex-end"}>
                 <Button variant="contained">Save</Button>
@@ -139,8 +142,8 @@ export default function Profile() {
             </Stack>
           </Stack>
         </Paper>
-        <Stack gap={2} height={"50%"} alignItems={"center"}>
-          <Paper sx={{ padding: 2, width: "100%" }}>
+        <Stack gap={5} height={"50%"} alignItems={"center"} width={"100%"}>
+          <Paper sx={{ padding: 3, width: "100%" }}>
             <Stack gap={2}>
               <Stack gap={1}>
                 <Stack position={"relative"}>
@@ -214,7 +217,7 @@ export default function Profile() {
               </Stack>
             </Stack>
           </Paper>
-          <Paper sx={{ padding: 2, width: "100%" }}>
+          <Paper sx={{ padding: 3, width: "100%" }}>
             <Stack gap={2}>
               <Input
                 inputProps={{
