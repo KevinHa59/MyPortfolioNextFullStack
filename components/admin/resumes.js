@@ -34,7 +34,7 @@ import {
   useTheme,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ButtonDialog from "../widgets/buttons/button_dialog";
 import Summary from "./resumes/summary";
 import Education from "./resumes/education";
@@ -53,6 +53,9 @@ import MyAPIs from "../../pages/api-functions/MyAPIs";
 import Table from "../widgets/tables/table";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import Header from "./header";
+import { ResumeIcon } from "../../icons/resume";
+import Link from "next/link";
+import { asyncNoteContext } from "../widgets/notification/async-notification";
 
 const resume_template = {
   user: null,
@@ -110,8 +113,9 @@ const userHeaders = [
     align: "right",
   },
 ];
-
 export default function Resumes({ defaultUser }) {
+  const { addNote } = useContext(asyncNoteContext);
+  const [isInit, setIsInit] = useState(true);
   const [generalData, setGeneralData] = useState({
     users: [],
     resumes: [],
@@ -120,24 +124,29 @@ export default function Resumes({ defaultUser }) {
   const [isNewUserOpen, setIsNewUserOpen] = useState(false);
   const [newResumeData, setNewResumeData] = useState(resume_template);
   const [tableHeader, setTableHeader] = useState(headers);
+
   useEffect(() => {
-    initData();
-  }, []);
+    if (isInit === true) {
+      initData();
+    }
+  }, [isInit]);
 
   const initData = async () => {
     setIsGettingData(true);
     const APIs = [MyAPIs.User().getUsers(), MyAPIs.Resume().getResumes()];
+
     const res = await axios.all(APIs);
-    let _resumes = res[1];
+    let _resumes = res[1].data;
     if (defaultUser) {
       _resumes = _resumes.filter((res) => res.user.id === defaultUser.id);
       setTableHeader(userHeaders);
     }
     handleUpdateGeneralData({
-      users: res[0],
+      users: res[0].data,
       resumes: _resumes,
     });
     setIsGettingData(false);
+    setIsInit(false);
   };
 
   const handleUpdateGeneralData = (newValue) => {
@@ -150,8 +159,9 @@ export default function Resumes({ defaultUser }) {
   };
 
   // update newResumeData onChange
-  const handleResumeChange = (newValue) => {
-    initData();
+  const handleResumeChange = (newValue, isRefresh = true) => {
+    console.log(isRefresh);
+    isRefresh && initData();
     setNewResumeData((prev) => {
       return {
         ...prev,
@@ -166,9 +176,20 @@ export default function Resumes({ defaultUser }) {
     setIsNewUserOpen(true);
   };
 
+  const handleRemoveResume = async (id) => {
+    setIsNewUserOpen(false);
+    handleResumeChange(resume_template);
+    // setIsRemoving(true);
+    // const res = await MyAPIs.Resume().deleteResumeByID(id);
+    // if (res) {
+    //   setOpen(false);
+    // }
+    // setIsRemoving(false);
+  };
+
   return (
     <Stack width={"100%"} height={"100%"} gap={"1px"}>
-      <Header title={"Resume"} icon={<Article />}>
+      <Header title={"My Resumes"} icon={<Article />}>
         <Stack direction={"row"} gap={1}>
           <ButtonDialog
             paperProps={{
@@ -197,9 +218,10 @@ export default function Resumes({ defaultUser }) {
               <ResumeCreator
                 data={newResumeData}
                 onRefresh={initData}
+                onDelete={() => handleRemoveResume(newResumeData.id)}
                 onClose={() => {
                   setIsNewUserOpen(false);
-                  handleResumeChange(resume_template);
+                  handleResumeChange(resume_template, false);
                 }}
               />
             )}
@@ -213,21 +235,59 @@ export default function Resumes({ defaultUser }) {
           overflow: "hidden",
         }}
       >
-        <Table
-          isLoading={isGettingData}
-          data={generalData?.resumes}
-          headers={tableHeader}
-          callback_cell={(row, key) => (
-            <Cell
-              row={row}
-              header={key}
-              onEdit={() => handleEditResume(row)}
-              onRemoveSuccess={initData}
-            />
-          )}
-        />
+        {defaultUser ? (
+          <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
+            {generalData?.resumes.map((re, index) => {
+              return (
+                <ResumeCard
+                  key={index}
+                  data={re}
+                  onEdit={() => handleEditResume(re)}
+                />
+              );
+            })}
+          </Stack>
+        ) : (
+          <Table
+            isLoading={isGettingData}
+            data={generalData?.resumes}
+            headers={tableHeader}
+            callback_cell={(row, key) => (
+              <Cell
+                row={row}
+                header={key}
+                onEdit={() => handleEditResume(row)}
+                onRemoveSuccess={initData}
+              />
+            )}
+          />
+        )}
       </Stack>
     </Stack>
+  );
+}
+
+function ResumeCard({ data, onEdit }) {
+  return (
+    <Button onClick={onEdit}>
+      <Stack
+        alignItems={"center"}
+        width={"clamp(100px, 10vw, 300px)"}
+        height="100%"
+        sx={{ aspectRatio: "1/1" }}
+      >
+        <Stack alignItems={"center"}>
+          <ResumeIcon
+            sx={{
+              width: "80%",
+              height: "100%",
+              aspectRatio: "0.8/1",
+            }}
+          />
+        </Stack>
+        <Typography variant="body2">{data.title}</Typography>
+      </Stack>
+    </Button>
   );
 }
 
@@ -390,7 +450,7 @@ const steps = [
   },
 ];
 
-function ResumeCreator({ data, onRefresh, onClose }) {
+function ResumeCreator({ data, onRefresh, onDelete, onClose }) {
   const [step, setStep] = useState(steps[0]);
   return (
     <Stack direction={"row"} height={"calc(100vh - 120px)"} padding={2}>
@@ -411,10 +471,13 @@ function ResumeCreator({ data, onRefresh, onClose }) {
         </Stack>
 
         <Stack
-          height={"100%"}
+          height={"calc(100% - 100px)"}
           gap={1}
           padding={2}
-          sx={{ overflowY: "auto", overflowX: "hidden" }}
+          sx={{
+            overflowY: "auto",
+            overflowX: "hidden",
+          }}
         >
           {steps.map((_step, index) => {
             return (
@@ -446,6 +509,23 @@ function ResumeCreator({ data, onRefresh, onClose }) {
             );
           })}
         </Stack>
+        {data.id && (
+          <>
+            <Divider />
+            <ButtonDialogConfirm
+              size={"small"}
+              className="br0"
+              fullWidth
+              color="error"
+              dialog_color={"error"}
+              dialog_title={"Delete Resume"}
+              dialog_message={"Are You Sure?"}
+              onConfirm={onDelete}
+            >
+              Delete Resume
+            </ButtonDialogConfirm>
+          </>
+        )}
       </Paper>
       <Stack minWidth={"1000px"} height={"100%"}>
         <Stack

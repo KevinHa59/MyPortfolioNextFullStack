@@ -9,6 +9,7 @@ import { getCookie, getCookies, setCookie } from "cookies-next";
 import { StyleMode } from "../styles/useStyle";
 import { darkStyles } from "../theme/dark-theme-options";
 import { lightStyles } from "../theme/light-theme-options";
+import AsyncNotification from "../components/widgets/notification/async-notification";
 
 export const mainContext = createContext(null);
 
@@ -101,7 +102,9 @@ function MyApp({ Component, pageProps }) {
           })}
         >
           <CssBaseline />
-          <Component {...pageProps} />
+          <AsyncNotification>
+            <Component {...pageProps} />
+          </AsyncNotification>
           <Notification
             note={note.message}
             type={note.type}

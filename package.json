@@ -29,12 +29,14 @@
     "lodash": "^4.17.21",
     "mongodb": "^6.7.0",
     "next": "13.4.13",
+    "next-js-app": "file:",
     "prisma": "^5.16.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
-    "styled-components": "^5.3.11"
+    "styled-components": "^5.3.11",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21"

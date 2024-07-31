@@ -31,6 +31,7 @@ import PaperForm from "../widgets/paper/paper-form";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import Table from "../widgets/tables/table";
 import Input from "../widgets/input/Input";
+import MyAPIs from "../../pages/api-functions/MyAPIs";
 
 export default function UserTypes() {
   const [userTypes, setUserTypes] = useState([]);
@@ -43,7 +44,7 @@ export default function UserTypes() {
 
   // get data
   async function initData() {
-    const data = await getUserTypes(true);
+    const data = await MyAPIs.User().getUserTypes(true);
     setIsGettingData(false);
     setUserTypes(data);
   }
@@ -264,7 +265,10 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
     const errors = validateInput(null, input.type, input.description);
     setInputErrors(errors);
     if (errors.length === 0) {
-      const res = await createUserType(input.type, input.description);
+      const res = await MyAPIs.User().createUserType(
+        input.type,
+        input.description
+      );
       onCreateSuccess && onCreateSuccess();
       handleInputChange({ type: "", description: "" });
     }
@@ -282,7 +286,7 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
     );
     setInputErrors(errors);
     if (errors.length === 0) {
-      const res = await updateUserType(
+      const res = await MyAPIs.User().updateUserType(
         input.id,
         input.type,
         input.description,
@@ -368,33 +372,4 @@ function validateInput(id = null, type, desc, isNew = true) {
     errors.push("Type is missing");
   }
   return errors;
-}
-
-// handle get user types data
-async function getUserTypes(isUserIncluding = false) {
-  try {
-    const res = await UsersAPI.getUserTypes(isUserIncluding);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// handle create new user type
-async function createUserType(type, description) {
-  try {
-    const res = await UsersAPI.createUserType(type, description);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
-}
-// handle update user type
-async function updateUserType(id, type, description, color) {
-  try {
-    const res = await UsersAPI.updateUserType(id, type, description, color);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
 }

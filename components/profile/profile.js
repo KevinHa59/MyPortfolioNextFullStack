@@ -30,7 +30,7 @@ import Link from "next/link";
 
 export default function Profile() {
   const { mainData } = useContext(profileContext);
-  console.log(mainData.user);
+
   const [isDelaying, startDelay] = useDelay(500);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [profileData, setProfileData] = useState({

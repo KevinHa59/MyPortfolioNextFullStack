@@ -64,7 +64,6 @@ export default function Summary({ data, step, onChange }) {
       MyAPIs.User().updateUser(userInfo),
     ];
     const res = await axios.all(APIs);
-    console.log(res);
     setIsSaving(false);
   };
 

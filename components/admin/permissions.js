@@ -49,22 +49,24 @@ export default function Permissions() {
     ];
     const res = await axios.all(APIs);
     if (router.query.user_type) {
-      const _type = res[0]?.find((item) => item.id === router.query.user_type);
+      const _type = res[0]?.data?.find(
+        (item) => item.id === router.query.user_type
+      );
       if (_type) {
         setSelectedUserType(_type);
       } else {
         handleRoute(null);
       }
     } else {
-      if (res[0]?.length > 0) {
-        const _type = res[0][0];
+      if (res[0]?.data?.length > 0) {
+        const _type = res[0]?.data[0];
         setSelectedUserType(_type);
         handleRoute(_type.id);
       }
     }
     setIsGettingData(false);
     handleUpdateData({
-      userTypes: res[0],
+      userTypes: res[0]?.data,
       pages: res[1],
     });
   }
@@ -129,7 +131,7 @@ export default function Permissions() {
       APIs.push(MyAPIs.Permission().createPermissions(newLinks));
     }
     if (removeLinks.length > 0) {
-      APIs.push(MyAPIs.Permission().deletePage(removeLinks));
+      APIs.push(MyAPIs.Permission().deletePermissions(removeLinks));
     }
 
     try {

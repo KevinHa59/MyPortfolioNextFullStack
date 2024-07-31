@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import React, { useState } from "react";
 import UsersAPI from "../../pages/api-functions/UsersAPI";
+import MyAPIs from "../../pages/api-functions/MyAPIs";
 
 export default function LoginBox() {
   const [section, setSection] = useState(0);
@@ -168,7 +169,7 @@ function CreateAccountSection({ isActive }) {
     });
   };
 
-  const handleCreateAccount = () => {
+  const handleCreateAccount = async () => {
     const errors = verifyNewUser(
       input.email,
       input.confirmEmail,
@@ -180,7 +181,7 @@ function CreateAccountSection({ isActive }) {
     );
     setInputErrors(errors);
     if (errors.length === 0) {
-      createUser(
+      const res = await MyAPIs.User().createUser(
         input.email,
         input.firstName,
         input.lastName,
@@ -325,27 +326,4 @@ function verifyNewUser(
   }
 
   return errors;
-}
-
-async function createUser(
-  email,
-  firstName,
-  lastName,
-  dob,
-  password,
-  userTypeID
-) {
-  try {
-    const res = UsersAPI.createUser(
-      email,
-      firstName,
-      lastName,
-      dob,
-      password,
-      userTypeID
-    );
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
 }

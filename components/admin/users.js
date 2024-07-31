@@ -58,8 +58,8 @@ export default function Users() {
 
   async function initData() {
     setIsGettingData(true);
-    let data = await getUsers();
-    data = data?.map((user) => {
+    let data = await MyAPIs.User().getUsers();
+    data = data.data?.map((user) => {
       const _userType = { ...user.userType };
       return {
         ...user,
@@ -72,7 +72,7 @@ export default function Users() {
   }
 
   async function getAllUserTypes() {
-    const res = await getUserTypes();
+    const res = await MyAPIs.User().getUserTypes();
     setUserTypes(res);
   }
 
@@ -160,7 +160,7 @@ function Cell({ row, header, onEdit, onRefresh }) {
     });
   } else if (header === "actions") {
     const handleRemoveUser = async () => {
-      const res = await removeUsers(row["id"]);
+      const res = await MyAPIs.User().removeUserByID(row["id"]);
       onRemoveSuccess && onRemoveSuccess();
     };
     return (
@@ -434,7 +434,7 @@ function PasswordChangeButton({ user }) {
       user.email,
       input.currentPassword
     );
-    if (verifyPassword !== undefined) {
+    if (verifyPassword.data !== undefined) {
       if (input.password.length < 8) {
         _errors.push("Password must contains at least 8 characters");
       }
@@ -534,7 +534,7 @@ function TokenButton({ user, onRefresh }) {
     setIsGenerateToken(true);
     const res = await MyAPIs.User().generateToken(user.email);
 
-    if (res !== undefined) {
+    if (res.data !== undefined) {
       onRefresh && onRefresh();
     }
     setIsGenerateToken(false);
@@ -642,34 +642,4 @@ function verifyNewUser(
   }
 
   return errors;
-}
-
-// handle get user types data
-async function getUserTypes(isUserIncluding = false) {
-  try {
-    const res = await UsersAPI.getUserTypes(isUserIncluding);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// get all users
-async function getUsers() {
-  try {
-    const res = await UsersAPI.getUsers();
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// remove user
-async function removeUsers(id) {
-  try {
-    const res = await UsersAPI.deleteUserByID(id);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
 }

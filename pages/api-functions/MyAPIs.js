@@ -8,7 +8,7 @@ class MyAPIs {
       getResumes: async (isQuantity = false) => {
         try {
           const res = await ResumesAPI.getResumes(isQuantity);
-          return res?.data || [];
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -16,7 +16,7 @@ class MyAPIs {
       getResumeByID: async (id) => {
         try {
           const res = await ResumesAPI.getResumeByID(id);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -24,7 +24,7 @@ class MyAPIs {
       updateResume: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResume(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -32,7 +32,7 @@ class MyAPIs {
       updateResumeEducation: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeEducation(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -40,7 +40,7 @@ class MyAPIs {
       updateResumeCertification: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeCertification(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -48,7 +48,7 @@ class MyAPIs {
       updateResumeSkill: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeSkill(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -56,7 +56,7 @@ class MyAPIs {
       updateResumeProject: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeProject(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -64,7 +64,7 @@ class MyAPIs {
       updateResumeWork: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeWork(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -72,7 +72,7 @@ class MyAPIs {
       deleteResumeWork: async (id) => {
         try {
           const res = await ResumesAPI.deleteResumeWork(id);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -80,7 +80,7 @@ class MyAPIs {
       updateResumeVolunteer: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeVolunteer(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -88,7 +88,7 @@ class MyAPIs {
       deleteResumeVolunteer: async (id) => {
         try {
           const res = await ResumesAPI.deleteResumeVolunteer(id);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -96,7 +96,7 @@ class MyAPIs {
       updateResumeAward: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeAward(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -104,7 +104,7 @@ class MyAPIs {
       deleteResumeAward: async (id) => {
         try {
           const res = await ResumesAPI.deleteResumeAward(id);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -112,7 +112,7 @@ class MyAPIs {
       updateResumeLanguage: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeLanguage(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -120,7 +120,7 @@ class MyAPIs {
       deleteResumeLanguage: async (id) => {
         try {
           const res = await ResumesAPI.deleteResumeLanguage(id);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -128,7 +128,7 @@ class MyAPIs {
       updateResumeHobby: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeHobby(id, data);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -136,7 +136,7 @@ class MyAPIs {
       deleteResumeHobby: async (id) => {
         try {
           const res = await ResumesAPI.deleteResumeHobby(id);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -144,7 +144,7 @@ class MyAPIs {
       deleteResumeByID: async (id) => {
         try {
           const res = await ResumesAPI.deleteResumeByID(id);
-          return res?.data;
+          return res;
         } catch (error) {
           console.error(error);
         }
@@ -156,7 +156,7 @@ class MyAPIs {
       getUsers: async (isQuantity = false) => {
         try {
           const res = await UsersAPI.getUsers(isQuantity);
-          return res?.data || [];
+          return res;
         } catch (error) {}
       },
       getUserTypes: async (
@@ -170,8 +170,29 @@ class MyAPIs {
             isPageIncluding,
             isQuantity
           );
-          return res?.data || [];
+          return res;
         } catch (error) {}
+      },
+      createUserType: async (type, description) => {
+        try {
+          const res = await UsersAPI.createUserType(type, description);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      updateUserType: async (id, type, description, color) => {
+        try {
+          const res = await UsersAPI.updateUserType(
+            id,
+            type,
+            description,
+            color
+          );
+          return res.data;
+        } catch (error) {
+          console.error(error);
+        }
       },
       createUser: async (
         email,
@@ -190,7 +211,7 @@ class MyAPIs {
             password,
             userTypeID
           );
-          return res?.data;
+          return res;
         } catch (error) {}
       },
       updateUser: async (userInfo) => {
@@ -215,7 +236,7 @@ class MyAPIs {
             userInfo.instagram,
             userInfo.portfolio
           );
-          return res?.data;
+          return res;
         } catch (error) {
           return error.response;
         }
@@ -223,19 +244,27 @@ class MyAPIs {
       getUserByID: async (id) => {
         try {
           const res = await UsersAPI.getUserByID(id);
-          return res?.data;
+          return res;
         } catch (error) {}
+      },
+      removeUserByID: async (id) => {
+        try {
+          const res = await UsersAPI.deleteUserByID(id);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
       },
       login: async (email, password) => {
         try {
           const res = await UsersAPI.login(email, password);
-          return res?.data;
+          return res;
         } catch (error) {}
       },
       updatePassword: async (email, password) => {
         try {
           const res = await UsersAPI.updatePassword(email, password);
-          return res?.data;
+          return res;
         } catch (error) {
           return error.response;
         }
@@ -243,7 +272,7 @@ class MyAPIs {
       generateToken: async (email) => {
         try {
           const res = await UsersAPI.generateToken(email);
-          return res?.data;
+          return res;
         } catch (error) {}
       },
       refreshToken: async () => {
@@ -266,25 +295,25 @@ class MyAPIs {
       getPages: async (isUserTypeIncluding = false, isQuantity = false) => {
         try {
           const res = await PagesAPI.getPages(isUserTypeIncluding, isQuantity);
-          return res?.data || [];
+          return res;
         } catch (error) {}
       },
       createPages: async (pages) => {
         try {
           const res = await PagesAPI.createPages(pages);
-          return res?.data || [];
+          return res;
         } catch (error) {}
       },
       savePage: async (path, description, id) => {
         try {
           const res = await PagesAPI.savePage(path, description, id);
-          return res?.data || [];
+          return res;
         } catch (error) {}
       },
       deletePage: async (id) => {
         try {
           const res = await PagesAPI.deletePage(id);
-          return res || [];
+          return res;
         } catch (error) {
           return error.response;
         }
@@ -296,25 +325,25 @@ class MyAPIs {
       getPermissionsByUserType: async (userTypeID) => {
         try {
           const res = await PermissionsAPI.getPermissionsByUserType(userTypeID);
-          return res?.data || [];
+          return res;
         } catch (error) {}
       },
       getPermissionsByPage: async (pageID) => {
         try {
           const res = await PermissionsAPI.getPermissionsByPage(pageID);
-          return res?.data || [];
+          return res;
         } catch (error) {}
       },
       createPermissions: async (links) => {
         try {
           const res = await PermissionsAPI.createPermissions(links);
-          return res?.data || [];
+          return res;
         } catch (error) {}
       },
-      deletePage: async (ids) => {
+      deletePermissions: async (ids) => {
         try {
           const res = await PermissionsAPI.deletePermissions(ids);
-          return res?.data || [];
+          return res;
         } catch (error) {}
       },
     };

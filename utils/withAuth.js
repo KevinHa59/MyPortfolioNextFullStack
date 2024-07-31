@@ -58,7 +58,7 @@ const withAuth = (WrappedComponent) => {
         const pages = await MyAPIs.Permission().getPermissionsByUserType(
           userTypeID
         );
-        if (pages?.some((page) => page.path === router.pathname)) {
+        if (pages?.data?.some((page) => page.path === router.pathname)) {
           setIsLoading(false);
         } else {
           localStorage.setItem("redirectPath", router.asPath);

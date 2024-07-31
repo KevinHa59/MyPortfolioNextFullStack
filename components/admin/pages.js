@@ -356,7 +356,7 @@ function EditButton({ data, pages, onRefresh }) {
       input.description,
       input.id
     );
-    if (res) {
+    if (res.data) {
       onRefresh && onRefresh();
       setIsOpen(false);
     }

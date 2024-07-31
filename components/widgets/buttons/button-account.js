@@ -17,7 +17,6 @@ export default function ButtonAccount() {
   let user = getCookie("user");
   if (user) {
     user = JSON.parse(user);
-    console.log(user);
   }
   return (
     <Stack>

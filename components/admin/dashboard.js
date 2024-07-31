@@ -47,10 +47,10 @@ export default function Dashboard() {
     ];
     const res = await axios.all(APIs);
     handleUpdateStatistic({
-      users: res[0],
-      userTypes: res[1],
-      pages: res[2],
-      resumes: res[3],
+      users: res[0].data || [],
+      userTypes: res[1].data || [],
+      pages: res[2].data || [],
+      resumes: res[3].data || [],
     });
     setIsGettingData(false);
   };

@@ -17,6 +17,7 @@ export default function ButtonDialogConfirm({
   color,
   startIcon,
   variant,
+  className,
   sx,
   dialog_title,
   dialog_message,
@@ -47,6 +48,7 @@ export default function ButtonDialogConfirm({
         color={color}
         variant={variant}
         startIcon={startIcon}
+        className={className}
         sx={{ ...sx }}
         isLoading={isLoading}
         onClick={() => {
