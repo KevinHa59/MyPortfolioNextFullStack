@@ -38,8 +38,8 @@ export default function Award({ data, step, onChange }) {
   const [input, setInput] = useState([award_template]);
   const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
-    if (data?.awards?.length > 0) {
-      setInput(data?.awards);
+    if (data?.length > 0) {
+      setInput(data);
     }
   }, [data]);
 

@@ -38,8 +38,8 @@ export default function Certification({ data, step, onChange }) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (data.certifications?.length > 0) {
-      setInput(data.certifications);
+    if (data?.length > 0) {
+      setInput(data);
     }
   }, [data]);
 

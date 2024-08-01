@@ -25,8 +25,8 @@ export default function Language({ data, step, onRefresh, onChange }) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (data?.languages?.length > 0) {
-      setInput(data?.languages);
+    if (data?.length > 0) {
+      setInput(data);
     }
   }, [data]);
 

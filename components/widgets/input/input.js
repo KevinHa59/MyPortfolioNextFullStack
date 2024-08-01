@@ -28,7 +28,9 @@ export default function Input({
   return (
     <Stack sx={sx}>
       <Stack direction={"row"} paddingX={1} gap={1} sx={{ opacity: 0.7 }}>
-        <Typography variant="body2">{label}</Typography>
+        <Typography variant="body2" sx={{ whiteSpace: "nowrap" }}>
+          {label}
+        </Typography>
         <Typography variant="body2" fontStyle={"italic"}>
           {subLabel}
         </Typography>

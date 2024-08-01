@@ -66,7 +66,7 @@ const error = {
 };
 
 const text = {
-  primary: "#ffffff",
+  primary: "#d6d6d6",
   secondary: "#ffffffE6",
   white: "#fff",
   black: "#000",
@@ -245,6 +245,7 @@ export const darkThemeOptions = {
     MuiInputBase: {
       styleOverrides: {
         input: {
+          color: text.primary,
           "&:placeholder": {
             opacity: 1,
             color: text.primary,
@@ -252,7 +253,6 @@ export const darkThemeOptions = {
         },
         root: {
           color: text.primary,
-          borderRadius: 0,
         },
       },
     },

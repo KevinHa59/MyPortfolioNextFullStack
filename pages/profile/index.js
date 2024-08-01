@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import React, { createContext, useEffect, useState } from "react";
 import {
+  Add,
   ArrowRight,
   Article,
   Dashboard as DashboardIcon,
@@ -22,6 +23,7 @@ import ButtonAccount from "../../components/widgets/buttons/button-account";
 import PasswordChange from "../authentication/password-change";
 import Resume from "../../components/profile/resume";
 import Profile from "../../components/profile/profile";
+import NewResume from "../../components/profile/new-resume";
 
 const menu_data = [
   {
@@ -32,9 +34,22 @@ const menu_data = [
   },
   {
     Icon: Article,
-    title: "My Resumes",
-    param: "myResumes",
-    Comp: <Resume />,
+    title: "Resumes",
+    param: "resumes",
+    Sub: [
+      {
+        Icon: Add,
+        title: "New Resume",
+        param: "newResume",
+        Comp: <NewResume />,
+      },
+      {
+        Icon: Article,
+        title: "My Resumes",
+        param: "myResumes",
+        Comp: <Resume />,
+      },
+    ],
   },
   {
     Icon: Password,
@@ -44,6 +59,20 @@ const menu_data = [
   },
 ];
 
+function findComponentByParam(menu, param) {
+  let result = null;
+  menu.forEach((comp) => {
+    if (comp.param === param && result === null) {
+      result = comp;
+    } else {
+      if (comp.Sub && result === null) {
+        result = findComponentByParam(comp.Sub, param);
+      }
+    }
+  });
+  return result;
+}
+
 export const profileContext = createContext(null);
 
 export default function Index() {
@@ -52,20 +81,25 @@ export default function Index() {
   const [mainData, setMainData] = useState({
     user: null,
   });
+  const [selectedComponent, setSelectedComponent] = useState(null);
   useEffect(() => {
     const _section = router.query.section;
 
     if (router.isReady === true) {
       initData();
       if (_section && _section !== section) {
+        const comp = findComponentByParam(menu_data, _section);
+        setSelectedComponent(comp);
         setSection(_section);
         router.push({
           pathname: router.pathname,
           query: {
+            ...router.query,
             section: _section,
           },
         });
       } else if (section === undefined) {
+        setSelectedComponent(menu_data[0]);
         setSection(menu_data[0].param);
         router.push({
           pathname: router.pathname,
@@ -77,7 +111,7 @@ export default function Index() {
     }
   }, [router]);
 
-  function initData() {
+  async function initData() {
     let userData = getCookie("user");
     if (userData) {
       userData = JSON.parse(userData);
@@ -96,11 +130,11 @@ export default function Index() {
 
   return (
     <profileContext.Provider value={{ mainData: mainData }}>
-      <Stack height={"100vh"} gap={"1px"} width={"clamp(500px, 100%,100%)"}>
+      <Stack height={"100vh"} gap={"1px"} width={"clamp(500px, 100%, 100%)"}>
         <Stack zIndex={1} direction={"row"} height={"100%"}>
           <Stack height={"100%"} width="300px" padding={2}>
             <Paper className="flat" sx={{ zIndex: 2, height: "100%" }}>
-              <Menu />
+              <Menu onSelect={setSelectedComponent} />
             </Paper>
           </Stack>
           <Stack
@@ -122,10 +156,13 @@ export default function Index() {
             <Divider />
             <Stack
               height={"calc(100% - 60px)"}
-              sx={{ overflowY: "auto" }}
+              sx={{
+                overflowY: "auto",
+                scrollBehavior: "smooth",
+              }}
               paddingY={2}
             >
-              {menu_data.find((menu) => menu.param === section)?.Comp}
+              {selectedComponent?.Comp}
             </Stack>
           </Stack>
         </Stack>
@@ -134,7 +171,7 @@ export default function Index() {
   );
 }
 
-function Menu() {
+function Menu({ onSelect }) {
   const router = useRouter();
 
   const handleRoute = (section) => {
@@ -156,6 +193,7 @@ function Menu() {
       }}
     >
       {menu_data.map((menu, index) => {
+        const subMenu = menu.Sub || null;
         return (
           <Slide
             key={index}
@@ -179,8 +217,12 @@ function Menu() {
                   width: "180px",
                   position: "relative",
                 }}
+                // disabled={subMenu !== null}
                 onClick={() => {
-                  handleRoute(menu.param);
+                  if (subMenu === null) {
+                    handleRoute(menu.param);
+                    onSelect && onSelect(menu);
+                  }
                 }}
               >
                 <Slide
@@ -200,6 +242,52 @@ function Menu() {
                   {menu.title}
                 </Typography>
               </Button>
+              <Stack paddingLeft={"40px"} width={"max-content"} gap={1}>
+                {subMenu?.map((sub, sIndex) => {
+                  return (
+                    <Button
+                      key={sIndex}
+                      color="inherit"
+                      className={
+                        router.query.section === sub.param
+                          ? "active"
+                          : "inactive"
+                      }
+                      sx={{
+                        display: "flex",
+                        gap: 1,
+                        justifyContent: "flex-start",
+                        transition: "ease 0.1s",
+                        width: "100%",
+                        position: "relative",
+                      }}
+                      onClick={() => {
+                        handleRoute(sub.param);
+                        onSelect && onSelect(sub);
+                      }}
+                    >
+                      <Slide
+                        direction="right"
+                        in={router.query.section === sub.param}
+                      >
+                        <ArrowRight
+                          sx={{ position: "absolute", right: "95%" }}
+                        />
+                      </Slide>
+                      {/* <sub.Icon fontSize="15px" /> */}
+                      <Typography
+                        variant="subtitle2"
+                        sx={{
+                          color: "inherit",
+                          fontWeight: "inherit",
+                        }}
+                      >
+                        {sub.title}
+                      </Typography>
+                    </Button>
+                  );
+                })}
+              </Stack>
             </Stack>
           </Slide>
         );

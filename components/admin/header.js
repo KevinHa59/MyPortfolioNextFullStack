@@ -4,9 +4,11 @@ import FormHeader from "../widgets/texts/form-header";
 
 export default function Header({ title, icon, children }) {
   return (
-    <Stack>
+    <Stack width={"100%"}>
       <Stack
         direction={"row"}
+        gap={3}
+        width={"100%"}
         sx={{
           justifyContent: "space-between",
           alignItems: "flex-end",
@@ -19,6 +21,7 @@ export default function Header({ title, icon, children }) {
           direction={"row"}
           gap={1}
           alignItems={"center"}
+          width="max-content"
           sx={{
             position: "relative",
             overflow: "hidden",
@@ -44,7 +47,12 @@ export default function Header({ title, icon, children }) {
             />
           </Slide>
         </Stack>
-        <Stack direction={"row"} gap={1} alignItems={"center"}>
+        <Stack
+          width={"max-content"}
+          direction={"row"}
+          gap={1}
+          alignItems={"center"}
+        >
           {children}
         </Stack>
       </Stack>

@@ -20,7 +20,7 @@ const background = {
   button: "#ff0f50",
 };
 
-const divider = "#2D3748";
+const divider = "#2D37481A";
 
 const primary = {
   main: "#7582EB",
@@ -65,9 +65,9 @@ const error = {
 };
 
 const text = {
-  primary: "#000000cc",
+  primary: "#424242",
   secondary: "#A0AEC0",
-  disabled: "rgba(255, 255, 255, 0.48)",
+  disabled: "rgba(125, 125, 125, 0.7)",
 };
 
 export const lightStyles = {
@@ -209,6 +209,7 @@ export const lightThemeOptions = {
     MuiInputBase: {
       styleOverrides: {
         input: {
+          color: text.primary,
           "&::placeholder": {
             opacity: 1,
             color: text.secondary,
@@ -229,7 +230,7 @@ export const lightThemeOptions = {
           borderColor: divider,
         },
         "&:hover MuiOutlinedInput-notchedOutline": {
-          borderColor: "rgba(120, 120, 120, 1)",
+          borderColor: "rgba(120, 120, 120, 0.2)",
         },
       },
     },

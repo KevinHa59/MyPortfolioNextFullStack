@@ -41,8 +41,8 @@ export default function WorkExperience({ data, step, onRefresh, onChange }) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (data?.workExperience?.length > 0) {
-      const _works = data.workExperience.map((work) => {
+    if (data?.length > 0) {
+      const _works = data.map((work) => {
         return {
           ...work,
           responsibilities: work.responsibilities.join(". "),

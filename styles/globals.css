@@ -4,6 +4,7 @@ body {
   padding: 0;
   margin: 0;
   font-family: "Cairo", sans-serif;
+  scroll-behavior: smooth;
 }
 
 a {
@@ -41,10 +42,12 @@ a {
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+    scroll-behavior: smooth;
   }
   body {
     color: white;
     background: black;
+    scroll-behavior: smooth;
   }
   /* Targeting the input[type="date"] field */
   input[type="date"]::-webkit-calendar-picker-indicator {

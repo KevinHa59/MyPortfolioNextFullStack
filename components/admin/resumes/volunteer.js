@@ -42,8 +42,8 @@ export default function VolunteerExperience({ data, step, onChange }) {
   const [input, setInput] = useState([volunteer_template]);
   const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
-    if (data?.volunteerExperience?.length > 0) {
-      setInput(data?.volunteerExperience);
+    if (data?.length > 0) {
+      setInput(data);
     }
   }, [data]);
 

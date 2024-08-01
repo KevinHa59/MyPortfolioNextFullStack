@@ -12,8 +12,6 @@ import {
 import React, { useEffect, useState } from "react";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
-import { StyleMode } from "../../../styles/useStyle";
-import { darkStyles } from "../../../theme/dark-theme-options";
 
 export default function Hobby({ data, step, onRefresh, onChange }) {
   const [input, setInput] = useState([]);
@@ -21,8 +19,8 @@ export default function Hobby({ data, step, onRefresh, onChange }) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (data?.hobbies?.length > 0) {
-      setInput(data?.hobbies);
+    if (data?.length > 0) {
+      setInput(data);
     }
   }, [data]);
 

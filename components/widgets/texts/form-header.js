@@ -19,6 +19,7 @@ export default function FormHeader({
           sx={{
             width: "100%",
             color: color,
+            whiteSpace: "nowrap",
             ...sx,
           }}
         >

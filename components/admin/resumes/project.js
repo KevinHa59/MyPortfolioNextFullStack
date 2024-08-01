@@ -39,8 +39,8 @@ export default function Project({ data, step, onChange }) {
   const [input, setInput] = useState([project_template]);
   const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
-    if (data.projects?.length > 0) {
-      const _projects = data.projects.map((pro) => {
+    if (data?.length > 0) {
+      const _projects = data.map((pro) => {
         return {
           ...pro,
           technologies: pro.technologies.join(", "),

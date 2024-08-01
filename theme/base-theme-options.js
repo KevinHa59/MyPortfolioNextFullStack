@@ -93,6 +93,7 @@ export const baseThemeOptions = {
     MuiInputBase: {
       styleOverrides: {
         root: {
+          fontSize: "15px",
           color: "#000",
           borderRadius: "25px",
         },

@@ -10,6 +10,7 @@ export default function AsyncNotification({ children }) {
 
   const handleAddNote = async (message = "", func) => {
     const id = uuidv4();
+
     setNotes((prev) => {
       const copy = _.cloneDeep(prev);
       copy[id] = {
@@ -40,7 +41,9 @@ export default function AsyncNotification({ children }) {
           return copy;
         });
       }, 2000);
+      return res;
     } catch (error) {
+      console.log(error);
       setNotes((prev) => {
         const copy = _.cloneDeep(prev);
         copy[id].status = "fail";
@@ -55,10 +58,9 @@ export default function AsyncNotification({ children }) {
       }, 2000);
     }
   };
-
   return (
     <asyncNoteContext.Provider value={{ addNote: handleAddNote }}>
-      <Stack position={"fixed"} bottom="50px" right="50px" gap={1}>
+      <Stack position={"fixed"} bottom="50px" right="50px" gap={1} zIndex={500}>
         {Object.entries(notes).map((m, index) => {
           const messageDetail = m[1];
           return <Message key={index} messageDetail={messageDetail} />;

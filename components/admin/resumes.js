@@ -32,6 +32,7 @@ import {
   TextField,
   Typography,
   useTheme,
+  Zoom,
 } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
@@ -56,6 +57,7 @@ import Header from "./header";
 import { ResumeIcon } from "../../icons/resume";
 import Link from "next/link";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
+import { useRouter } from "next/router";
 
 const resume_template = {
   user: null,
@@ -92,12 +94,12 @@ const headers = [
     key: "userEmail",
     xs: 3,
   },
-  {
-    name: "",
-    key: "actions",
-    xs: 2,
-    align: "right",
-  },
+  // {
+  //   name: "",
+  //   key: "actions",
+  //   xs: 2,
+  //   align: "right",
+  // },
 ];
 
 const userHeaders = [
@@ -114,8 +116,8 @@ const userHeaders = [
   },
 ];
 export default function Resumes({ defaultUser }) {
+  const router = useRouter();
   const { addNote } = useContext(asyncNoteContext);
-  const [isInit, setIsInit] = useState(true);
   const [generalData, setGeneralData] = useState({
     users: [],
     resumes: [],
@@ -126,27 +128,50 @@ export default function Resumes({ defaultUser }) {
   const [tableHeader, setTableHeader] = useState(headers);
 
   useEffect(() => {
-    if (isInit === true) {
-      initData();
-    }
-  }, [isInit]);
+    initData();
+  }, []);
 
   const initData = async () => {
     setIsGettingData(true);
-    const APIs = [MyAPIs.User().getUsers(), MyAPIs.Resume().getResumes()];
+    let APIs = [];
 
-    const res = await axios.all(APIs);
-    let _resumes = res[1].data;
     if (defaultUser) {
-      _resumes = _resumes.filter((res) => res.user.id === defaultUser.id);
+      APIs = [
+        addNote(
+          "Get Resumes",
+          MyAPIs.Resume().getResumesByUser(defaultUser.id)
+        ),
+      ];
+      const res = await axios.all(APIs);
+      let _resumes = res[0].data;
+      handleUpdateGeneralData({
+        resumes: _resumes,
+      });
       setTableHeader(userHeaders);
+    } else {
+      APIs = [
+        addNote("Get Users", MyAPIs.User().getUsers()),
+        addNote("Get Resumes", MyAPIs.Resume().getResumes()),
+      ];
+      const res = await axios.all(APIs);
+      let _resumes = res[1].data;
+      handleUpdateGeneralData({
+        users: res[0].data,
+        resumes: _resumes,
+      });
     }
-    handleUpdateGeneralData({
-      users: res[0].data,
-      resumes: _resumes,
-    });
+
     setIsGettingData(false);
-    setIsInit(false);
+  };
+
+  const handleRouteEdit = (id) => {
+    router.push({
+      pathname: router.pathname,
+      query: {
+        section: "newResume",
+        id: id,
+      },
+    });
   };
 
   const handleUpdateGeneralData = (newValue) => {
@@ -160,8 +185,9 @@ export default function Resumes({ defaultUser }) {
 
   // update newResumeData onChange
   const handleResumeChange = (newValue, isRefresh = true) => {
-    console.log(isRefresh);
-    isRefresh && initData();
+    if (isRefresh) {
+      initData();
+    }
     setNewResumeData((prev) => {
       return {
         ...prev,
@@ -172,7 +198,7 @@ export default function Resumes({ defaultUser }) {
 
   // on edit resume click
   const handleEditResume = (resumeData) => {
-    handleResumeChange(resumeData);
+    handleResumeChange(resumeData, false);
     setIsNewUserOpen(true);
   };
 
@@ -190,43 +216,7 @@ export default function Resumes({ defaultUser }) {
   return (
     <Stack width={"100%"} height={"100%"} gap={"1px"}>
       <Header title={"My Resumes"} icon={<Article />}>
-        <Stack direction={"row"} gap={1}>
-          <ButtonDialog
-            paperProps={{
-              sx: { minWidth: "max-content", overflow: "hidden" },
-            }}
-            open={isNewUserOpen}
-            isCloseOnClickOut={false}
-            onClick={() => setIsNewUserOpen(true)}
-            variant={"contained"}
-            button_label="Create New Resume"
-            size="small"
-            title={"Resume"}
-            onClose={() => {
-              setIsNewUserOpen(false);
-              handleResumeChange(resume_template);
-            }}
-          >
-            {newResumeData.user === null ? (
-              <UserSelection
-                defaultUser={defaultUser}
-                users={generalData.users}
-                onChange={(resume) => handleResumeChange(resume)}
-                onClose={() => setIsNewUserOpen(false)}
-              />
-            ) : (
-              <ResumeCreator
-                data={newResumeData}
-                onRefresh={initData}
-                onDelete={() => handleRemoveResume(newResumeData.id)}
-                onClose={() => {
-                  setIsNewUserOpen(false);
-                  handleResumeChange(resume_template, false);
-                }}
-              />
-            )}
-          </ButtonDialog>
-        </Stack>
+        <Stack direction={"row"} gap={1}></Stack>
       </Header>
       <Stack
         sx={{
@@ -241,8 +231,9 @@ export default function Resumes({ defaultUser }) {
               return (
                 <ResumeCard
                   key={index}
+                  index={index}
                   data={re}
-                  onEdit={() => handleEditResume(re)}
+                  onEdit={() => handleRouteEdit(re.id)}
                 />
               );
             })}
@@ -267,27 +258,29 @@ export default function Resumes({ defaultUser }) {
   );
 }
 
-function ResumeCard({ data, onEdit }) {
+function ResumeCard({ index, data, onEdit }) {
   return (
-    <Button onClick={onEdit}>
-      <Stack
-        alignItems={"center"}
-        width={"clamp(100px, 10vw, 300px)"}
-        height="100%"
-        sx={{ aspectRatio: "1/1" }}
-      >
-        <Stack alignItems={"center"}>
-          <ResumeIcon
-            sx={{
-              width: "80%",
-              height: "100%",
-              aspectRatio: "0.8/1",
-            }}
-          />
+    <Zoom in={true} style={{ transitionDelay: index * 100 }}>
+      <Button onClick={onEdit}>
+        <Stack
+          alignItems={"center"}
+          width={"clamp(100px, 10vw, 300px)"}
+          height="100%"
+          sx={{ aspectRatio: "1/1" }}
+        >
+          <Stack alignItems={"center"}>
+            <ResumeIcon
+              sx={{
+                width: "80%",
+                height: "100%",
+                aspectRatio: "0.8/1",
+              }}
+            />
+          </Stack>
+          <Typography variant="body2">{data.title}</Typography>
         </Stack>
-        <Typography variant="body2">{data.title}</Typography>
-      </Stack>
-    </Button>
+      </Button>
+    </Zoom>
   );
 }
 
@@ -451,9 +444,15 @@ const steps = [
 ];
 
 function ResumeCreator({ data, onRefresh, onDelete, onClose }) {
+  const theme = useTheme();
   const [step, setStep] = useState(steps[0]);
   return (
-    <Stack direction={"row"} height={"calc(100vh - 120px)"} padding={2}>
+    <Stack
+      direction={"row"}
+      height={"calc(100vh - 120px)"}
+      padding={2}
+      sx={{ background: theme.palette.background.default }}
+    >
       <Paper
         sx={{
           width: "250px",

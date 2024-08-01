@@ -25,8 +25,8 @@ export default function Skill({ data, step, onChange }) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
-    if (data.skills.length > 0) {
-      setSkills(data.skills);
+    if (data.length > 0) {
+      setSkills(data);
     }
   }, [data]);
 

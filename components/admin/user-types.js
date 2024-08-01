@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import UsersAPI from "../../pages/api-functions/UsersAPI";
 import {
   Button,
@@ -32,8 +32,10 @@ import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import Table from "../widgets/tables/table";
 import Input from "../widgets/input/Input";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
+import { asyncNoteContext } from "../widgets/notification/async-notification";
 
 export default function UserTypes() {
+  const { addNote } = useContext(asyncNoteContext);
   const [userTypes, setUserTypes] = useState([]);
   const [isGettingData, setIsGettingData] = useState(true);
   const [isNewUserTypeOpen, setIsNewUserTypeOpen] = useState(false);
@@ -44,9 +46,12 @@ export default function UserTypes() {
 
   // get data
   async function initData() {
-    const data = await MyAPIs.User().getUserTypes(true);
+    const data = await addNote(
+      "Get User Types",
+      MyAPIs.User().getUserTypes(true)
+    );
     setIsGettingData(false);
-    setUserTypes(data);
+    setUserTypes(data.data);
   }
 
   return (

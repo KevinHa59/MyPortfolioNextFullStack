@@ -45,19 +45,26 @@ class UsersAPI {
       },
     });
   }
-  async updateUser(
+  async updateUserBasic(id, dob, cellPhone, homePhone) {
+    return await axios.put(API.users_user, {
+      id,
+      dob,
+      cellPhone,
+      homePhone,
+    });
+  }
+  async updateUserAddress(id, address, city, state, country, zipCode) {
+    return await axios.put(API.users_user, {
+      id,
+      address,
+      city,
+      state,
+      country,
+      zipCode,
+    });
+  }
+  async updateUserSocial(
     id,
-    firstName,
-    lastName,
-    dob,
-    userTypeID,
-    address,
-    city,
-    state,
-    country,
-    zipCode,
-    cellPhone,
-    homePhone,
     linkedIn,
     github,
     twitter,
@@ -67,17 +74,6 @@ class UsersAPI {
   ) {
     return await axios.put(API.users_user, {
       id,
-      firstName,
-      lastName,
-      dob,
-      userTypeID,
-      address,
-      city,
-      state,
-      country,
-      zipCode,
-      cellPhone,
-      homePhone,
       linkedIn,
       github,
       twitter,

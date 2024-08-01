@@ -2,6 +2,7 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 const API = {
   resumes: "/api/resumes",
+  resumes_user: "/api/resumes/user",
   resumes_resume: "/api/resumes/resume",
   resumes_resume_education: "/api/resumes/resume/education",
   resumes_resume_certification: "/api/resumes/resume/certification",
@@ -18,6 +19,15 @@ class ResumesAPI {
     return await axios.get(API.resumes, {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
+        isQuantity: isQuantity ? "1" : "0",
+      },
+    });
+  }
+  async getResumesByUser(userID, isQuantity = false) {
+    return await axios.get(API.resumes_user, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+      params: {
+        userID: userID,
         isQuantity: isQuantity ? "1" : "0",
       },
     });

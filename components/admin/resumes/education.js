@@ -46,8 +46,8 @@ export default function Education({ data, step, onChange }) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (data.education?.length > 0) {
-      setInput(data.education);
+    if (data.length > 0) {
+      setInput(data);
     }
   }, [data]);
 

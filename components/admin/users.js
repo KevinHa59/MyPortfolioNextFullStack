@@ -44,8 +44,10 @@ import ButtonLoading from "../widgets/buttons/button-loading";
 import LabelText from "../widgets/texts/label-text";
 import { mainContext } from "../../pages/_app";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
+import { asyncNoteContext } from "../widgets/notification/async-notification";
 
 export default function Users() {
+  const { addNote } = useContext(asyncNoteContext);
   const [users, setUsers] = useState([]);
   const [userTypes, setUserTypes] = useState([]);
   const [isGettingData, setIsGettingData] = useState(true);
@@ -58,7 +60,7 @@ export default function Users() {
 
   async function initData() {
     setIsGettingData(true);
-    let data = await MyAPIs.User().getUsers();
+    let data = await addNote("Get Users", MyAPIs.User().getUsers());
     data = data.data?.map((user) => {
       const _userType = { ...user.userType };
       return {
@@ -72,7 +74,7 @@ export default function Users() {
   }
 
   async function getAllUserTypes() {
-    const res = await MyAPIs.User().getUserTypes();
+    const res = await addNote("Get User Types", MyAPIs.User().getUserTypes());
     setUserTypes(res);
   }
 

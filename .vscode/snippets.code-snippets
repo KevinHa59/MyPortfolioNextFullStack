@@ -1,0 +1,7 @@
+{
+  "Custom Async Note Context": {
+    "prefix": "cAsyncNote",
+    "body": ["const { addNote } = useContext(asyncNoteContext);"],
+    "description": "Custom Async Note Context"
+  }
+}

@@ -13,6 +13,14 @@ class MyAPIs {
           console.error(error);
         }
       },
+      getResumesByUser: async (userID, isQuantity = false) => {
+        try {
+          const res = await ResumesAPI.getResumesByUser(userID, isQuantity);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
       getResumeByID: async (id) => {
         try {
           const res = await ResumesAPI.getResumeByID(id);
@@ -214,27 +222,47 @@ class MyAPIs {
           return res;
         } catch (error) {}
       },
-      updateUser: async (userInfo) => {
+      updateUserBasic: async (id, dob, cellPhone) => {
         try {
-          const res = await UsersAPI.updateUser(
-            userInfo.id,
-            userInfo.firstName,
-            userInfo.lastName,
-            userInfo.dob,
-            userInfo.userTypeID,
-            userInfo.address,
-            userInfo.city,
-            userInfo.state,
-            userInfo.country,
-            userInfo.zipCode,
-            userInfo.cellPhone,
-            userInfo.homePhone,
-            userInfo.linkedIn,
-            userInfo.github,
-            userInfo.twitter,
-            userInfo.facebook,
-            userInfo.instagram,
-            userInfo.portfolio
+          const res = await UsersAPI.updateUserBasic(id, dob, cellPhone);
+          return res;
+        } catch (error) {
+          return error.response;
+        }
+      },
+      updateUserAddress: async (id, address, city, state, country, zipCode) => {
+        try {
+          const res = await UsersAPI.updateUserAddress(
+            id,
+            address,
+            city,
+            state,
+            country,
+            zipCode
+          );
+          return res;
+        } catch (error) {
+          return error.response;
+        }
+      },
+      updateUserSocial: async (
+        id,
+        linkedIn,
+        github,
+        twitter,
+        facebook,
+        instagram,
+        portfolio
+      ) => {
+        try {
+          const res = await UsersAPI.updateUserSocial(
+            id,
+            linkedIn,
+            github,
+            twitter,
+            facebook,
+            instagram,
+            portfolio
           );
           return res;
         } catch (error) {

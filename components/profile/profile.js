@@ -27,13 +27,17 @@ import Input from "../widgets/input/Input";
 import axios from "axios";
 import useDelay from "../../hooks/use-delay";
 import Link from "next/link";
+import { asyncNoteContext } from "../widgets/notification/async-notification";
+import MyAPIs from "../../pages/api-functions/MyAPIs";
+import { setCookie } from "cookies-next";
 
 export default function Profile() {
   const { mainData } = useContext(profileContext);
-
+  const { addNote } = useContext(asyncNoteContext);
   const [isDelaying, startDelay] = useDelay(500);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [profileData, setProfileData] = useState({
+    id: mainData.user.id,
     basic: {
       email: mainData.user.email,
       cellPhone: mainData.user.cellPhone,
@@ -45,6 +49,14 @@ export default function Profile() {
       state: mainData.user.state,
       zipCode: mainData.user.zipCode,
       country: mainData.user.country,
+    },
+    socials: {
+      linkedIn: mainData.user.linkedIn,
+      github: mainData.user.github,
+      twitter: mainData.user.twitter,
+      facebook: mainData.user.facebook,
+      instagram: mainData.user.instagram,
+      portfolio: mainData.user.portfolio,
     },
   });
   const [addresses, setAddresses] = useState(null);
@@ -96,6 +108,80 @@ export default function Profile() {
     }
   };
 
+  const handleSaveBasic = async () => {
+    try {
+      const { email, cellPhone, dob } = profileData.basic;
+      const res = await addNote(
+        "Update Address",
+        MyAPIs.User().updateUserBasic(profileData.id, dob, cellPhone)
+      );
+      const newUserInfo = res.data;
+      newUserInfo["token"] = newUserInfo.refreshToken;
+      delete newUserInfo.password;
+      delete newUserInfo.refreshToken;
+      setCookie("user", newUserInfo);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleSaveAddress = async () => {
+    try {
+      const { address, city, state, country, zipCode } = profileData.address;
+      const res = await addNote(
+        "Update Address",
+        MyAPIs.User().updateUserAddress(
+          profileData.id,
+          address,
+          city,
+          state,
+          country,
+          zipCode
+        )
+      );
+      const newUserInfo = res.data;
+      newUserInfo["token"] = newUserInfo.refreshToken;
+      delete newUserInfo.password;
+      delete newUserInfo.refreshToken;
+      setCookie("user", newUserInfo);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleSaveSocial = async () => {
+    try {
+      const { linkedIn, github, twitter, facebook, instagram, portfolio } =
+        profileData.socials;
+      const res = await addNote(
+        "Update Socials",
+        MyAPIs.User().updateUserSocial(
+          profileData.id,
+          linkedIn,
+          github,
+          twitter,
+          facebook,
+          instagram,
+          portfolio
+        )
+      );
+      const newUserInfo = res.data;
+      newUserInfo["token"] = newUserInfo.refreshToken;
+      delete newUserInfo.password;
+      delete newUserInfo.refreshToken;
+      setCookie("user", newUserInfo);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleProfileChange = (key, newData) => {
+    const copy = _.cloneDeep(profileData);
+    copy[key] = {
+      ...copy[key],
+      ...newData,
+    };
+    setProfileData(copy);
+  };
+
   return (
     <Fade in={true}>
       <Stack
@@ -123,21 +209,35 @@ export default function Profile() {
               </Stack>
               <Typography
                 textAlign={"center"}
-                sx={{ fontSize: "3vw" }}
+                sx={{ fontSize: "clamp(20px,3vw,50px)" }}
               >{`${mainData.user?.firstName} ${mainData.user?.lastName}`}</Typography>
+              <Typography
+                textAlign={"center"}
+                sx={{ fontSize: "clamp(12px,1.5vw,20px)" }}
+              >{`${mainData.user?.email}`}</Typography>
             </Stack>
             <Divider />
 
             <Stack gap={2} sx={{ padding: 2 }}>
-              <Input label={"Email"} value={profileData.basic.email} />
-              <Input label={"Cell Phone"} value={profileData.basic.cellPhone} />
+              <Input
+                label={"Cell Phone"}
+                value={profileData.basic.cellPhone}
+                onChange={(e) =>
+                  handleProfileChange("basic", { cellPhone: e.target.value })
+                }
+              />
               <Input
                 type={"date"}
                 label={"Date of Birth"}
-                value={profileData.basic.dob.split("T")[0]}
+                value={profileData.basic.dob?.split("T")[0]}
+                onChange={(e) =>
+                  handleProfileChange("basic", { dob: e.target.value })
+                }
               />
               <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Button variant="contained">Save</Button>
+                <Button variant="contained" onClick={handleSaveBasic}>
+                  Save
+                </Button>
               </Stack>
             </Stack>
           </Stack>
@@ -203,17 +303,42 @@ export default function Profile() {
                   )}
                 </Stack>
                 <Stack direction={"row"} gap={1}>
-                  <Input label={"City"} value={profileData.address.city} />
-                  <Input label={"State"} value={profileData.address.state} />
+                  <Input
+                    label={"City"}
+                    value={profileData.address.city}
+                    onChange={(e) =>
+                      handleProfileChange("address", { city: e.target.value })
+                    }
+                  />
+                  <Input
+                    label={"State"}
+                    value={profileData.address.state}
+                    onChange={(e) =>
+                      handleProfileChange("address", { state: e.target.value })
+                    }
+                  />
                   <Input
                     label={"Zip Code"}
                     value={profileData.address.zipCode}
+                    onChange={(e) =>
+                      handleProfileChange("address", {
+                        zipCode: e.target.value,
+                      })
+                    }
                   />
                 </Stack>
-                <Input label={"Country"} value={profileData.address.country} />
+                <Input
+                  label={"Country"}
+                  value={profileData.address.country}
+                  onChange={(e) =>
+                    handleProfileChange("address", { country: e.target.value })
+                  }
+                />
               </Stack>
               <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Button variant="contained">Save</Button>
+                <Button variant="contained" onClick={handleSaveAddress}>
+                  Save
+                </Button>
               </Stack>
             </Stack>
           </Paper>
@@ -228,7 +353,10 @@ export default function Profile() {
                   ),
                 }}
                 label={"Linkedin"}
-                value={mainData.user.linkedIn || ""}
+                onChange={(e) =>
+                  handleProfileChange("socials", { linkedIn: e.target.value })
+                }
+                value={profileData.socials.linkedIn || ""}
               />
               <Input
                 inputProps={{
@@ -239,7 +367,10 @@ export default function Profile() {
                   ),
                 }}
                 label={"Github"}
-                value={mainData.user.github || ""}
+                onChange={(e) =>
+                  handleProfileChange("socials", { github: e.target.value })
+                }
+                value={profileData.socials.github || ""}
               />
               <Input
                 inputProps={{
@@ -250,7 +381,10 @@ export default function Profile() {
                   ),
                 }}
                 label={"Twitter"}
-                value={mainData.user.twitter || ""}
+                onChange={(e) =>
+                  handleProfileChange("socials", { twitter: e.target.value })
+                }
+                value={profileData.socials.twitter || ""}
               />
               <Input
                 inputProps={{
@@ -261,7 +395,10 @@ export default function Profile() {
                   ),
                 }}
                 label={"Facebook"}
-                value={mainData.user.facebook || ""}
+                onChange={(e) =>
+                  handleProfileChange("socials", { facebook: e.target.value })
+                }
+                value={profileData.socials.facebook || ""}
               />
               <Input
                 inputProps={{
@@ -272,7 +409,10 @@ export default function Profile() {
                   ),
                 }}
                 label={"Instagram"}
-                value={mainData.user.instagram || ""}
+                onChange={(e) =>
+                  handleProfileChange("socials", { instagram: e.target.value })
+                }
+                value={profileData.socials.instagram || ""}
               />
               <Input
                 inputProps={{
@@ -283,10 +423,15 @@ export default function Profile() {
                   ),
                 }}
                 label={"Portfolio"}
-                value={mainData.user.portfolio || ""}
+                onChange={(e) =>
+                  handleProfileChange("socials", { portfolio: e.target.value })
+                }
+                value={profileData.socials.portfolio || ""}
               />
               <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Button variant="contained">Save</Button>
+                <Button variant="contained" onClick={handleSaveSocial}>
+                  Save
+                </Button>
               </Stack>
             </Stack>
           </Paper>

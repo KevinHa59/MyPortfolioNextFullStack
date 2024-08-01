@@ -25,10 +25,11 @@ import { mainContext } from "../../pages/_app";
 import { getCookie, getCookies } from "cookies-next";
 import { AdminPanelSettings, Save } from "@mui/icons-material";
 import Table from "../widgets/tables/table";
+import { asyncNoteContext } from "../widgets/notification/async-notification";
 
 export default function Permissions() {
   const router = useRouter();
-  const { setNote } = useContext(mainContext);
+  const { addNote } = useContext(asyncNoteContext);
   const [data, setData] = useState({
     userTypes: [],
     pages: [],
@@ -44,8 +45,8 @@ export default function Permissions() {
   // get data
   async function initData() {
     const APIs = [
-      MyAPIs.User().getUserTypes(false, true),
-      MyAPIs.Page().getPages(),
+      addNote("Get User Types", MyAPIs.User().getUserTypes(false, true)),
+      addNote("Get Pages", MyAPIs.Page().getPages()),
     ];
     const res = await axios.all(APIs);
     if (router.query.user_type) {
@@ -67,7 +68,7 @@ export default function Permissions() {
     setIsGettingData(false);
     handleUpdateData({
       userTypes: res[0]?.data,
-      pages: res[1],
+      pages: res[1]?.data,
     });
   }
 
@@ -128,19 +129,27 @@ export default function Permissions() {
     });
     const APIs = [];
     if (newLinks.length > 0) {
-      APIs.push(MyAPIs.Permission().createPermissions(newLinks));
+      APIs.push(
+        addNote(
+          "Create Permissions",
+          MyAPIs.Permission().createPermissions(newLinks)
+        )
+      );
     }
     if (removeLinks.length > 0) {
-      APIs.push(MyAPIs.Permission().deletePermissions(removeLinks));
+      APIs.push(
+        addNote(
+          "Remove Permissions",
+          MyAPIs.Permission().deletePermissions(removeLinks)
+        )
+      );
     }
 
     try {
       const res = await axios.all(APIs);
       initData();
-      setNote.success("Save Permissions Success");
       setIsSaving(false);
     } catch (error) {
-      setNote.error("Save Permissions Fail");
       setIsSaving(false);
       console.log(error);
     }
