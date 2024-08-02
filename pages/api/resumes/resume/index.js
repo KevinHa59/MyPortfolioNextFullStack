@@ -29,7 +29,11 @@ async function getResume(req, res) {
       where: { id: id },
       include: {
         workExperience: true,
-        education: true,
+        education: {
+          orderBy: {
+            startDate: "desc",
+          },
+        },
         skills: true,
         certifications: true,
         projects: true,

@@ -21,7 +21,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useContext, useState, useTransition } from "react";
+import React, { useContext, useEffect, useState, useTransition } from "react";
 import { profileContext } from "../../pages/profile";
 import Input from "../widgets/input/Input";
 import axios from "axios";
@@ -37,29 +37,57 @@ export default function Profile() {
   const [isDelaying, startDelay] = useDelay(500);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [profileData, setProfileData] = useState({
-    id: mainData.user.id,
+    id: null,
     basic: {
-      email: mainData.user.email,
-      cellPhone: mainData.user.cellPhone,
-      dob: mainData.user.dob,
+      email: "",
+      cellPhone: "",
+      dob: "",
     },
     address: {
-      address: mainData.user.address,
-      city: mainData.user.city,
-      state: mainData.user.state,
-      zipCode: mainData.user.zipCode,
-      country: mainData.user.country,
+      address: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
     },
     socials: {
-      linkedIn: mainData.user.linkedIn,
-      github: mainData.user.github,
-      twitter: mainData.user.twitter,
-      facebook: mainData.user.facebook,
-      instagram: mainData.user.instagram,
-      portfolio: mainData.user.portfolio,
+      linkedIn: "",
+      github: "",
+      twitter: "",
+      facebook: "",
+      instagram: "",
+      portfolio: "",
     },
   });
   const [addresses, setAddresses] = useState(null);
+
+  useEffect(() => {
+    if (mainData.user) {
+      setProfileData({
+        id: mainData.user.id,
+        basic: {
+          email: mainData.user.email,
+          cellPhone: mainData.user.cellPhone,
+          dob: mainData.user.dob,
+        },
+        address: {
+          address: mainData.user.address,
+          city: mainData.user.city,
+          state: mainData.user.state,
+          zipCode: mainData.user.zipCode,
+          country: mainData.user.country,
+        },
+        socials: {
+          linkedIn: mainData.user.linkedIn,
+          github: mainData.user.github,
+          twitter: mainData.user.twitter,
+          facebook: mainData.user.facebook,
+          instagram: mainData.user.instagram,
+          portfolio: mainData.user.portfolio,
+        },
+      });
+    }
+  }, [mainData]);
 
   const handleAddressChange = async (key, value, isFetching = true) => {
     setIsFetchingData(true);

@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 // input: id, update data
 async function updateResumeEducation(req, res) {
   try {
-    const { id, education } = req.body;
+    const { id, education, resumeID } = req.body;
 
     // input validation
     if (!id || !education) {

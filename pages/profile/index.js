@@ -155,12 +155,11 @@ export default function Index() {
             </Stack>
             <Divider />
             <Stack
-              height={"calc(100% - 60px)"}
+              height={"calc(100% - 65px)"}
               sx={{
-                overflowY: "auto",
+                // overflowY: "auto",
                 scrollBehavior: "smooth",
               }}
-              paddingY={2}
             >
               {selectedComponent?.Comp}
             </Stack>

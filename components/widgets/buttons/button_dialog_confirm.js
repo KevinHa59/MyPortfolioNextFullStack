@@ -125,9 +125,11 @@ export function AlertDialog({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       PaperProps={{
-        className: "bgt60",
+        className: "bgt80",
         variant: dialog_variant,
+
         style: {
+          backdropFilter: "blur(5px)",
           minWidth: "300px",
           // borderColor: dialog_style(dialog_color).shadowColor,
         },

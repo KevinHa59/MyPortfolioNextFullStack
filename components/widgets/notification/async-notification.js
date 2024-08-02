@@ -43,7 +43,6 @@ export default function AsyncNotification({ children }) {
       }, 2000);
       return res;
     } catch (error) {
-      console.log(error);
       setNotes((prev) => {
         const copy = _.cloneDeep(prev);
         copy[id].status = "fail";

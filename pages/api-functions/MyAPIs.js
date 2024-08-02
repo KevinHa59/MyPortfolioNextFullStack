@@ -1,3 +1,4 @@
+import GeneralsAPI from "./GeneralsAPI";
 import PagesAPI from "./PagesAPI";
 import PermissionsAPI from "./PermissionsAPI";
 import ResumesAPI from "./ResumesAPI";
@@ -29,6 +30,14 @@ class MyAPIs {
           console.error(error);
         }
       },
+      createResume: async (userID, title) => {
+        try {
+          const res = await ResumesAPI.createResume(userID, title);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
       updateResume: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResume(id, data);
@@ -37,9 +46,9 @@ class MyAPIs {
           console.error(error);
         }
       },
-      updateResumeEducation: async (id, data) => {
+      updateResumeEducation: async (id, educations) => {
         try {
-          const res = await ResumesAPI.updateResumeEducation(id, data);
+          const res = await ResumesAPI.updateResumeEducation(id, educations);
           return res;
         } catch (error) {
           console.error(error);
@@ -371,6 +380,16 @@ class MyAPIs {
       deletePermissions: async (ids) => {
         try {
           const res = await PermissionsAPI.deletePermissions(ids);
+          return res;
+        } catch (error) {}
+      },
+    };
+  }
+  Generals() {
+    return {
+      getUniversities: async (name, limit) => {
+        try {
+          const res = await GeneralsAPI.getUniversities(name, limit);
           return res;
         } catch (error) {}
       },

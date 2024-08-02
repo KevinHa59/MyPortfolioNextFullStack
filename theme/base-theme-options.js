@@ -289,7 +289,7 @@ export const baseThemeOptions = {
             boxShadow: "none",
           },
           "&.br0": {
-            borderRadius: 5,
+            borderRadius: 0,
           },
           "&.brMAX": {
             borderRadius: "100%",

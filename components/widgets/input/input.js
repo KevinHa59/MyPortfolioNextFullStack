@@ -1,8 +1,19 @@
 import { RemoveRedEye, Visibility, VisibilityOff } from "@mui/icons-material";
-import { IconButton, Stack, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import {
+  Button,
+  CircularProgress,
+  Divider,
+  IconButton,
+  Paper,
+  Popover,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useRef, useState } from "react";
 import { styles } from "../../../styles/useStyle";
-
+import useDelay from "../../../hooks/use-delay";
+import { ClickAwayListener } from "@mui/base/ClickAwayListener";
 export default function Input({
   autoComplete = "off",
   id,
@@ -18,13 +29,40 @@ export default function Input({
   size = "small",
   fullWidth = false,
   isInvalidInput = false,
+  isEdit = true,
   inputErrorMessage = "",
   variant,
   value,
+  nullReplacement,
   onChange,
+  isAutoComplete = false,
+  onSelect,
+  APIOptions,
+  APIOptionKey,
   onKeyPress = null,
+  callbackOption,
 }) {
   const [visible, setVisible] = useState(false);
+  const [isDelaying, startDelay] = useDelay(500);
+  const [options, setOptions] = useState([]);
+  const [isFetchingData, setIsFetchingData] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleChange = (e) => {
+    onChange && onChange(e);
+    if (isAutoComplete && APIOptions && APIOptionKey) {
+      setIsFetchingData(true);
+      startDelay(async () => {
+        const searchValue = e.target.value;
+        const res = await APIOptions(searchValue, 20);
+        if (res.data.length > 0) {
+          setOpen(true);
+        }
+        setOptions(res.data);
+        setIsFetchingData(false);
+      });
+    }
+  };
+
   return (
     <Stack sx={sx}>
       <Stack direction={"row"} paddingX={1} gap={1} sx={{ opacity: 0.7 }}>
@@ -40,36 +78,89 @@ export default function Input({
           </Typography>
         )}
       </Stack>
-      <TextField
-        id={id}
-        type={type === "password" ? (visible ? "text" : "password") : type}
-        variant={variant}
-        fullWidth={fullWidth}
-        multiline={multiline}
-        rows={rows}
-        size={size}
-        sx={sx_input}
-        autoComplete={autoComplete}
-        InputProps={
-          type === "password"
-            ? {
-                ...inputProps,
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    onClick={() => setVisible((prev) => !prev)}
-                  >
-                    {visible ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                ),
-              }
-            : inputProps
-        }
-        className={inputClassName}
-        value={value}
-        onChange={onChange}
-        onKeyPress={onKeyPress}
-      />
+      {isEdit ? (
+        <Stack position={"relative"}>
+          <TextField
+            id={id}
+            type={type === "password" ? (visible ? "text" : "password") : type}
+            variant={variant}
+            fullWidth={fullWidth}
+            multiline={multiline}
+            rows={rows}
+            size={size}
+            sx={sx_input}
+            autoComplete={autoComplete}
+            InputProps={
+              type === "password"
+                ? {
+                    ...inputProps,
+                    endAdornment: (
+                      <Stack direction={"row"}>
+                        <IconButton
+                          size="small"
+                          onClick={() => setVisible((prev) => !prev)}
+                        >
+                          {visible ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </Stack>
+                    ),
+                  }
+                : isAutoComplete === true
+                ? {
+                    ...inputProps,
+                    endAdornment: (
+                      <Stack direction={"row"}>
+                        {isFetchingData && <CircularProgress size={14} />}
+                      </Stack>
+                    ),
+                  }
+                : inputProps
+            }
+            className={inputClassName}
+            value={value}
+            onChange={handleChange}
+            onKeyPress={onKeyPress}
+          />
+          <ClickAwayListener onClickAway={() => setOpen(false)}>
+            <Stack>
+              {open && (
+                <Paper
+                  sx={{
+                    position: "absolute",
+                    top: "100%",
+                    zIndex: 10,
+                    maxHeight: "500px",
+                    overflowY: "auto",
+                  }}
+                >
+                  <Stack>
+                    {options.map((s, i) => {
+                      return (
+                        <>
+                          <Button
+                            key={i}
+                            size="small"
+                            onClick={() => onSelect && onSelect(s)}
+                          >
+                            {callbackOption
+                              ? callbackOption(s)
+                              : s[APIOptionKey]}
+                          </Button>
+                          <Divider />
+                        </>
+                      );
+                    })}
+                  </Stack>
+                </Paper>
+              )}
+            </Stack>
+          </ClickAwayListener>
+        </Stack>
+      ) : (
+        <Typography sx={{ paddingLeft: 1 }}>
+          {value || nullReplacement}
+        </Typography>
+      )}
     </Stack>
   );
 }

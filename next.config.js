@@ -9,6 +9,7 @@ const nextConfig = {
     NEXT_PUBLIC_SALT_ROUND: 5,
     NEXT_PUBLIC_ACCESS_TOKEN_EXPIRE_TIME: 3600,
   },
+  reactStrictMode: false,
 };
 
 module.exports = nextConfig;

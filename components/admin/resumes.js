@@ -30,6 +30,7 @@ import {
   Slide,
   Stack,
   TextField,
+  Tooltip,
   Typography,
   useTheme,
   Zoom,
@@ -123,8 +124,6 @@ export default function Resumes({ defaultUser }) {
     resumes: [],
   });
   const [isGettingData, setIsGettingData] = useState(false);
-  const [isNewUserOpen, setIsNewUserOpen] = useState(false);
-  const [newResumeData, setNewResumeData] = useState(resume_template);
   const [tableHeader, setTableHeader] = useState(headers);
 
   useEffect(() => {
@@ -183,34 +182,19 @@ export default function Resumes({ defaultUser }) {
     });
   };
 
-  // update newResumeData onChange
-  const handleResumeChange = (newValue, isRefresh = true) => {
-    if (isRefresh) {
-      initData();
+  const handleRemoveResume = async (id, setOpen) => {
+    try {
+      const res = await addNote(
+        "Resume Removing",
+        MyAPIs.Resume().deleteResumeByID(id)
+      );
+      setOpen(false);
+      // filter out deleted from state
+      const newResumes = generalData.resumes.filter((r) => r.id !== id);
+      handleUpdateGeneralData({ resumes: newResumes });
+    } catch (error) {
+      console.log(error);
     }
-    setNewResumeData((prev) => {
-      return {
-        ...prev,
-        ...newValue,
-      };
-    });
-  };
-
-  // on edit resume click
-  const handleEditResume = (resumeData) => {
-    handleResumeChange(resumeData, false);
-    setIsNewUserOpen(true);
-  };
-
-  const handleRemoveResume = async (id) => {
-    setIsNewUserOpen(false);
-    handleResumeChange(resume_template);
-    // setIsRemoving(true);
-    // const res = await MyAPIs.Resume().deleteResumeByID(id);
-    // if (res) {
-    //   setOpen(false);
-    // }
-    // setIsRemoving(false);
   };
 
   return (
@@ -234,6 +218,7 @@ export default function Resumes({ defaultUser }) {
                   index={index}
                   data={re}
                   onEdit={() => handleRouteEdit(re.id)}
+                  onRemove={(setOpen) => handleRemoveResume(re.id, setOpen)}
                 />
               );
             })}
@@ -244,12 +229,7 @@ export default function Resumes({ defaultUser }) {
             data={generalData?.resumes}
             headers={tableHeader}
             callback_cell={(row, key) => (
-              <Cell
-                row={row}
-                header={key}
-                onEdit={() => handleEditResume(row)}
-                onRemoveSuccess={initData}
-              />
+              <Cell row={row} header={key} onRemoveSuccess={initData} />
             )}
           />
         )}
@@ -258,16 +238,54 @@ export default function Resumes({ defaultUser }) {
   );
 }
 
-function ResumeCard({ index, data, onEdit }) {
+function ResumeCard({ index, data, onEdit, onRemove }) {
+  const [isHover, setIsHover] = useState(false);
   return (
     <Zoom in={true} style={{ transitionDelay: index * 100 }}>
-      <Button onClick={onEdit}>
+      <Button
+        onClick={onEdit}
+        onMouseOver={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        sx={{ overflow: "hidden" }}
+      >
         <Stack
           alignItems={"center"}
           width={"clamp(100px, 10vw, 300px)"}
           height="100%"
+          position={"relative"}
           sx={{ aspectRatio: "1/1" }}
         >
+          <Stack
+            sx={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              overflow: "hidden",
+            }}
+          >
+            <Slide
+              in={isHover}
+              direction="right"
+              // timeout={500}
+              style={{ transition: "ease-in" }}
+            >
+              <Tooltip title="Delete Resume" placement="right">
+                <Stack>
+                  <ButtonDialogConfirm
+                    size={"small"}
+                    color={"error"}
+                    dialog_color={"error"}
+                    dialog_title={"Delete Resume"}
+                    dialog_message={"Are You Sure?"}
+                    sx={{ padding: 0, minWidth: "0" }}
+                    onConfirm={onRemove}
+                  >
+                    <DeleteForever color="error" />
+                  </ButtonDialogConfirm>
+                </Stack>
+              </Tooltip>
+            </Slide>
+          </Stack>
           <Stack alignItems={"center"}>
             <ResumeIcon
               sx={{

@@ -53,16 +53,31 @@ async function createResume(req, res) {
     const body = req.body;
     // input validation
     if (!body.userID) {
-      res.status(400).json({ error: "Incomplete data" });
+      return res.status(400).json({ error: "Incomplete data" });
     }
 
-    const resume = await prisma.resume.create({
-      data: {
-        userID: body.userID,
+    // verify title
+
+    const found = await prisma.resume.findMany({
+      where: {
         title: body.title,
+        userID: body.userID,
       },
     });
-    res.status(201).json(resume);
+    if (found.length > 0) {
+      return res.status(209).json({
+        error:
+          "Error: A resume with this name already exists. Please choose a different name.",
+      });
+    } else {
+      const resume = await prisma.resume.create({
+        data: {
+          userID: body.userID,
+          title: body.title,
+        },
+      });
+      return res.status(201).json(resume);
+    }
   } catch (err) {
     res.status(500).json({ err: "Internal server error" });
   }
