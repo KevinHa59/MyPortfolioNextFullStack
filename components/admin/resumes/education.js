@@ -1,15 +1,10 @@
 import {
   Add,
-  CastForEducation,
   Check,
   Clear,
   DeleteForever,
-  DeleteForeverRounded,
-  DeleteForeverSharp,
-  DeleteForeverTwoTone,
   Edit,
   Remove,
-  School,
 } from "@mui/icons-material";
 import {
   Button,
@@ -24,15 +19,11 @@ import {
 import _ from "lodash";
 import React, { useContext, useEffect, useState } from "react";
 import PublicAPI from "../../../pages/api-functions/PublicAPI";
-import AutocompleteCustom from "../../widgets/autocomplete/autocomplete";
 import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
-import ButtonLoading from "../../widgets/buttons/button-loading";
-import { StyleMode, styles } from "../../../styles/useStyle";
-import { darkStyles } from "../../../theme/dark-theme-options";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
-import * as XLSX from "xlsx";
 import { asyncNoteContext } from "../../widgets/notification/async-notification";
+import { resumeContext } from "../../profile/new-resume";
 const edu_template = {
   id: null,
   degree: "",
@@ -44,23 +35,15 @@ const edu_template = {
   gpa: "",
 };
 
-export default function Education({ resumeID, data, step, onChange }) {
-  const theme = useTheme();
-  const [input, setInput] = useState([edu_template]);
-  const [isSaving, setIsSaving] = useState(false);
+export default function Education({ resumeID, data, step }) {
+  const { handleResumeDataChange } = useContext(resumeContext);
+  const [input, setInput] = useState([]);
 
   useEffect(() => {
     if (data?.length > 0) {
       setInput(data);
     }
   }, [data]);
-
-  const init = async () => {
-    try {
-      const res = await MyAPIs.Generals().getUniversities("houston", 10);
-      console.log(res.data);
-    } catch (error) {}
-  };
 
   const handleAddEducation = () => {
     // only allow add new one once per time
@@ -78,10 +61,9 @@ export default function Education({ resumeID, data, step, onChange }) {
     setOpen(false);
   };
 
-  const handleUpdateEducation = async () => {
-    setIsSaving(true);
-    const res = await MyAPIs.Resume().updateResumeEducation(data.id, input);
-    setIsSaving(false);
+  const handleUpdateCertification = (newCer) => {
+    setInput(newCer);
+    handleResumeDataChange({ certifications: newCer });
   };
 
   return (
@@ -120,6 +102,7 @@ export default function Education({ resumeID, data, step, onChange }) {
               onRemoveEducation={(setOpen) =>
                 handleRemoveEducation(index, setOpen)
               }
+              onChange={handleUpdateCertification}
               key={index}
             />
           );
@@ -129,7 +112,7 @@ export default function Education({ resumeID, data, step, onChange }) {
   );
 }
 
-function Form({ resumeID, data, onRemoveEducation }) {
+function Form({ resumeID, data, onRemoveEducation, onChange }) {
   const { addNote } = useContext(asyncNoteContext);
   const [isEdit, setIsEdit] = useState(false);
   const [edu, setEdu] = useState(null);
@@ -158,7 +141,7 @@ function Form({ resumeID, data, onRemoveEducation }) {
         MyAPIs.Resume().updateResumeEducation(resumeID, [edu])
       );
       setIsEdit(false);
-      console.log(res);
+      onChange && onChange(res.data);
     } catch (error) {
       console.log(error);
     }

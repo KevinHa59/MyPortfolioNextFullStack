@@ -49,8 +49,15 @@ async function updateResumeCertification(req, res) {
           upsert: _certifications,
         },
       },
+      include: {
+        certifications: {
+          orderBy: {
+            dateObtained: "desc",
+          },
+        },
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.certifications);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });

@@ -62,8 +62,15 @@ async function updateResumeEducation(req, res) {
           upsert: _educations,
         },
       },
+      include: {
+        education: {
+          orderBy: {
+            startDate: "desc",
+          },
+        },
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.education);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });
