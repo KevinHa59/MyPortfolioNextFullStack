@@ -8,6 +8,7 @@ const API = {
   resumes_resume_certification: "/api/resumes/resume/certification",
   resumes_resume_skill: "/api/resumes/resume/skill",
   resumes_resume_work: "/api/resumes/resume/work",
+  resumes_resume_project: "/api/resumes/resume/project",
   resumes_resume_volunteer: "/api/resumes/resume/volunteer",
   resumes_resume_award: "/api/resumes/resume/award",
   resumes_resume_language: "/api/resumes/resume/language",

@@ -35,8 +35,11 @@ export default function Input({
   value,
   nullReplacement,
   onChange,
+  OptionListMinWidth,
   isAutoComplete = false,
   onSelect,
+  defaultOptions,
+  optionKey,
   APIOptions,
   APIOptionKey,
   onKeyPress = null,
@@ -49,17 +52,31 @@ export default function Input({
   const [open, setOpen] = useState(false);
   const handleChange = (e) => {
     onChange && onChange(e);
-    if (isAutoComplete && APIOptions && APIOptionKey) {
-      setIsFetchingData(true);
-      startDelay(async () => {
-        const searchValue = e.target.value;
-        const res = await APIOptions(searchValue, 20);
-        if (res.data.length > 0) {
+    if (isAutoComplete) {
+      if (APIOptions) {
+        setIsFetchingData(true);
+        startDelay(async () => {
+          const searchValue = e.target.value;
+          const res = await APIOptions(searchValue, 20);
+          if (res?.data?.length > 0) {
+            setOpen(true);
+          }
+          setOptions(res?.data || []);
+          setIsFetchingData(false);
+        });
+      } else if (defaultOptions) {
+        const res = defaultOptions.filter((opt) => {
+          return optionKey
+            ? opt[optionKey]
+                ?.toLowerCase()
+                .includes(e.target.value.toLowerCase())
+            : opt?.toLowerCase().includes(e.target.value.toLowerCase());
+        });
+        setOptions(res);
+        if (res?.length > 0) {
           setOpen(true);
         }
-        setOptions(res.data);
-        setIsFetchingData(false);
-      });
+      }
     }
   };
 
@@ -122,10 +139,11 @@ export default function Input({
             onKeyPress={onKeyPress}
           />
           <ClickAwayListener onClickAway={() => setOpen(false)}>
-            <Stack>
+            <Stack minWidth={OptionListMinWidth}>
               {open && (
                 <Paper
                   sx={{
+                    width: "100%",
                     position: "absolute",
                     top: "100%",
                     zIndex: 10,
@@ -133,18 +151,24 @@ export default function Input({
                     overflowY: "auto",
                   }}
                 >
-                  <Stack>
+                  <Stack width={"100%"}>
                     {options.map((s, i) => {
                       return (
                         <>
                           <Button
                             key={i}
                             size="small"
-                            onClick={() => onSelect && onSelect(s)}
+                            className="br0 flex-start"
+                            onClick={() => {
+                              onSelect && onSelect(s);
+                              setOpen(false);
+                            }}
                           >
                             {callbackOption
                               ? callbackOption(s)
-                              : s[APIOptionKey]}
+                              : APIOptionKey
+                              ? s[APIOptionKey]
+                              : s}
                           </Button>
                           <Divider />
                         </>
@@ -157,7 +181,9 @@ export default function Input({
           </ClickAwayListener>
         </Stack>
       ) : (
-        <Typography sx={{ paddingLeft: 1 }}>
+        <Typography
+          sx={{ paddingLeft: 1, whiteSpace: "pre-line", lineHeight: 2 }}
+        >
           {value || nullReplacement}
         </Typography>
       )}

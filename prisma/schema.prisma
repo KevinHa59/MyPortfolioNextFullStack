@@ -118,7 +118,7 @@ model Skill {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   resumeID String @db.ObjectId
   name     String
-  type     String
+  group     String?
 
   resume   Resume @relation(fields: [resumeID], references: [id])
 }
@@ -150,7 +150,7 @@ model Award {
   resumeID          String @db.ObjectId
   awardName         String
   issuingOrganization String
-  dateReceived      DateTime
+  dateReceived      DateTime?
 
   resume            Resume @relation(fields: [resumeID], references: [id])
 }

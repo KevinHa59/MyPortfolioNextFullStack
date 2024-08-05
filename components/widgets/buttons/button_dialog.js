@@ -12,6 +12,7 @@ import React, { useState } from "react";
 export default function ButtonDialog({
   isIconButton = false,
   button_label = "Button",
+  className,
   isStartIcon = true,
   isEndIcon = false,
   fullWidth = false,
@@ -53,6 +54,7 @@ export default function ButtonDialog({
         </IconButton>
       ) : (
         <Button
+          className={className}
           disabled={disabled}
           startIcon={isStartIcon && icon}
           endIcon={isEndIcon && icon}

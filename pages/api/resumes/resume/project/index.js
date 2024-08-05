@@ -25,12 +25,10 @@ export default async function handler(req, res) {
 async function updateResumeProject(req, res) {
   try {
     const { id, projects } = req.body;
-
     // input validation
     if (!id || !projects) {
       res.status(400).json({ error: "Incomplete data" });
     }
-
     const _projects = projects.map((project) => ({
       where: { id: project.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
       create: {
@@ -60,8 +58,11 @@ async function updateResumeProject(req, res) {
           upsert: _projects,
         },
       },
+      include: {
+        projects: true,
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.projects);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });

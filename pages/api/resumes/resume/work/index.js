@@ -38,20 +38,16 @@ async function updateResumeWork(req, res) {
         companyName: work.companyName,
         location: work.location,
         startDate: new Date(work.startDate).toISOString(),
-        endDate: new Date(work.endDate).toISOString() || null,
-        responsibilities: work.responsibilities
-          .split(".")
-          .map((res) => res.trim()),
+        endDate: work.endDate ? new Date(work.endDate).toISOString() : null,
+        responsibilities: work.responsibilities,
       },
       update: {
         jobTitle: work.jobTitle,
         companyName: work.companyName,
         location: work.location,
         startDate: new Date(work.startDate).toISOString(),
-        endDate: new Date(work.endDate).toISOString() || null,
-        responsibilities: work.responsibilities
-          .split(".")
-          .map((res) => res.trim()),
+        endDate: work.endDate ? new Date(work.endDate).toISOString() : null,
+        responsibilities: work.responsibilities,
       },
     }));
 
@@ -62,8 +58,15 @@ async function updateResumeWork(req, res) {
           upsert: _works,
         },
       },
+      include: {
+        workExperience: {
+          orderBy: {
+            startDate: "desc",
+          },
+        },
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.workExperience);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });

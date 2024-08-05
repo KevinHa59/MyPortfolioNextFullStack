@@ -36,12 +36,16 @@ async function updateResumeAward(req, res) {
       create: {
         awardName: award.awardName,
         issuingOrganization: award.issuingOrganization,
-        dateReceived: new Date(award.dateReceived).toISOString(),
+        dateReceived: award.dateReceived
+          ? new Date(award.dateReceived).toISOString()
+          : null,
       },
       update: {
         awardName: award.awardName,
         issuingOrganization: award.issuingOrganization,
-        dateReceived: new Date(award.dateReceived).toISOString(),
+        dateReceived: award.dateReceived
+          ? new Date(award.dateReceived).toISOString()
+          : null,
       },
     }));
     const resume = await prisma.resume.update({
@@ -51,8 +55,15 @@ async function updateResumeAward(req, res) {
           upsert: _awards,
         },
       },
+      include: {
+        awards: {
+          orderBy: {
+            dateReceived: "desc",
+          },
+        },
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.awards);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });

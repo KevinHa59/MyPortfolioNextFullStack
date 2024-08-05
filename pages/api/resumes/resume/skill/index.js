@@ -35,11 +35,11 @@ async function updateResumeSkill(req, res) {
       where: { id: skill.id || new ObjectId().toString() }, // Use an empty string or a temporary value if `id` is not present for new entries
       create: {
         name: skill.name || null,
-        type: skill.type || "",
+        group: skill.group,
       },
       update: {
         name: skill.name || null,
-        type: skill.type || "",
+        group: skill.group,
       },
     }));
     const resume = await prisma.resume.update({
@@ -49,8 +49,15 @@ async function updateResumeSkill(req, res) {
           upsert: _skills,
         },
       },
+      include: {
+        skills: {
+          orderBy: {
+            name: "asc",
+          },
+        },
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.skills);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });

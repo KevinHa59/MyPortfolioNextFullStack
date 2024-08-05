@@ -70,6 +70,14 @@ class MyAPIs {
           console.error(error);
         }
       },
+      deleteResumeSkill: async (id) => {
+        try {
+          const res = await ResumesAPI.deleteResumeSkill(id);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
       updateResumeProject: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeProject(id, data);

@@ -3,9 +3,9 @@ import {
   Check,
   Clear,
   DeleteForever,
+  Edit,
   Engineering,
   Remove,
-  School,
 } from "@mui/icons-material";
 import {
   Button,
@@ -13,20 +13,18 @@ import {
   IconButton,
   Paper,
   Stack,
-  TextField,
   Typography,
-  useTheme,
 } from "@mui/material";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
-import ButtonLoading from "../../widgets/buttons/button-loading";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
-import { StyleMode, styles } from "../../../styles/useStyle";
-import { darkStyles } from "../../../theme/dark-theme-options";
+import { asyncNoteContext } from "../../widgets/notification/async-notification";
+import { resumeContext } from "../../profile/new-resume";
 
 const work_template = {
+  id: null,
   jobTitle: "",
   companyName: "",
   location: "",
@@ -35,89 +33,63 @@ const work_template = {
   responsibilities: "",
 };
 
-export default function WorkExperience({ data, step, onRefresh, onChange }) {
-  const theme = useTheme();
-  const [input, setInput] = useState([work_template]);
-  const [isSaving, setIsSaving] = useState(false);
+export default function WorkExperience({ resumeID, data, step }) {
+  const { handleResumeDataChange } = useContext(resumeContext);
+  const [input, setInput] = useState([]);
 
   useEffect(() => {
     if (data?.length > 0) {
-      const _works = data.map((work) => {
-        return {
-          ...work,
-          responsibilities: work.responsibilities.join(". "),
-        };
-      });
-      setInput(_works);
+      setInput(data);
     }
   }, [data]);
 
-  const handleAddWork = () => {
-    setInput((prev) => {
-      return [...prev, { ...work_template }];
-    });
+  const handleAddNew = () => {
+    // only allow add new one once per time
+    if (!input.some((work) => work.id === null)) {
+      setInput((prev) => {
+        return [{ ...work_template }, ...prev];
+      });
+    }
   };
 
-  const handleRemoveWork = async (index, id, setOpen) => {
-    if (id !== undefined) {
-      const res = await MyAPIs.Resume().deleteResumeWork(id);
-      onRefresh && onRefresh();
-    }
+  const handleRemove = (index, setOpen) => {
     const copy = _.cloneDeep(input);
     copy.splice(index, 1);
     setInput(copy);
     setOpen(false);
   };
 
-  const handleInputChange = (newValue, index) => {
-    const copy = _.cloneDeep(input);
-    copy[index] = {
-      ...copy[index],
-      ...newValue,
-    };
-    setInput(copy);
-  };
-
-  const handleSave = () => {
-    setIsSaving(true);
-    const res = MyAPIs.Resume().updateResumeWork(data.id, input);
-    setIsSaving(false);
-    onRefresh && onRefresh();
+  const handleChange = (newItem) => {
+    setInput(newItem);
+    handleResumeDataChange({ workExperience: newItem });
   };
 
   return (
     <Stack height={"100%"} width={"100%"}>
-      <Stack
-        direction={"row"}
-        gap={"1px"}
-        justifyContent={"space-between"}
-        height={"45px"}
-        padding={1}
-      >
-        <Stack alignItems={"center"} direction={"row"} gap={1}>
-          {step.Icon}
-          <Typography>{step.name}</Typography>
+      <Paper className="br0" sx={{ position: "sticky", top: 0, zIndex: 5 }}>
+        <Stack
+          direction={"row"}
+          gap={"1px"}
+          justifyContent={"space-between"}
+          height={"45px"}
+          padding={1}
+        >
+          <Stack alignItems={"center"} direction={"row"} gap={1}>
+            {step.Icon}
+            <Typography>{step.name}</Typography>
+          </Stack>
+          <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
+            <Button
+              size="small"
+              startIcon={<Add />}
+              color="primary"
+              onClick={handleAddNew}
+            >
+              Add Work
+            </Button>
+          </Stack>
         </Stack>
-        <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
-          <Button
-            size="small"
-            startIcon={<Add />}
-            color="primary"
-            onClick={handleAddWork}
-          >
-            Add Work
-          </Button>
-          <ButtonLoading
-            size="small"
-            variant="contained"
-            isLoading={isSaving}
-            onClick={handleSave}
-            startIcon={<Check />}
-          >
-            Save
-          </ButtonLoading>
-        </Stack>
-      </Stack>
+      </Paper>
       <Divider />
       <Stack
         height={"calc(100% - 37px)"}
@@ -128,101 +100,148 @@ export default function WorkExperience({ data, step, onRefresh, onChange }) {
       >
         {input.map((work, index) => {
           return (
-            <Paper key={index} variant="outlined">
-              <Stack
-                direction={"row"}
-                paddingX={2}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-              >
-                <Stack direction={"row"} gap={1} alignItems={"center"}>
-                  <Engineering sx={{ color: "#fff" }} />{" "}
-                  <Typography
-                    fontWeight={"bold"}
-                    fontStyle={"italic"}
-                    variant="body1"
-                  >
-                    {work.jobTitle}
-                  </Typography>
-                </Stack>
-                <ButtonDialogConfirm
-                  variant={"contained"}
-                  size="small"
-                  color={"error"}
-                  dialog_color="error"
-                  dialog_title={"Delete Work Experience"}
-                  dialog_message={"Are You Sure?"}
-                  onConfirm={(setOpen) =>
-                    handleRemoveWork(index, work.id, setOpen)
-                  }
-                  startIcon={work.id ? <DeleteForever /> : <Remove />}
-                  isConfirmRequired={work.id !== undefined}
-                >
-                  {work.id ? "Delete" : "Remove"}
-                </ButtonDialogConfirm>
-              </Stack>
-              <Divider />
-              <Stack gap={1} paddingX={5} paddingY={3}>
-                <Stack direction={"row"} gap={1}>
-                  <Input
-                    sx={{ width: "100%" }}
-                    value={work.jobTitle}
-                    label="Job Title"
-                    onChange={(e) =>
-                      handleInputChange({ jobTitle: e.target.value }, index)
-                    }
-                  />
-                  <Input
-                    type="date"
-                    value={work.startDate ? work.startDate.split("T")[0] : null}
-                    label="From"
-                    sx={{ minWidth: "200px" }}
-                    onChange={(e) =>
-                      handleInputChange({ startDate: e.target.value }, index)
-                    }
-                  />
-                  <Input
-                    type="date"
-                    value={work.endDate ? work.endDate.split("T")[0] : null}
-                    label="To"
-                    sx={{ minWidth: "200px" }}
-                    onChange={(e) =>
-                      handleInputChange({ endDate: e.target.value }, index)
-                    }
-                  />
-                </Stack>
-
-                <Input
-                  value={work.companyName}
-                  label="Company"
-                  onChange={(e) =>
-                    handleInputChange({ companyName: e.target.value }, index)
-                  }
-                />
-                <Input
-                  value={work.location}
-                  label="Location"
-                  onChange={(e) =>
-                    handleInputChange({ location: e.target.value }, index)
-                  }
-                />
-                <Input
-                  value={work.responsibilities}
-                  multiline={true}
-                  rows={5}
-                  label="Responsibilities"
-                  onChange={(e) =>
-                    handleInputChange(
-                      { responsibilities: e.target.value },
-                      index
-                    )
-                  }
-                />
-              </Stack>
-            </Paper>
+            <Form
+              resumeID={resumeID}
+              data={work}
+              onRemove={(setOpen) => handleRemove(index, setOpen)}
+              onChange={handleChange}
+              key={index}
+            />
           );
         })}
       </Stack>
     </Stack>
+  );
+}
+
+function Form({ resumeID, data, onRemove, onChange }) {
+  const { addNote } = useContext(asyncNoteContext);
+  const [isEdit, setIsEdit] = useState(false);
+  const [work, setWork] = useState(null);
+
+  useEffect(() => {
+    setWork(data);
+    if (data.id === null) {
+      setIsEdit(true);
+    } else {
+      setIsEdit(false);
+    }
+  }, [data]);
+  const handleInputChange = (newValue) => {
+    setWork((pre) => {
+      return {
+        ...pre,
+        ...newValue,
+      };
+    });
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const res = await addNote(
+        "Update Project",
+        MyAPIs.Resume().updateResumeWork(resumeID, [work])
+      );
+      setIsEdit(false);
+      onChange && onChange(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return (
+    <Paper
+      className="flat"
+      sx={{ background: isEdit === false && "transparent" }}
+    >
+      <Stack
+        direction={"row"}
+        paddingX={2}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <Stack direction={"row"} gap={1} alignItems={"center"}>
+          <Typography fontWeight={"bold"} fontStyle={"italic"} variant="body1">
+            {work?.jobTitle}
+          </Typography>
+        </Stack>
+        <Stack direction={"row"}>
+          {isEdit && (
+            <IconButton color="success" onClick={() => handleUpdate()}>
+              <Check />
+            </IconButton>
+          )}
+          <IconButton
+            color={isEdit ? "error" : "warning"}
+            onClick={() => setIsEdit((prev) => !prev)}
+          >
+            {isEdit ? <Clear /> : <Edit />}
+          </IconButton>
+
+          <ButtonDialogConfirm
+            size="small"
+            color="error"
+            sx={{ minWidth: "40px", paddingX: 0 }}
+            dialog_color={"error"}
+            dialog_title={"Remove Work"}
+            dialog_message={"Are You Sure?"}
+            onConfirm={onRemove}
+          >
+            {work?.id ? <DeleteForever /> : <Remove />}
+          </ButtonDialogConfirm>
+        </Stack>
+      </Stack>
+      <Divider />
+      <Stack gap={1} paddingX={5} paddingY={3}>
+        <Stack direction={"row"} gap={1}>
+          <Input
+            sx={{ width: "100%" }}
+            value={work?.jobTitle}
+            label="Job Title"
+            isEdit={isEdit}
+            onChange={(e) => handleInputChange({ jobTitle: e.target.value })}
+          />
+          <Input
+            type="date"
+            value={work?.startDate ? work?.startDate.split("T")[0] : null}
+            label="From"
+            sx={{ minWidth: "200px" }}
+            isEdit={isEdit}
+            onChange={(e) => handleInputChange({ startDate: e.target.value })}
+          />
+          <Input
+            type="date"
+            value={work?.endDate ? work?.endDate.split("T")[0] : null}
+            label="To"
+            nullReplacement={"Current"}
+            sx={{ minWidth: "200px" }}
+            isEdit={isEdit}
+            onChange={(e) => handleInputChange({ endDate: e.target.value })}
+          />
+        </Stack>
+
+        <Input
+          value={work?.companyName}
+          label="Company"
+          isEdit={isEdit}
+          onChange={(e) => handleInputChange({ companyName: e.target.value })}
+        />
+        <Input
+          value={work?.location}
+          label="Location"
+          isEdit={isEdit}
+          onChange={(e) => handleInputChange({ location: e.target.value })}
+        />
+        <Input
+          value={work?.responsibilities}
+          multiline={true}
+          rows={5}
+          label="Responsibilities"
+          isEdit={isEdit}
+          onChange={(e) =>
+            handleInputChange({ responsibilities: e.target.value })
+          }
+        />
+      </Stack>
+    </Paper>
   );
 }

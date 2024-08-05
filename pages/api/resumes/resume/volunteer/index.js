@@ -38,7 +38,9 @@ async function updateResumeVolunteer(req, res) {
         organizationName: volunteer.organizationName,
         location: volunteer.location,
         startDate: new Date(volunteer.startDate).toISOString(),
-        endDate: new Date(volunteer.endDate).toISOString() || null,
+        endDate: volunteer.endDate
+          ? new Date(volunteer.endDate).toISOString()
+          : null,
         responsibilities: volunteer.responsibilities,
       },
       update: {
@@ -46,7 +48,9 @@ async function updateResumeVolunteer(req, res) {
         organizationName: volunteer.organizationName,
         location: volunteer.location,
         startDate: new Date(volunteer.startDate).toISOString(),
-        endDate: new Date(volunteer.endDate).toISOString() || null,
+        endDate: volunteer.endDate
+          ? new Date(volunteer.endDate).toISOString()
+          : null,
         responsibilities: volunteer.responsibilities,
       },
     }));
@@ -58,8 +62,15 @@ async function updateResumeVolunteer(req, res) {
           upsert: _volunteer,
         },
       },
+      include: {
+        volunteerExperience: {
+          orderBy: {
+            startDate: "desc",
+          },
+        },
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.volunteerExperience);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });
