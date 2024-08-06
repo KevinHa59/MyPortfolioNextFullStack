@@ -2,7 +2,10 @@ import _ from "lodash";
 
 class ArrayUtils {
   groupByKey(data, key) {
-    const copy = _.cloneDeep(data);
+    let copy = _.cloneDeep(data);
+    copy = copy.sort((a, b) =>
+      a[key]?.toLowerCase().localeCompare(b[key]?.toLowerCase())
+    );
     const result = copy.reduce((res, cur) => {
       let _key = cur[key];
       if (_key === null) _key = "ungrouped";
