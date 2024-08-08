@@ -2,7 +2,12 @@ import { Divider, Fade, Paper, Slide, Stack, Typography } from "@mui/material";
 import React from "react";
 import FormHeader from "../widgets/texts/form-header";
 
-export default function Header({ title, icon, children }) {
+export default function Header({
+  title,
+  icon,
+  subWidth = "max-content",
+  children,
+}) {
   return (
     <Stack width={"100%"}>
       <Stack
@@ -47,12 +52,7 @@ export default function Header({ title, icon, children }) {
             />
           </Slide>
         </Stack>
-        <Stack
-          width={"max-content"}
-          direction={"row"}
-          gap={1}
-          alignItems={"center"}
-        >
+        <Stack width={subWidth} direction={"row"} gap={1} alignItems={"center"}>
           {children}
         </Stack>
       </Stack>

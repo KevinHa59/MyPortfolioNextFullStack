@@ -62,6 +62,7 @@ export default function NewResume() {
   const [step, setStep] = useState(steps[0]);
   const [error, setError] = useState(null);
   const [isTitleEditable, setIsTitleEditable] = useState(false);
+  const [isSummaryEdit, setIsSummaryEdit] = useState(false);
   const [resumeData, setResumeData] = useState({
     id: null,
     user: null,
@@ -149,13 +150,71 @@ export default function NewResume() {
     }
   };
 
+  const handleSaveSummary = async () => {
+    try {
+      const res = await addNote(
+        "Save Summary",
+        MyAPIs.Resume().updateResume(resumeData.id, {
+          summary: resumeData.summary,
+        })
+      );
+      setIsSummaryEdit(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <resumeContext.Provider
       value={{ handleResumeDataChange: handleResumeDataChange }}
     >
       <Stack width={"100%"} height={"100%"} gap={"1px"} position={"relative"}>
-        <Header title={"New Resumes"} icon={<Article />}>
-          <Stack direction={"row"} gap={1}></Stack>
+        <Header title={"New Resumes"} subWidth="100%" icon={<Article />}>
+          <Stack direction={"row"} gap={1} width={"100%"}>
+            <Stack
+              sx={{
+                bottom: 0,
+                left: 0,
+                width: "100%",
+                zIndex: 2,
+              }}
+              direction={"row"}
+              alignItems={"center"}
+              gap={1}
+            >
+              <Input
+                inputProps={{
+                  startAdornment: <Label sx={{ paddingRight: 1 }} />,
+                  endAdornment: (
+                    <Stack direction={"row"} gap={1}>
+                      <IconButton size="small" color="success">
+                        <Check />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => setIsTitleEditable(false)}
+                      >
+                        <Clear />
+                      </IconButton>
+                    </Stack>
+                  ),
+                }}
+                value={resumeData.title}
+                isEdit={isTitleEditable}
+              />
+              {!isTitleEditable && (
+                <IconButton
+                  size="small"
+                  color="warning"
+                  sx={{ padding: 0 }}
+                  onClick={() => setIsTitleEditable(true)}
+                >
+                  <Edit />
+                </IconButton>
+              )}
+            </Stack>
+          </Stack>
         </Header>
         {resumeData.id === null && router.query.id === undefined ? (
           <Stack
@@ -255,59 +314,27 @@ export default function NewResume() {
             </Paper>
             <Stack width={"100%"} alignItems={"center"}>
               <Stack
-                sx={{
-                  bottom: 0,
-                  left: 0,
-                  width: "100%",
-                  zIndex: 2,
-                  height: "50px",
-                }}
-                direction={"row"}
-                alignItems={"center"}
-                gap={1}
-              >
-                <Input
-                  inputProps={{
-                    startAdornment: <Label sx={{ paddingRight: 1 }} />,
-                    endAdornment: (
-                      <Stack direction={"row"} gap={1}>
-                        <IconButton size="small" color="success">
-                          <Check />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={() => setIsTitleEditable(false)}
-                        >
-                          <Clear />
-                        </IconButton>
-                      </Stack>
-                    ),
-                  }}
-                  value={resumeData.title}
-                  isEdit={isTitleEditable}
-                  // fullWidth
-                  // sx={{ width: "100%" }}
-                />
-                {!isTitleEditable && (
-                  <IconButton
-                    size="small"
-                    color="warning"
-                    onClick={() => setIsTitleEditable(true)}
-                  >
-                    <Edit />
-                  </IconButton>
-                )}
-              </Stack>
-              <Stack
                 width={"100%"}
-                // width={"calc(500px, 100%, 1000px)"}
-                height={"calc(100% - 50px)"}
-                gap={10}
+                height={"calc(100%)"}
+                gap={2}
                 position={"relative"}
-                sx={{ overflowY: "auto", scrollBehavior: "smooth" }}
+                sx={{
+                  paddingX: 2,
+                  overflowY: "auto",
+                  scrollBehavior: "smooth",
+                  opacity: 0.8,
+                  background: `repeating-linear-gradient( -45deg, transparent, transparent 5px, ${theme.palette.background.paper} 5px, ${theme.palette.background.paper} 25px )`,
+                }}
               >
-                <Stack id={steps[0].name} width={"100%"} height={"100%"}>
+                <Stack
+                  id={steps[0].name}
+                  width={"100%"}
+                  height={"100%"}
+                  sx={{
+                    background: theme.palette.background.default,
+                    paddingY: 2,
+                  }}
+                >
                   <Stack
                     width={"100%"}
                     sx={{
@@ -316,79 +343,191 @@ export default function NewResume() {
                       overflowX: "hidden",
                     }}
                   >
-                    <Stack sx={{ overflowY: "auto" }} gap={3} paddingX={5}>
+                    <Stack
+                      width={"100%"}
+                      sx={{ overflowY: "auto" }}
+                      gap={3}
+                      paddingX={5}
+                      direction={"row"}
+                    >
                       <Input
-                        label="Write short cool summary about yourself here... "
+                        value={resumeData?.summary}
+                        label={
+                          isSummaryEdit
+                            ? "Write short cool summary about yourself here... "
+                            : "Summary"
+                        }
+                        sx={{ width: "100%" }}
                         fullWidth
                         multiline
                         rows={10}
+                        isEdit={isSummaryEdit}
+                        onChange={(e) =>
+                          handleResumeDataChange({ summary: e.target.value })
+                        }
                       />
+                      <Stack>
+                        {isSummaryEdit ? (
+                          <>
+                            <IconButton
+                              color="success"
+                              onClick={handleSaveSummary}
+                            >
+                              <Check />
+                            </IconButton>
+                            <IconButton
+                              color="error"
+                              onClick={() => setIsSummaryEdit(false)}
+                            >
+                              <Clear />
+                            </IconButton>
+                          </>
+                        ) : (
+                          <IconButton
+                            color="warning"
+                            onClick={() => setIsSummaryEdit(true)}
+                          >
+                            <Edit />
+                          </IconButton>
+                        )}
+                      </Stack>
                     </Stack>
                   </Stack>
                 </Stack>
-                <Stack id={steps[1].name} width={"100%"}>
+                <Paper
+                  id={steps[1].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <Education
                     resumeID={resumeData.id}
                     data={resumeData.education}
                     step={steps[1]}
                   />
-                </Stack>
-                <Stack id={steps[2].name} width={"100%"}>
+                </Paper>
+                <Paper
+                  id={steps[2].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <Certification
                     resumeID={resumeData.id}
                     data={resumeData.certifications}
                     step={steps[2]}
                   />
-                </Stack>
-                <Stack id={steps[3].name} width={"100%"}>
+                </Paper>
+                <Paper
+                  id={steps[3].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <Skill
                     resumeID={resumeData.id}
                     data={resumeData.skills}
                     step={steps[3]}
                   />
-                </Stack>
-                <Stack id={steps[4].name} width={"100%"}>
+                </Paper>
+                <Paper
+                  id={steps[4].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <Project
                     resumeID={resumeData.id}
                     data={resumeData.projects}
                     step={steps[4]}
                   />
-                </Stack>
-                <Stack id={steps[5].name} width={"100%"}>
+                </Paper>
+                <Paper
+                  id={steps[5].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <WorkExperience
                     resumeID={resumeData.id}
                     data={resumeData.workExperience}
                     step={steps[5]}
                   />
-                </Stack>
-                <Stack id={steps[6].name} width={"100%"}>
+                </Paper>
+                <Paper
+                  id={steps[6].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <VolunteerExperience
                     resumeID={resumeData.id}
                     data={resumeData.volunteerExperience}
                     step={steps[6]}
                   />
-                </Stack>
-                <Stack id={steps[7].name} width={"100%"}>
+                </Paper>
+                <Paper
+                  id={steps[7].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <Award
                     resumeID={resumeData.id}
                     data={resumeData.awards}
                     step={steps[7]}
                   />
-                </Stack>
-                <Stack id={steps[8].name} width={"100%"}>
+                </Paper>
+                <Paper
+                  id={steps[8].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <Language
                     resumeID={resumeData.id}
                     data={resumeData.languages}
                     step={steps[8]}
                   />
-                </Stack>
-                <Stack id={steps[9].name} width={"100%"}>
+                </Paper>
+                <Paper
+                  id={steps[9].name}
+                  className="flat"
+                  variant="outlined"
+                  sx={{
+                    background: theme.palette.background.default,
+                  }}
+                >
                   <Hobby
                     resumeID={resumeData.id}
                     data={resumeData.hobbies}
                     step={steps[9]}
                   />
-                </Stack>
+                </Paper>
               </Stack>
             </Stack>
           </Stack>

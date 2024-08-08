@@ -76,7 +76,8 @@ async function updateResume(req, res) {
     const resume = await prisma.resume.update({
       where: { id: id },
       data: {
-        summary: updateData.summary,
+        // summary: updateData.summary,
+        ...updateData,
       },
     });
     res.status(201).json(resume);

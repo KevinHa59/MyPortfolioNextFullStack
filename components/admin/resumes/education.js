@@ -68,7 +68,7 @@ export default function Education({ resumeID, data, step }) {
 
   return (
     <Stack width={"100%"} position={"relative"}>
-      <Paper className="br0" sx={{ position: "sticky", top: 0, zIndex: 5 }}>
+      <Paper sx={{ position: "sticky", top: 0, zIndex: 5 }}>
         <Stack
           direction={"row"}
           gap={"1px"}

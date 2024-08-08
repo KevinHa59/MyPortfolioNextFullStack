@@ -94,7 +94,7 @@ export default function Skill({ resumeID, data, step }) {
 
   return (
     <Stack height={"100%"} width={"100%"}>
-      <Paper className="br0" sx={{ position: "sticky", top: 0, zIndex: 5 }}>
+      <Paper sx={{ position: "sticky", top: 0, zIndex: 5 }}>
         <Stack
           direction={"row"}
           gap={"1px"}
