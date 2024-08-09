@@ -49,8 +49,11 @@ async function updateResumeLanguage(req, res) {
           upsert: _languages,
         },
       },
+      include: {
+        languages: true,
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.languages);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });
@@ -62,7 +65,7 @@ async function updateResumeLanguage(req, res) {
 async function removeResumeLanguage(req, res) {
   try {
     const { id } = req.query;
-
+    console.log(id);
     // input validation
     if (!id) {
       res.status(400).json({ error: "Incomplete data" });

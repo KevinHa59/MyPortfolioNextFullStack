@@ -67,6 +67,13 @@ class ResumesAPI {
       education: educations,
     });
   }
+  async deleteResumeEducation(id) {
+    return await axios.delete(API.resumes_resume_education, {
+      params: {
+        id: id,
+      },
+    });
+  }
   async updateResumeCertification(id, certifications) {
     return await axios.put(API.resumes_resume_certification, {
       id: id,
@@ -144,8 +151,15 @@ class ResumesAPI {
       languages: languages,
     });
   }
+  async deleteResumeLanguage(id) {
+    return await axios.delete(API.resumes_resume_language, {
+      params: {
+        id: id,
+      },
+    });
+  }
   async deleteResumeHobby(id) {
-    return await axios.delete(API.resumes_resume_award, {
+    return await axios.delete(API.resumes_resume_hobby, {
       params: {
         id: id,
       },
@@ -155,13 +169,6 @@ class ResumesAPI {
     return await axios.put(API.resumes_resume_hobby, {
       id: id,
       hobbies: hobbies,
-    });
-  }
-  async deleteResumeLanguage(id) {
-    return await axios.delete(API.resumes_resume_hobby, {
-      params: {
-        id: id,
-      },
     });
   }
 }

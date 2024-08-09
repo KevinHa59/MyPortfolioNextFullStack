@@ -109,7 +109,7 @@ export default function Skill({ resumeID, data, step }) {
         </Stack>
       </Paper>
       <Divider />
-      <Stack gap={1} padding={1} paddingX={5}>
+      <Stack gap={5} padding={1} paddingX={5}>
         <Stack direction={"row"} gap={1} alignItems={"flex-end"}>
           <Input
             isAutoComplete={true}
@@ -146,7 +146,7 @@ export default function Skill({ resumeID, data, step }) {
             Add
           </Button>
         </Stack>
-        <Stack direction={"row"} gap={2} flexWrap={"wrap"}>
+        <Stack direction={"row"} gap={5} flexWrap={"wrap"}>
           {Object.entries(skills).map((group, index) => {
             return (
               <SkillGroup
@@ -173,7 +173,7 @@ function SkillGroup({ groupData, groups, onDelete, onMoveToGroup }) {
     <Paper
       variant="outlined"
       sx={{
-        width: "clamp(300px, 32% , 500px)",
+        width: "clamp(300px, 30% , 500px)",
         overflow: "hidden",
         background: "transparent",
       }}

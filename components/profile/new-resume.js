@@ -320,6 +320,7 @@ export default function NewResume() {
                 position={"relative"}
                 sx={{
                   paddingX: 2,
+                  paddingBottom: 2,
                   overflowY: "auto",
                   scrollBehavior: "smooth",
                   opacity: 0.8,
@@ -331,6 +332,7 @@ export default function NewResume() {
                   width={"100%"}
                   height={"100%"}
                   sx={{
+                    marginTop: 2,
                     background: theme.palette.background.default,
                     paddingY: 2,
                   }}

@@ -26,12 +26,13 @@ const project_template = {
   id: null,
   title: "",
   role: "",
-  technologies: "",
+  technologies: [],
   description: "",
   achievements: "",
 };
 
 export default function Project({ resumeID, data, step }) {
+  const { addNote } = useContext(asyncNoteContext);
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
 
@@ -50,11 +51,16 @@ export default function Project({ resumeID, data, step }) {
     }
   };
 
-  const handleRemove = (index, setOpen) => {
-    const copy = _.cloneDeep(input);
-    copy.splice(index, 1);
-    setInput(copy);
-    setOpen(false);
+  const handleRemove = async (id, index, setOpen) => {
+    try {
+      const copy = _.cloneDeep(input);
+      copy.splice(index, 1);
+      await addNote("Remove Project", MyAPIs.Resume().deleteResumeProject(id));
+      handleResumeDataChange({ projects: copy });
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleChange = (newProject) => {
@@ -101,7 +107,7 @@ export default function Project({ resumeID, data, step }) {
             <Form
               resumeID={resumeID}
               data={project}
-              onRemove={(setOpen) => handleRemove(index, setOpen)}
+              onRemove={(setOpen) => handleRemove(project.id, index, setOpen)}
               onChange={handleChange}
               key={index}
             />
@@ -120,7 +126,7 @@ function Form({ resumeID, data, onRemove, onChange }) {
   useEffect(() => {
     setProject({
       ...data,
-      technologies: data.technologies.join(", "),
+      technologies: data?.technologies?.join(", ") || "",
     });
     if (data.id === null) {
       setIsEdit(true);
@@ -166,7 +172,7 @@ function Form({ resumeID, data, onRemove, onChange }) {
           </Typography>
         </Stack>
         <Stack direction={"row"}>
-          {project?.id !== null && isEdit && (
+          {isEdit && (
             <IconButton color="success" onClick={() => handleUpdate()}>
               <Check />
             </IconButton>

@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   const method = req.method;
   if (method === "PUT") {
     updateResumeHobby(req, res);
-  } else if (method === "PUT") {
+  } else if (method === "DELETE") {
     removeResumeHobby(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
@@ -25,7 +25,6 @@ export default async function handler(req, res) {
 async function updateResumeHobby(req, res) {
   try {
     const { id, hobbies } = req.body;
-
     // input validation
     if (!id || !hobbies) {
       res.status(400).json({ error: "Incomplete data" });
@@ -47,8 +46,15 @@ async function updateResumeHobby(req, res) {
           upsert: _hobbies,
         },
       },
+      include: {
+        hobbies: {
+          orderBy: {
+            name: "asc",
+          },
+        },
+      },
     });
-    res.status(201).json(resume);
+    res.status(201).json(resume.hobbies);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });

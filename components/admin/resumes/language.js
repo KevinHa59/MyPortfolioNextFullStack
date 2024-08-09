@@ -1,28 +1,38 @@
-import { Add, Check } from "@mui/icons-material";
+import {
+  Add,
+  Check,
+  Clear,
+  DeleteForever,
+  Edit,
+  Remove,
+} from "@mui/icons-material";
 import {
   Button,
-  Chip,
   Divider,
+  Grid,
   IconButton,
+  Paper,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SelectCustom from "../../widgets/select/select-custom";
-import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
-import ButtonLoading from "../../widgets/buttons/button-loading";
-import { StyleMode } from "../../../styles/useStyle";
-import { darkStyles } from "../../../theme/dark-theme-options";
+import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
+import { asyncNoteContext } from "../../widgets/notification/async-notification";
+import { resumeContext } from "../../profile/new-resume";
+import Input from "../../widgets/input/Input";
 
-export default function Language({ data, step, onRefresh, onChange }) {
+const language_template = {
+  id: null,
+  language: "",
+  proficiencyLevel: "",
+};
+
+export default function Language({ resumeID, data, step }) {
+  const { addNote } = useContext(asyncNoteContext);
+  const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
-  const [language, setLanguage] = useState({
-    language: "",
-    proficiencyLevel: "",
-  });
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (data?.length > 0) {
@@ -30,67 +40,62 @@ export default function Language({ data, step, onRefresh, onChange }) {
     }
   }, [data]);
 
-  const handleLanguageChange = (newValue) => {
-    setLanguage((prev) => {
-      return {
-        ...prev,
-        ...newValue,
-      };
-    });
-  };
-
-  const handleAddLanguage = () => {
-    setInput((prev) => {
-      return [language, ...prev];
-    });
-    handleLanguageChange({
-      language: "",
-      proficiencyLevel: "",
-    });
-  };
-
-  const handleRemoveLanguage = async (index, id) => {
-    if (id !== undefined) {
-      const res = await MyAPIs.Resume().deleteResumeLanguage(id);
+  const handleAddNew = () => {
+    // only allow add new one once per time
+    if (!input.some((work) => work.id === null)) {
+      setInput((prev) => {
+        return [{ ...language_template }, ...prev];
+      });
     }
-    const _copy = _.cloneDeep(input);
-    _copy.splice(index, 1);
-    setInput(_copy);
-    onRefresh && onRefresh();
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    const res = await MyAPIs.Resume().updateResumeLanguage(data.id, input);
-    onRefresh && onRefresh();
-    setIsSaving(false);
+  const handleRemove = async (id, index, setOpen) => {
+    try {
+      const res = await addNote(
+        "Remove Language",
+        MyAPIs.Resume().deleteResumeLanguage(id)
+      );
+      const copy = _.cloneDeep(input);
+      copy.splice(index, 1);
+      handleResumeDataChange({ languages: copy });
+      // setInput(copy);
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleChange = (newItem) => {
+    setInput(newItem);
+    handleResumeDataChange({ languages: newItem });
   };
 
   return (
     <Stack height={"100%"} width={"100%"}>
-      <Stack
-        direction={"row"}
-        gap={"1px"}
-        justifyContent={"space-between"}
-        height={"45px"}
-        padding={1}
-      >
-        <Stack alignItems={"center"} direction={"row"} gap={1}>
-          {step.Icon}
-          <Typography>{step.name}</Typography>
+      <Paper sx={{ position: "sticky", top: 0, zIndex: 5 }}>
+        <Stack
+          direction={"row"}
+          gap={"1px"}
+          justifyContent={"space-between"}
+          height={"45px"}
+          padding={1}
+        >
+          <Stack alignItems={"center"} direction={"row"} gap={1}>
+            {step.Icon}
+            <Typography>{step.name}</Typography>
+          </Stack>
+          <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
+            <Button
+              size="small"
+              startIcon={<Add />}
+              color="primary"
+              onClick={handleAddNew}
+            >
+              Add Award
+            </Button>
+          </Stack>
         </Stack>
-        <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
-          <ButtonLoading
-            size="small"
-            variant="contained"
-            isLoading={isSaving}
-            onClick={handleSave}
-            startIcon={<Check />}
-          >
-            Save
-          </ButtonLoading>
-        </Stack>
-      </Stack>
+      </Paper>
       <Divider />
       <Stack
         height={"calc(100% - 37px)"}
@@ -99,43 +104,15 @@ export default function Language({ data, step, onRefresh, onChange }) {
         padding={1}
         paddingX={5}
       >
-        <Stack direction={"row"} gap={1} alignItems={"flex-end"}>
-          <SelectCustom
-            size="small"
-            sx={{ width: "100%" }}
-            label={"Proficiency"}
-            selected_value={language.language}
-            data={languages.sort()}
-            onChange={(value) => handleLanguageChange({ language: value })}
-          />
-          <SelectCustom
-            size="small"
-            sx={{ width: "200px" }}
-            label={"Proficiency"}
-            selected_value={language.proficiencyLevel}
-            data={["Native", "Fluent", "Advanced", "Intermediate"]}
-            onChange={(value) =>
-              handleLanguageChange({ proficiencyLevel: value })
-            }
-          />
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            sx={{ height: "max-content" }}
-            onClick={() => handleAddLanguage()}
-          >
-            Add
-          </Button>
-        </Stack>
         <Stack gap={1}>
           {input.map((lang, index) => {
             return (
-              <Chip
+              <Form
+                resumeID={resumeID}
+                data={lang}
+                onRemove={(setOpen) => handleRemove(lang.id, index, setOpen)}
+                onChange={handleChange}
                 key={index}
-                label={`${lang.language}: ${lang.proficiencyLevel}`}
-                color={lang.id ? "info" : "default"}
-                onDelete={() => handleRemoveLanguage(index, lang.id)}
-                sx={{ width: "max-content" }}
               />
             );
           })}
@@ -144,6 +121,133 @@ export default function Language({ data, step, onRefresh, onChange }) {
     </Stack>
   );
 }
+
+function Form({ resumeID, data, onRemove, onChange }) {
+  const { addNote } = useContext(asyncNoteContext);
+  const [isEdit, setIsEdit] = useState(false);
+  const [language, setLanguage] = useState(null);
+
+  useEffect(() => {
+    setLanguage(data);
+    if (data.id === null) {
+      setIsEdit(true);
+    } else {
+      setIsEdit(false);
+    }
+  }, [data]);
+  const handleInputChange = (newValue) => {
+    setLanguage((pre) => {
+      return {
+        ...pre,
+        ...newValue,
+      };
+    });
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const res = await addNote(
+        "Update Language",
+        MyAPIs.Resume().updateResumeLanguage(resumeID, [language])
+      );
+      setIsEdit(false);
+      onChange && onChange(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return (
+    <Paper
+      className="flat"
+      sx={{ background: isEdit === false && "transparent" }}
+    >
+      <Stack
+        direction={"row"}
+        paddingX={2}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <Stack direction={"row"} gap={1} alignItems={"center"}>
+          <Typography fontWeight={"bold"} fontStyle={"italic"} variant="body1">
+            {language?.language}
+          </Typography>
+        </Stack>
+        <Stack direction={"row"}>
+          {isEdit && (
+            <IconButton color="success" onClick={() => handleUpdate()}>
+              <Check />
+            </IconButton>
+          )}
+          <IconButton
+            color={isEdit ? "error" : "warning"}
+            onClick={() => setIsEdit((prev) => !prev)}
+          >
+            {isEdit ? <Clear /> : <Edit />}
+          </IconButton>
+
+          <ButtonDialogConfirm
+            size="small"
+            color="error"
+            sx={{ minWidth: "40px", paddingX: 0 }}
+            dialog_color={"error"}
+            dialog_title={"Remove Project"}
+            dialog_message={"Are You Sure?"}
+            onConfirm={onRemove}
+          >
+            {language?.id ? <DeleteForever /> : <Remove />}
+          </ButtonDialogConfirm>
+        </Stack>
+      </Stack>
+      <Divider />
+      <Stack gap={1} paddingX={5} paddingY={3}>
+        <Stack direction={"row"} gap={1}>
+          <Input
+            sx={{ width: "100%" }}
+            value={language?.language}
+            isAutoComplete={true}
+            defaultOptions={languages}
+            label="Language"
+            isEdit={isEdit}
+            onChange={(e) => handleInputChange({ language: e.target.value })}
+            onSelect={(value) => handleInputChange({ language: value })}
+          />
+          <Input
+            value={language?.proficiencyLevel}
+            isSelect={true}
+            isOpenOptionOnFocus={true}
+            defaultOptions={["Native", "Fluent", "Advanced", "Intermediate"]}
+            label="Proficiency"
+            isEdit={isEdit}
+            sx={{ minWidth: "200px" }}
+            onSelect={(value) => handleInputChange({ proficiencyLevel: value })}
+          />
+        </Stack>
+
+        {/* <Input
+          value={language?.technologies}
+          label="Technologies"
+          isEdit={isEdit}
+          onChange={(e) => handleInputChange({ technologies: e.target.value })}
+        />
+        <Input
+          value={language?.achievements}
+          label="Achievements"
+          isEdit={isEdit}
+          onChange={(e) => handleInputChange({ achievements: e.target.value })}
+        />
+        <Input
+          value={language?.description}
+          label="Description"
+          multiline={true}
+          rows={5}
+          isEdit={isEdit}
+          onChange={(e) => handleInputChange({ description: e.target.value })}
+        /> */}
+      </Stack>
+    </Paper>
+  );
+}
+
 const languages = [
   "Mandarin Chinese",
   "Spanish",

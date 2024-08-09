@@ -36,6 +36,7 @@ const edu_template = {
 };
 
 export default function Education({ resumeID, data, step }) {
+  const { addNote } = useContext(asyncNoteContext);
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
 
@@ -54,11 +55,19 @@ export default function Education({ resumeID, data, step }) {
     }
   };
 
-  const handleRemoveEducation = (index, setOpen) => {
-    const copy = _.cloneDeep(input);
-    copy.splice(index, 1);
-    setInput(copy);
-    setOpen(false);
+  const handleRemoveEducation = async (id, index, setOpen) => {
+    try {
+      const copy = _.cloneDeep(input);
+      copy.splice(index, 1);
+      await addNote(
+        "Remove Education",
+        MyAPIs.Resume().deleteResumeEducation(id)
+      );
+      handleResumeDataChange({ education: copy });
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleUpdateCertification = (newCer) => {
@@ -100,7 +109,7 @@ export default function Education({ resumeID, data, step }) {
               resumeID={resumeID}
               data={edu}
               onRemoveEducation={(setOpen) =>
-                handleRemoveEducation(index, setOpen)
+                handleRemoveEducation(edu.id, index, setOpen)
               }
               onChange={handleUpdateCertification}
               key={index}
@@ -164,7 +173,7 @@ function Form({ resumeID, data, onRemoveEducation, onChange }) {
           </Typography>
         </Stack>
         <Stack direction={"row"}>
-          {edu?.id !== null && isEdit && (
+          {isEdit && (
             <IconButton color="success" onClick={() => handleUpdateEducation()}>
               <Check />
             </IconButton>

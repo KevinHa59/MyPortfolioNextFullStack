@@ -34,6 +34,7 @@ const work_template = {
 };
 
 export default function WorkExperience({ resumeID, data, step }) {
+  const { addNote } = useContext(asyncNoteContext);
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
 
@@ -52,11 +53,19 @@ export default function WorkExperience({ resumeID, data, step }) {
     }
   };
 
-  const handleRemove = (index, setOpen) => {
-    const copy = _.cloneDeep(input);
-    copy.splice(index, 1);
-    setInput(copy);
-    setOpen(false);
+  const handleRemove = async (id, index, setOpen) => {
+    try {
+      const copy = _.cloneDeep(input);
+      copy.splice(index, 1);
+      await addNote(
+        "Remove Work Experience",
+        MyAPIs.Resume().deleteResumeWork(id)
+      );
+      handleResumeDataChange({ workExperience: copy });
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleChange = (newItem) => {
@@ -103,7 +112,7 @@ export default function WorkExperience({ resumeID, data, step }) {
             <Form
               resumeID={resumeID}
               data={work}
-              onRemove={(setOpen) => handleRemove(index, setOpen)}
+              onRemove={(setOpen) => handleRemove(work.id, index, setOpen)}
               onChange={handleChange}
               key={index}
             />

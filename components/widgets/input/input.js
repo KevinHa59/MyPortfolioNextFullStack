@@ -14,6 +14,7 @@ import React, { useRef, useState } from "react";
 import { styles } from "../../../styles/useStyle";
 import useDelay from "../../../hooks/use-delay";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
+import SelectCustom from "../select/select-custom";
 export default function Input({
   autoComplete = "off",
   id,
@@ -37,8 +38,11 @@ export default function Input({
   onChange,
   OptionListMinWidth,
   isAutoComplete = false,
+  isSelect = false,
   onSelect,
+  isOpenOptionOnFocus = false,
   defaultOptions,
+  optionPlacement = "bottom",
   optionKey,
   APIOptions,
   APIOptionKey,
@@ -97,88 +101,153 @@ export default function Input({
       </Stack>
       {isEdit ? (
         <Stack position={"relative"}>
-          <TextField
-            id={id}
-            type={type === "password" ? (visible ? "text" : "password") : type}
-            variant={variant}
-            fullWidth={fullWidth}
-            multiline={multiline}
-            rows={rows}
-            size={size}
-            sx={sx_input}
-            autoComplete={autoComplete}
-            InputProps={
-              type === "password"
-                ? {
-                    ...inputProps,
-                    endAdornment: (
-                      <Stack direction={"row"}>
-                        <IconButton
-                          size="small"
-                          onClick={() => setVisible((prev) => !prev)}
-                        >
-                          {visible ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </Stack>
-                    ),
-                  }
-                : isAutoComplete === true
-                ? {
-                    ...inputProps,
-                    endAdornment: (
-                      <Stack direction={"row"}>
-                        {isFetchingData && <CircularProgress size={14} />}
-                      </Stack>
-                    ),
-                  }
-                : inputProps
-            }
-            className={inputClassName}
-            value={value}
-            onChange={handleChange}
-            onKeyPress={onKeyPress}
-          />
-          <ClickAwayListener onClickAway={() => setOpen(false)}>
-            <Stack minWidth={OptionListMinWidth}>
-              {open && (
-                <Paper
-                  sx={{
-                    width: "100%",
-                    position: "absolute",
-                    top: "100%",
-                    zIndex: 10,
-                    maxHeight: "500px",
-                    overflowY: "auto",
-                  }}
+          {isSelect ? (
+            <SelectCustom
+              size={size}
+              sx={sx_input}
+              variant={variant}
+              fullWidth={fullWidth}
+              selected_value={value}
+              data={defaultOptions}
+              onChange={(value) => onSelect && onSelect(value)}
+            />
+          ) : (
+            <>
+              {optionPlacement === "top" && (
+                <ClickAwayListener
+                  onClickAway={() => open === true && setOpen(false)}
                 >
-                  <Stack width={"100%"}>
-                    {options.map((s, i) => {
-                      return (
-                        <>
-                          <Button
-                            key={i}
-                            size="small"
-                            className="br0 flex-start"
-                            onClick={() => {
-                              onSelect && onSelect(s);
-                              setOpen(false);
-                            }}
-                          >
-                            {callbackOption
-                              ? callbackOption(s)
-                              : APIOptionKey
-                              ? s[APIOptionKey]
-                              : s}
-                          </Button>
-                          <Divider />
-                        </>
-                      );
-                    })}
+                  <Stack minWidth={OptionListMinWidth}>
+                    {open && (
+                      <Paper
+                        sx={{
+                          width: "100%",
+                          position: "absolute",
+                          bottom: "100%",
+                          zIndex: 10,
+                          maxHeight: "500px",
+                          overflowY: "auto",
+                        }}
+                      >
+                        <Stack width={"100%"}>
+                          {options.map((s, i) => {
+                            return (
+                              <>
+                                <Button
+                                  key={i}
+                                  size="small"
+                                  className="br0 flex-start"
+                                  onClick={() => {
+                                    onSelect && onSelect(s);
+                                    setOpen(false);
+                                  }}
+                                >
+                                  {callbackOption
+                                    ? callbackOption(s)
+                                    : APIOptionKey
+                                    ? s[APIOptionKey]
+                                    : s}
+                                </Button>
+                                <Divider />
+                              </>
+                            );
+                          })}
+                        </Stack>
+                      </Paper>
+                    )}
                   </Stack>
-                </Paper>
+                </ClickAwayListener>
               )}
-            </Stack>
-          </ClickAwayListener>
+              <TextField
+                id={id}
+                type={
+                  type === "password" ? (visible ? "text" : "password") : type
+                }
+                variant={variant}
+                fullWidth={fullWidth}
+                multiline={multiline}
+                rows={rows}
+                size={size}
+                sx={sx_input}
+                autoComplete={autoComplete}
+                InputProps={
+                  type === "password"
+                    ? {
+                        ...inputProps,
+                        endAdornment: (
+                          <Stack direction={"row"}>
+                            <IconButton
+                              size="small"
+                              onClick={() => setVisible((prev) => !prev)}
+                            >
+                              {visible ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </Stack>
+                        ),
+                      }
+                    : isAutoComplete === true
+                    ? {
+                        ...inputProps,
+                        endAdornment: (
+                          <Stack direction={"row"}>
+                            {isFetchingData && <CircularProgress size={14} />}
+                          </Stack>
+                        ),
+                      }
+                    : inputProps
+                }
+                className={inputClassName}
+                value={value}
+                onChange={handleChange}
+                onKeyPress={onKeyPress}
+              />
+              {optionPlacement === "bottom" && (
+                <ClickAwayListener
+                  onClickAway={() => open === true && setOpen(false)}
+                >
+                  <Stack minWidth={OptionListMinWidth}>
+                    {open && (
+                      <Paper
+                        sx={{
+                          width: "100%",
+                          position: "absolute",
+                          top: "100%",
+                          zIndex: 10,
+                          maxHeight: "500px",
+                          overflowY: "auto",
+                        }}
+                      >
+                        <Stack width={"100%"}>
+                          {options.map((s, i) => {
+                            return (
+                              <>
+                                <Button
+                                  key={i}
+                                  size="small"
+                                  className="br0 flex-start"
+                                  onClick={() => {
+                                    onSelect && onSelect(s);
+                                    setOpen(false);
+                                  }}
+                                >
+                                  {callbackOption
+                                    ? callbackOption(s)
+                                    : APIOptionKey
+                                    ? s[APIOptionKey]
+                                    : s}
+                                </Button>
+                                <Divider />
+                              </>
+                            );
+                          })}
+                        </Stack>
+                      </Paper>
+                    )}
+                  </Stack>
+                </ClickAwayListener>
+              )}
+            </>
+          )}
         </Stack>
       ) : (
         <Typography

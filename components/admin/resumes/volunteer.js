@@ -34,6 +34,7 @@ const volunteer_template = {
 };
 
 export default function VolunteerExperience({ resumeID, data, step }) {
+  const { addNote } = useContext(asyncNoteContext);
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
 
@@ -52,11 +53,19 @@ export default function VolunteerExperience({ resumeID, data, step }) {
     }
   };
 
-  const handleRemove = (index, setOpen) => {
-    const copy = _.cloneDeep(input);
-    copy.splice(index, 1);
-    setInput(copy);
-    setOpen(false);
+  const handleRemove = async (id, index, setOpen) => {
+    try {
+      const copy = _.cloneDeep(input);
+      copy.splice(index, 1);
+      await addNote(
+        "Remove Volunteer",
+        MyAPIs.Resume().deleteResumeVolunteer(id)
+      );
+      handleResumeDataChange({ volunteerExperience: copy });
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleChange = (newItem) => {
@@ -103,7 +112,7 @@ export default function VolunteerExperience({ resumeID, data, step }) {
             <Form
               resumeID={resumeID}
               data={volunteer}
-              onRemove={(setOpen) => handleRemove(index, setOpen)}
+              onRemove={(setOpen) => handleRemove(volunteer.id, index, setOpen)}
               onChange={handleChange}
               key={index}
             />

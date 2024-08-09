@@ -5,109 +5,105 @@ import {
   Chip,
   Divider,
   IconButton,
+  Paper,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
+import Input from "../../widgets/input/Input";
+import { asyncNoteContext } from "../../widgets/notification/async-notification";
+import { resumeContext } from "../../profile/new-resume";
 
-export default function Hobby({ data, step, onRefresh, onChange }) {
+export default function Hobby({ resumeID, data, step }) {
+  const { addNote } = useContext(asyncNoteContext);
+  const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
   const [hobbies, setHobbies] = useState(interests);
   const [isSaving, setIsSaving] = useState(false);
-
+  const [hobby, setHobby] = useState("");
   useEffect(() => {
     if (data?.length > 0) {
       setInput(data);
     }
   }, [data]);
 
-  const handleAddHobby = (hobby) => {
-    if (hobby?.length > 0 && !input.some((hb) => hb.name === hobby)) {
-      setInput((prev) => {
-        return [...new Set([...prev, { name: hobby }])];
-      });
-    }
-  };
-
-  const handleFilterChange = (e) => {
-    const value = e.target.value;
-    if (value.length > 0) {
-      const _hobbies = interests.filter((h) =>
-        h.toLowerCase().includes(value.toLowerCase())
-      );
-      setHobbies(_hobbies);
-    } else {
-      setHobbies(interests);
+  const handleAddHobby = async (_hobby, isSelect = true) => {
+    let newHobby = isSelect ? _hobby : hobby;
+    if (newHobby?.length > 0 && !input.some((hb) => hb.name === newHobby)) {
+      try {
+        const hobbyData = {
+          name: newHobby,
+        };
+        const res = await addNote(
+          "Add Hobby",
+          MyAPIs.Resume().updateResumeHobby(resumeID, [hobbyData])
+        );
+        handleResumeDataChange({ hobbies: res.data });
+      } catch (error) {
+        console.log(0);
+      }
     }
   };
 
   const handleRemove = async (index, id) => {
-    const copy = _.cloneDeep(input);
-    if (id !== undefined) {
-      const res = await MyAPIs.Resume().deleteResumeHobby(id);
-      onRefresh && onRefresh();
+    try {
+      const res = await addNote(
+        "Remove Hobby",
+        MyAPIs.Resume().deleteResumeHobby(id)
+      );
+      const copy = _.cloneDeep(input);
+
+      copy.splice(index, 1);
+      handleResumeDataChange({ hobbies: copy });
+    } catch (error) {
+      console.log(error);
     }
-
-    copy.splice(index, 1);
-    setInput(copy);
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    const res = await MyAPIs.Resume().updateResumeHobby(data.id, input);
-    setIsSaving(false);
-    onRefresh && onRefresh();
-  };
   return (
     <Stack height={"100%"} width={"100%"}>
-      <Stack
-        direction={"row"}
-        gap={"1px"}
-        justifyContent={"space-between"}
-        height={"45px"}
-        padding={1}
-      >
-        <Stack alignItems={"center"} direction={"row"} gap={1}>
-          {step.Icon}
-          <Typography>{step.name}</Typography>
+      <Paper sx={{ position: "sticky", top: 0, zIndex: 5 }}>
+        <Stack
+          direction={"row"}
+          gap={"1px"}
+          justifyContent={"space-between"}
+          height={"45px"}
+          padding={1}
+        >
+          <Stack alignItems={"center"} direction={"row"} gap={1}>
+            {step.Icon}
+            <Typography>{step.name}</Typography>
+          </Stack>
+          <Stack
+            direction={"row"}
+            gap={"1px"}
+            justifyContent={"flex-end"}
+          ></Stack>
         </Stack>
-        <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
-          <ButtonLoading
-            size="small"
-            variant="contained"
-            isLoading={isSaving}
-            onClick={handleSave}
-            startIcon={<Check />}
-          >
-            Save
-          </ButtonLoading>
-        </Stack>
-      </Stack>
+      </Paper>
       <Divider />
-      <Stack
-        height={"calc(100% - 37px)"}
-        sx={{ overflowY: "auto" }}
-        gap={3}
-        padding={1}
-        paddingX={5}
-      >
+      <Stack gap={3} padding={5} paddingTop={2}>
         <Stack direction={"row"} gap={1} alignItems={"flex-end"}>
-          <Autocomplete
-            size="small"
-            options={hobbies}
-            fullWidth
-            onChange={(event, newValue) => handleAddHobby(newValue)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Search Hobby"
-                onChange={handleFilterChange}
-              />
-            )}
+          <Input
+            sx={{ width: "100%" }}
+            value={hobby}
+            label={"Hobbies"}
+            defaultOptions={hobbies}
+            isAutoComplete={true}
+            optionPlacement="top"
+            onChange={(e) => setHobby(e.target.value)}
+            onSelect={(value) => handleAddHobby(value)}
           />
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => handleAddHobby(null, false)}
+          >
+            Add
+          </Button>
         </Stack>
         <Stack gap={1}>
           {input.map((hb, index) => {
@@ -115,7 +111,6 @@ export default function Hobby({ data, step, onRefresh, onChange }) {
               <Chip
                 key={index}
                 label={hb.name}
-                color={hb.id ? "info" : "default"}
                 sx={{ width: "max-content" }}
                 onDelete={() => handleRemove(index, hb.id)}
               />

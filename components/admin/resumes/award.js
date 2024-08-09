@@ -30,6 +30,7 @@ const award_template = {
 };
 
 export default function Award({ resumeID, data, step }) {
+  const { addNote } = useContext(asyncNoteContext);
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
   useEffect(() => {
@@ -47,11 +48,16 @@ export default function Award({ resumeID, data, step }) {
     }
   };
 
-  const handleRemove = (index, setOpen) => {
-    const copy = _.cloneDeep(input);
-    copy.splice(index, 1);
-    setInput(copy);
-    setOpen(false);
+  const handleRemove = async (id, index, setOpen) => {
+    try {
+      const copy = _.cloneDeep(input);
+      copy.splice(index, 1);
+      await addNote("Remove Award", MyAPIs.Resume().deleteResumeAward(id));
+      handleResumeDataChange({ awards: copy });
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleChange = (newItem) => {
@@ -98,7 +104,7 @@ export default function Award({ resumeID, data, step }) {
             <Form
               resumeID={resumeID}
               data={award}
-              onRemove={(setOpen) => handleRemove(index, setOpen)}
+              onRemove={(setOpen) => handleRemove(award.id, index, setOpen)}
               onChange={handleChange}
               key={index}
             />
