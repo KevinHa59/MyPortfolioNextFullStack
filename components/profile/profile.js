@@ -216,7 +216,7 @@ export default function Profile() {
         gap={5}
         direction={"row"}
         height={"100%"}
-        paddingX={2}
+        padding={2}
         position={"relative"}
       >
         <Paper
@@ -270,7 +270,13 @@ export default function Profile() {
             </Stack>
           </Stack>
         </Paper>
-        <Stack gap={5} height={"50%"} alignItems={"center"} width={"100%"}>
+        <Stack
+          gap={5}
+          height={"100%"}
+          alignItems={"center"}
+          width={"100%"}
+          sx={{ overflowY: "auto" }}
+        >
           <Paper sx={{ padding: 3, width: "100%" }}>
             <Stack gap={2}>
               <Stack gap={1}>

@@ -9,6 +9,7 @@ import {
 import React, { createContext, useEffect, useState } from "react";
 import {
   Add,
+  Apps,
   ArrowRight,
   Article,
   Dashboard as DashboardIcon,
@@ -24,6 +25,8 @@ import PasswordChange from "../authentication/password-change";
 import Resume from "../../components/profile/resume";
 import Profile from "../../components/profile/profile";
 import NewResume from "../../components/profile/new-resume";
+import withAuth from "../../utils/withAuth";
+import PortfolioCollection from "../../components/profile/portfolio-collections";
 
 const menu_data = [
   {
@@ -52,6 +55,12 @@ const menu_data = [
     ],
   },
   {
+    Icon: Apps,
+    title: "Portfolio Collection",
+    param: "portfolioCollection",
+    Comp: <PortfolioCollection />,
+  },
+  {
     Icon: Password,
     title: "Change Password",
     param: "changePassword",
@@ -75,7 +84,7 @@ function findComponentByParam(menu, param) {
 
 export const profileContext = createContext(null);
 
-export default function Index() {
+function Index() {
   const router = useRouter();
   const [section, setSection] = useState(undefined);
   const [mainData, setMainData] = useState({
@@ -169,6 +178,8 @@ export default function Index() {
     </profileContext.Provider>
   );
 }
+
+export default withAuth(Index);
 
 function Menu({ onSelect }) {
   const router = useRouter();
