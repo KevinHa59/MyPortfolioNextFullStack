@@ -1,5 +1,9 @@
 import {
+  Box,
   Button,
+  Card,
+  CardContent,
+  CardMedia,
   Chip,
   ClickAwayListener,
   Divider,
@@ -24,9 +28,20 @@ import {
   LinkedIn,
   Twitter,
   Menu as MenuIcon,
+  Clear,
 } from "@mui/icons-material";
 import LabelText from "./components/label-text";
-
+import DesignerIcon from "../../../icons/design_components.svg";
+import serverIcon from "../../../icons/server.svg";
+import { FrontEndIcon } from "../../../icons/front-end";
+import { BackEndIcon } from "../../../icons/back-end";
+import { DatabaseIcon } from "../../../icons/database";
+import { VersionControlIcon } from "../../../icons/version-control";
+import { ProcessIcon } from "../../../icons/process";
+import { ServerClusterIcon } from "../../../icons/server-cluster";
+import { CodeReviewIcon } from "../../../icons/code-review";
+import { WindowsIcon } from "../../../icons/windows";
+import { Styles } from "../../../styles/useStyle";
 const color_palette = {
   background: "#0d1b2a",
   subBackground: "#102336",
@@ -36,9 +51,9 @@ const color_palette = {
 };
 
 const styles = {
-  width: "clamp(500px, 100vw, 1280px)",
-  textTitle: "clamp(15px, 1.8vw, 22px)",
-  textDetail: "clamp(13px, 1.3vw, 18px)",
+  width: { xs: "100%", lg: "1280px" },
+  textTitle: "clamp(17px, 1.8vw, 22px)",
+  textDetail: "clamp(17px, 1.3vw, 18px)",
 };
 
 const menu = ["About", "Skills", "Educations", "Projects", "Experience"];
@@ -372,61 +387,74 @@ function Menu() {
         </Typography>
       </Stack>
       <ClickAwayListener onClickAway={() => setIsOpen(false)}>
-        <Fade in={isOpen || !isMobile}>
-          <Stack
-            position={isMobile ? "absolute" : "unset"}
-            left={0}
-            zIndex={5}
-            padding={isMobile && 2}
-            top={"100%"}
-            width={isMobile ? "100%" : "max-content"}
-            direction={isMobile ? "column" : "row"}
-            alignItems={"flex-end"}
-            sx={{
-              boxShadow: isMobile && "5px 5px 10px rgba(0,0,0,0.5)",
-              background: isMobile && color_palette.background,
-            }}
-          >
-            <Divider flexItem />
-            {menu.map((m, index) => {
-              return (
-                <Slide
-                  direction="down"
-                  in={true}
-                  style={{ transitionDelay: 100 * index }}
-                  key={index}
-                >
-                  <Button
-                    fullWidth={isMobile}
-                    className="br0"
-                    sx={{ paddingTop: "25px" }}
-                  >
-                    {m}
-                  </Button>
-                </Slide>
-              );
-            })}
-
-            <Button
-              fullWidth={isMobile}
-              variant="outlined"
-              sx={{ height: "max-content" }}
+        <Stack>
+          <Fade in={!isMobile ? true : isOpen}>
+            <Stack
+              position={isMobile ? "absolute" : "unset"}
+              left={0}
+              zIndex={5}
+              padding={isMobile && 2}
+              top={"100%"}
+              width={isMobile ? "100%" : "max-content"}
+              direction={isMobile ? "column" : "row"}
+              alignItems={"flex-end"}
+              sx={{
+                boxShadow: isMobile && "5px 5px 10px rgba(0,0,0,0.5)",
+                background: isMobile && color_palette.background,
+              }}
             >
-              Contact
-            </Button>
-          </Stack>
-        </Fade>
+              <Divider flexItem />
+              {menu.map((m, index) => {
+                return (
+                  <Slide
+                    direction="down"
+                    in={true}
+                    style={{ transitionDelay: 100 * index }}
+                    key={index}
+                  >
+                    <Button
+                      fullWidth={isMobile}
+                      className="br0"
+                      sx={{ paddingTop: "25px" }}
+                    >
+                      {m}
+                    </Button>
+                  </Slide>
+                );
+              })}
+
+              <Button
+                fullWidth={isMobile}
+                variant="outlined"
+                sx={{ height: "max-content" }}
+              >
+                Contact
+              </Button>
+            </Stack>
+          </Fade>
+          {isMobile &&
+            (isOpen ? (
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+              >
+                <Clear />
+              </IconButton>
+            ) : (
+              <IconButton
+                sx={{ zIndex: 200 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(true);
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+            ))}
+        </Stack>
       </ClickAwayListener>
-      {isMobile && (
-        <IconButton
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsOpen((prev) => !prev);
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
-      )}
     </Stack>
   );
 }
@@ -449,38 +477,45 @@ function Introduction() {
       <Stack
         position={"sticky"}
         top={0}
+        left={0}
         height={"60px"}
         width={"100%"}
-        sx={{ background: color_palette.background, zIndex: 5 }}
+        sx={{
+          background: color_palette.background,
+          zIndex: 5,
+        }}
       />
       <Stack
         direction={"row"}
         alignItems={"center"}
-        padding={4}
+        padding={2}
         zIndex={1}
         sx={{ flex: 1 }}
       >
-        <Stack gap={4}>
+        <Stack gap={{ xs: 1, sm: 4 }}>
           <Typography
+            textAlign={{ xs: "center", sm: "left" }}
             fontWeight={"bold"}
-            sx={{ fontSize: "clamp(15px, 2vw, 30px)" }}
+            sx={{ fontSize: "clamp(25px, 2vw, 30px)" }}
           >
             Hello, I am
           </Typography>
           <Typography
+            textAlign={{ xs: "center", sm: "left" }}
             fontWeight={"bold"}
             whiteSpace={"wrap"}
             sx={{
-              fontSize: "8vw",
+              fontSize: "clamp(60px, 8vw, 80px)",
               marginTop: "-3vw",
             }}
           >{`${userData?.user?.firstName || ""} ${
             userData?.user?.lastName || ""
           }`}</Typography>
           <Typography
+            textAlign={{ xs: "center", sm: "left" }}
             fontWeight={"bold"}
             sx={{
-              fontSize: "clamp(17px, 1.7vw, 30px)",
+              fontSize: "clamp(20px, 1.7vw, 30px)",
               wordSpacing: 2,
               lineHeight: 2,
             }}
@@ -489,14 +524,22 @@ function Introduction() {
           </Typography>
           <Typography
             sx={{
-              fontSize: "clamp(13px, 0.8vw, 17px)",
+              fontSize: "clamp(15px, 0.8vw, 19px)",
               wordSpacing: 2,
               lineHeight: 2,
+              textAlign: {
+                xs: "justify",
+                sm: "left",
+              },
             }}
           >
             {userData?.summary || ""}
           </Typography>
-          <Stack direction={"row"} gap={1}>
+          <Stack
+            direction={"row"}
+            gap={1}
+            justifyContent={{ xs: "center", sm: "flex-start" }}
+          >
             {socials.map((sc, index) => {
               const link = userData?.user[sc.name] || null;
               if (link) {
@@ -505,13 +548,17 @@ function Introduction() {
                     key={index}
                     onClick={() => window.open(link, "_blank")}
                   >
-                    <sc.Icon sx={{ fontSize: "clamp(20px, 2vw, 35px)" }} />
+                    <sc.Icon sx={{ fontSize: "clamp(30px, 2vw, 35px)" }} />
                   </IconButton>
                 );
               }
             })}
           </Stack>
-          <Stack direction={"row"} gap={1}>
+          <Stack
+            direction={"row"}
+            gap={1}
+            justifyContent={{ xs: "center", sm: "flex-start" }}
+          >
             <Button
               variant="contained"
               color="error"
@@ -531,6 +578,16 @@ function Introduction() {
     </Stack>
   );
 }
+const Icons = {
+  "Front End": FrontEndIcon,
+  "Back End": BackEndIcon,
+  Database: DatabaseIcon,
+  "Version Control": VersionControlIcon,
+  "Web Services": ServerClusterIcon,
+  SDLC: ProcessIcon,
+  IDE: CodeReviewIcon,
+  OS: WindowsIcon,
+};
 
 function Skills() {
   const groupSkills = userData?.skills.reduce((res, cur) => {
@@ -555,41 +612,47 @@ function Skills() {
           width={"100%"}
           sx={{ background: color_palette.subBackground }}
         />
-        <Stack gap={4} width={styles.width} padding={4}>
+        <Stack gap={4} width={styles.width} padding={2}>
           <Typography
             fontWeight={"bold"}
             variant="h5"
-            textAlign={"left"}
+            textAlign={{ xs: "center", sm: "left" }}
             sx={{ width: "100%" }}
           >
             Skills
           </Typography>
-          <Grid container spacing={"5px"}>
+          <Grid container spacing={4}>
             {Object.keys(groupSkills)?.map((group, index) => {
               const groupName = group;
+              const Icon = Icons[groupName];
               return (
                 <Grid item key={index} xs={12} sm={6} md={4}>
                   <Paper
-                    className="br0"
-                    key={index}
                     variant="outlined"
                     sx={{
-                      padding: 2,
-                      background: "transparent",
-                      height: "100%",
+                      background: `linear-gradient(-225deg, ${color_palette.subBackground} 0, ${color_palette.subBackground} 120px, ${color_palette.background} 120px, ${color_palette.background})`,
                     }}
                   >
-                    <Stack gap={2}>
+                    <CardContent>
+                      <Stack
+                        width={"100%"}
+                        height={"max-content"}
+                        alignItems={"center"}
+                      >
+                        {Icon && (
+                          <Icon
+                            sx={{ fontSize: "clamp(150px, 15vw, 200px)" }}
+                          />
+                        )}
+                      </Stack>
                       <Typography
-                        fontWeight={"bold"}
-                        textAlign={"center"}
-                        sx={{
-                          fontSize: styles.textTitle,
-                        }}
+                        gutterBottom
+                        variant="h5"
+                        component="div"
+                        textAlign={{ xs: "center", md: "left" }}
                       >
                         {groupName}
                       </Typography>
-                      <Divider />
                       <Stack
                         direction={"row"}
                         gap={2}
@@ -609,7 +672,7 @@ function Skills() {
                           );
                         })}
                       </Stack>
-                    </Stack>
+                    </CardContent>
                   </Paper>
                 </Grid>
               );
@@ -634,11 +697,11 @@ function Educations() {
           background: color_palette.background,
         }}
       />
-      <Stack gap={4} width={styles.width} padding={4}>
+      <Stack gap={4} width={styles.width} padding={2}>
         <Typography
           fontWeight={"bold"}
           variant="h5"
-          textAlign={"left"}
+          textAlign={{ xs: "center", sm: "left" }}
           sx={{ width: "100%" }}
         >
           Educations
@@ -656,10 +719,10 @@ function Educations() {
                     backdropFilter: "blur(5px)",
                   }}
                 >
-                  <Stack gap={1} padding={4}>
-                    <Stack>
+                  <Stack gap={3} padding={4}>
+                    <Stack gap={1}>
                       <Stack
-                        direction={"row"}
+                        direction={{ xs: "column", sm: "row" }}
                         alignItems={"center"}
                         justifyContent={"space-between"}
                       >
@@ -677,7 +740,11 @@ function Educations() {
                         }`}</Typography>
                       </Stack>
                       <Divider />
-                      <Typography variant="body1" fontWeight={100}>
+                      <Typography
+                        textAlign={{ xs: "center", sm: "left" }}
+                        variant="body1"
+                        fontWeight={100}
+                      >
                         {edu.location}
                       </Typography>
                     </Stack>
