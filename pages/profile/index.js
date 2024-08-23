@@ -23,7 +23,6 @@ import ButtonAccount from "../../components/widgets/buttons/button-account";
 import PasswordChange from "../authentication/password-change";
 import Resume from "../../components/profile/resume";
 import Profile from "../../components/profile/profile";
-import NewResume from "../../components/profile/new-resume";
 import withAuth from "../../utils/withAuth";
 import PortfolioCollection from "../../components/profile/portfolio-collections";
 
@@ -39,12 +38,6 @@ const menu_data = [
     title: "My Resumes",
     param: "myResumes",
     Comp: <Resume />,
-  },
-  {
-    Icon: Apps,
-    title: "Portfolio Collection",
-    param: "portfolioCollection",
-    Comp: <PortfolioCollection />,
   },
   {
     Icon: Apps,
@@ -297,5 +290,3 @@ function Menu({ onSelect }) {
     </Stack>
   );
 }
-
-export default withAuth(Index);

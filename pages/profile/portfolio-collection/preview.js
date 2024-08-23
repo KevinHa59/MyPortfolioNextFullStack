@@ -1,9 +1,5 @@
 import {
-  Box,
   Button,
-  Card,
-  CardContent,
-  CardMedia,
   Chip,
   ClickAwayListener,
   Divider,
@@ -13,11 +9,9 @@ import {
   Paper,
   Slide,
   Stack,
-  TextField,
   Typography,
   useMediaQuery,
   useTheme,
-  Zoom,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import MyAPIs from "../../api-functions/MyAPIs";
@@ -30,16 +24,11 @@ import {
   Twitter,
   Menu as MenuIcon,
   Clear,
-  ArrowDropDown,
   ArrowRight,
-  Remove,
   NavigateNext,
-  CopyAll,
   Download,
 } from "@mui/icons-material";
 import LabelText from "./components/label-text";
-import DesignerIcon from "../../../icons/design_components.svg";
-import serverIcon from "../../../icons/server.svg";
 import { FrontEndIcon } from "../../../icons/front-end";
 import { BackEndIcon } from "../../../icons/back-end";
 import { DatabaseIcon } from "../../../icons/database";
@@ -48,10 +37,8 @@ import { ProcessIcon } from "../../../icons/process";
 import { ServerClusterIcon } from "../../../icons/server-cluster";
 import { CodeReviewIcon } from "../../../icons/code-review";
 import { WindowsIcon } from "../../../icons/windows";
-import { Styles } from "../../../styles/useStyle";
-import { ProjectTeamIcon } from "../../../icons/project-team";
 import { EmailIcon } from "../../../icons/email";
-import Link from "next/link";
+
 const color_palette = {
   background: "#0d1b2a",
   subBackground: "#102336",
