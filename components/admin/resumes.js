@@ -18,6 +18,8 @@ import {
   Language as LanguageIcon,
   Article,
   ArrowRight,
+  Add,
+  AddCircle,
 } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -56,24 +58,9 @@ import Table from "../widgets/tables/table";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import Header from "./header";
 import { ResumeIcon } from "../../icons/resume";
-import Link from "next/link";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
 import { useRouter } from "next/router";
 
-const resume_template = {
-  user: null,
-  title: "",
-  summary: "",
-  workExperience: [],
-  education: [],
-  skills: [],
-  certifications: [],
-  projects: [],
-  awards: [],
-  volunteerExperience: [],
-  languages: [],
-  hobbies: [],
-};
 const headers = [
   {
     name: "Resume Title",
@@ -167,7 +154,8 @@ export default function Resumes({ defaultUser }) {
     router.push({
       pathname: router.pathname,
       query: {
-        section: "newResume",
+        // section: "edit",
+        ...router.query,
         id: id,
       },
     });
@@ -211,11 +199,29 @@ export default function Resumes({ defaultUser }) {
       >
         {defaultUser ? (
           <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
+            <Zoom in={true} style={{ transitionDelay: 0 * 100 }}>
+              <Button
+                sx={{ overflow: "hidden" }}
+                onClick={() => handleRouteEdit("new")}
+              >
+                <Stack
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  width={"clamp(100px, 10vw, 300px)"}
+                  height="100%"
+                  position={"relative"}
+                  sx={{ aspectRatio: "1/1" }}
+                >
+                  <AddCircle sx={{ fontSize: "80px" }} />
+                  <Typography variant="h5">Add</Typography>
+                </Stack>
+              </Button>
+            </Zoom>
             {generalData?.resumes.map((re, index) => {
               return (
                 <ResumeCard
                   key={index}
-                  index={index}
+                  index={index + 1}
                   data={re}
                   onEdit={() => handleRouteEdit(re.id)}
                   onRemove={(setOpen) => handleRemoveResume(re.id, setOpen)}
@@ -276,7 +282,14 @@ function ResumeCard({ index, data, onEdit, onRemove }) {
                     color={"error"}
                     dialog_color={"error"}
                     dialog_title={"Delete Resume"}
-                    dialog_message={"Are You Sure?"}
+                    dialog_message={
+                      <Typography
+                        textAlign={"center"}
+                        sx={{ maxWidth: "280px", whiteSpace: "pre-wrap" }}
+                      >
+                        {`Are you sure?\nOnce deleted, this resume cannot be recovered.`}
+                      </Typography>
+                    }
                     sx={{ padding: 0, minWidth: "0" }}
                     onConfirm={onRemove}
                   >

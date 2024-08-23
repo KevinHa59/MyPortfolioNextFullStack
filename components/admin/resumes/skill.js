@@ -21,7 +21,7 @@ import React, { useContext, useEffect, useState } from "react";
 import PublicAPI from "../../../pages/api-functions/PublicAPI";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import Input from "../../widgets/input/Input";
-import { resumeContext } from "../../profile/new-resume";
+import { resumeContext } from "../../profile/edit-resume";
 import { asyncNoteContext } from "../../widgets/notification/async-notification";
 import ArrayUtils from "../../../utils/arrays";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
@@ -37,14 +37,12 @@ export default function Skill({ resumeID, data, step }) {
   });
   const [groups, setGroups] = useState([]);
   useEffect(() => {
-    if (data?.length > 0) {
-      setSkills(data);
-      const res = ArrayUtils.groupByKey(data, "group");
-      let groups = ArrayUtils.UniqueKey(data, "group");
-      groups = groups.filter((item) => item !== null);
-      setGroups(groups);
-      setSkills(res);
-    }
+    setSkills(data);
+    const res = ArrayUtils.groupByKey(data, "group");
+    let groups = ArrayUtils.UniqueKey(data, "group");
+    groups = groups.filter((item) => item !== null);
+    setGroups(groups);
+    setSkills(res);
   }, [data]);
 
   const handleSearchChange = (newValue) => {

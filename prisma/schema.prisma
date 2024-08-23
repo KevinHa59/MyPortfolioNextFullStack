@@ -14,95 +14,118 @@ datasource db {
 }
 
 model Users {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String  @unique
-  firstName  String?
-  lastName  String?
-  dob DateTime?
-  address String?
-  city String?
-  state String?
-  country String?
-  zipCode String?
-  cellPhone String?
-  homePhone String?
-  linkedIn String?
-  github String?
-  twitter String?
-  facebook String?
-  instagram String?
-  portfolio String?
-  password String?
-  userTypeID String
-  userType UserTypes @relation(fields: [userTypeID], references: [id])
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  email        String    @unique
+  firstName    String?
+  lastName     String?
+  dob          DateTime?
+  address      String?
+  city         String?
+  state        String?
+  country      String?
+  zipCode      String?
+  cellPhone    String?
+  homePhone    String?
+  linkedIn     String?
+  github       String?
+  twitter      String?
+  facebook     String?
+  instagram    String?
+  portfolio    String?
+  password     String?
+  userTypeID   String
+  userType     UserTypes @relation(fields: [userTypeID], references: [id])
   refreshToken String?
-  resumes Resume[]
+  resumes      Resume[]
+
   @@map("users")
 }
 
 model UserTypes {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  type String @unique
-  description String? @default("")
-  color String?
-  users Users[]
-  pageLinks UserTypePageLinks[]
+  id          String              @id @default(auto()) @map("_id") @db.ObjectId
+  type        String              @unique
+  description String?             @default("")
+  color       String?
+  users       Users[]
+  pageLinks   UserTypePageLinks[]
+
   @@map("user_types")
 }
 
 model Pages {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  path String @unique
-  description String? @default("")
+  id            String              @id @default(auto()) @map("_id") @db.ObjectId
+  path          String              @unique
+  description   String?             @default("")
   userTypeLinks UserTypePageLinks[]
 }
 
 model UserTypePageLinks {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   userTypeID String
   pageID     String
-  userType UserTypes @relation(fields: [userTypeID], references: [id])
+  userType   UserTypes @relation(fields: [userTypeID], references: [id])
   page       Pages     @relation(fields: [pageID], references: [id])
+
   @@unique([userTypeID, pageID])
 }
 
 model Resume {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  userID   String @db.ObjectId
-  title    String
-  summary  String?
-  workExperience  WorkExperience[]
-  education       Education[]
-  skills          Skill[]
-  certifications  Certification[]
-  projects        Project[]
-  awards          Award[]
-  volunteerExperience VolunteerExperience[]
-  languages       Language[]
-  publications    Publication[]
+  id                      String                   @id @default(auto()) @map("_id") @db.ObjectId
+  userID                  String                   @db.ObjectId
+  title                   String
+  summary                 String?
+  workExperience          WorkExperience[]
+  education               Education[]
+  skills                  Skill[]
+  certifications          Certification[]
+  projects                Project[]
+  awards                  Award[]
+  volunteerExperience     VolunteerExperience[]
+  languages               Language[]
+  publications            Publication[]
   professionalMemberships ProfessionalMembership[]
-  hobbies         Hobby[]
+  hobbies                 Hobby[]
+  resumeSectionsID        String?                  @db.ObjectId
+  user                    Users                    @relation(fields: [userID], references: [id])
+  resumeSections          ResumeSections?
 
-  user     Users   @relation(fields: [userID], references: [id])
   @@map("Resume")
 }
 
+model ResumeSections {
+  id                      String  @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID                String  @unique @db.ObjectId
+  workExperience          Boolean @default(false)
+  education               Boolean @default(true)
+  skills                  Boolean @default(true)
+  certifications          Boolean @default(false)
+  projects                Boolean @default(true)
+  awards                  Boolean @default(false)
+  volunteerExperience     Boolean @default(false)
+  languages               Boolean @default(true)
+  publications            Boolean @default(false)
+  professionalMemberships Boolean @default(false)
+  hobbies                 Boolean @default(true)
+
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+}
+
 model WorkExperience {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID       String @db.ObjectId
-  jobTitle       String
-  companyName    String
-  location       String
-  startDate      DateTime
-  endDate        DateTime?
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID         String    @db.ObjectId
+  jobTitle         String
+  companyName      String
+  location         String
+  startDate        DateTime
+  endDate          DateTime?
   responsibilities String
 
-  resume         Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model Education {
-  id           String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID     String @db.ObjectId
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID     String    @db.ObjectId
   degree       String
   schoolName   String
   location     String
@@ -111,53 +134,53 @@ model Education {
   fieldOfStudy String
   gpa          Float?
 
-  resume       Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model Skill {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID String @db.ObjectId
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID String  @db.ObjectId
   name     String
-  group     String?
+  group    String?
 
-  resume   Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model Certification {
-  id                 String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID           String @db.ObjectId
-  certificationName  String
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID            String   @db.ObjectId
+  certificationName   String
   issuingOrganization String
-  dateObtained       DateTime
+  dateObtained        DateTime
 
-  resume             Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model Project {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID      String @db.ObjectId
-  title         String
-  role          String
-  description   String
-  technologies  String[]
-  achievements  String
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID     String   @db.ObjectId
+  title        String
+  role         String
+  description  String
+  technologies String[]
+  achievements String
 
-  resume        Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model Award {
-  id                String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID          String @db.ObjectId
-  awardName         String
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID            String    @db.ObjectId
+  awardName           String
   issuingOrganization String
-  dateReceived      DateTime?
+  dateReceived        DateTime?
 
-  resume            Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model VolunteerExperience {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID         String @db.ObjectId
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID         String    @db.ObjectId
   role             String
   organizationName String
   location         String
@@ -165,37 +188,37 @@ model VolunteerExperience {
   endDate          DateTime?
   responsibilities String?
 
-  resume           Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model Language {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID        String @db.ObjectId
-  language        String
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID         String @db.ObjectId
+  language         String
   proficiencyLevel String
 
-  resume          Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model Publication {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID        String @db.ObjectId
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID        String   @db.ObjectId
   title           String
   publicationName String
   datePublished   DateTime
 
-  resume          Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model ProfessionalMembership {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID         String @db.ObjectId
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID         String    @db.ObjectId
   organizationName String
   role             String
   startDate        DateTime
   endDate          DateTime?
 
-  resume           Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }
 
 model Hobby {
@@ -203,5 +226,5 @@ model Hobby {
   resumeID String @db.ObjectId
   name     String
 
-  resume   Resume @relation(fields: [resumeID], references: [id])
+  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }

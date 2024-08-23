@@ -20,7 +20,7 @@ import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import { asyncNoteContext } from "../../widgets/notification/async-notification";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
-import { resumeContext } from "../../profile/new-resume";
+import { resumeContext } from "../../profile/edit-resume";
 
 const project_template = {
   id: null,
@@ -37,9 +37,7 @@ export default function Project({ resumeID, data, step }) {
   const [input, setInput] = useState([]);
 
   useEffect(() => {
-    if (data?.length > 0) {
-      setInput(data);
-    }
+    setInput(data);
   }, [data]);
 
   const handleAddNew = () => {

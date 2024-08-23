@@ -20,7 +20,7 @@ import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
 import { asyncNoteContext } from "../../widgets/notification/async-notification";
-import { resumeContext } from "../../profile/new-resume";
+import { resumeContext } from "../../profile/edit-resume";
 
 const cer_template = {
   id: null,
@@ -30,25 +30,38 @@ const cer_template = {
 };
 
 export default function Certification({ resumeID, data, step }) {
+  const { addNote } = useContext(asyncNoteContext);
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
 
   useEffect(() => {
-    if (data?.length > 0) {
-      setInput(data);
-    }
+    setInput(data);
   }, [data]);
 
-  const handleAddEducation = () => {
-    setInput((prev) => {
-      return [...prev, { ...cer_template }];
-    });
+  const handleAddCertification = () => {
+    // only allow add new one once per time
+    if (!input.some((cer) => cer.id === null)) {
+      setInput((prev) => {
+        return [{ ...cer_template }, ...prev];
+      });
+    }
   };
 
-  const handleRemoveEducation = (index) => {
-    const copy = _.cloneDeep(input);
-    copy.splice(index, 1);
-    setInput(copy);
+  const handleRemoveCertification = async (id, index, setOpen) => {
+    try {
+      const copy = _.cloneDeep(input);
+      copy.splice(index, 1);
+      if (id) {
+        await addNote(
+          "Remove Certification",
+          MyAPIs.Resume().deleteResumeCertification(id)
+        );
+      }
+      handleResumeDataChange({ certifications: copy });
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleUpdateCertification = (newCer) => {
@@ -75,7 +88,7 @@ export default function Certification({ resumeID, data, step }) {
               size="small"
               startIcon={<Add />}
               color="primary"
-              onClick={handleAddEducation}
+              onClick={handleAddCertification}
             >
               Add Certification
             </Button>
@@ -96,7 +109,7 @@ export default function Certification({ resumeID, data, step }) {
               resumeID={resumeID}
               data={cer}
               onRemoveCertification={(setOpen) =>
-                handleRemoveEducation(index, setOpen)
+                handleRemoveCertification(cer.id, index, setOpen)
               }
               onChange={handleUpdateCertification}
               key={index}
@@ -159,7 +172,7 @@ function Form({ resumeID, data, onRemoveCertification, onChange }) {
           </Typography>
         </Stack>
         <Stack direction={"row"}>
-          {cer?.id !== null && isEdit && (
+          {isEdit && (
             <IconButton
               color="success"
               onClick={() => handleUpdateCertification()}

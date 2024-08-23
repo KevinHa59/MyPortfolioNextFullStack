@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 async function getResume(req, res) {
   try {
     const { id } = req.query;
-    const resumes = await prisma.resume.findUnique({
+    const resume = await prisma.resume.findUnique({
       where: { id: id },
       include: {
         workExperience: true,
@@ -41,10 +41,12 @@ async function getResume(req, res) {
         volunteerExperience: true,
         languages: true,
         hobbies: true,
+        resumeSections: true,
         user: true,
       },
     });
-    res.status(200).json(resumes);
+
+    res.status(200).json(resume);
   } catch (error) {
     res.status(500).json({ err: "Internal server error" });
   }

@@ -74,6 +74,9 @@ async function createResume(req, res) {
         data: {
           userID: body.userID,
           title: body.title,
+          resumeSections: {
+            create: {},
+          },
         },
       });
       return res.status(201).json(resume);

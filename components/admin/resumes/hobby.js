@@ -15,19 +15,16 @@ import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonLoading from "../../widgets/buttons/button-loading";
 import Input from "../../widgets/input/Input";
 import { asyncNoteContext } from "../../widgets/notification/async-notification";
-import { resumeContext } from "../../profile/new-resume";
+import { resumeContext } from "../../profile/edit-resume";
 
 export default function Hobby({ resumeID, data, step }) {
   const { addNote } = useContext(asyncNoteContext);
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
-  const [hobbies, setHobbies] = useState(interests);
-  const [isSaving, setIsSaving] = useState(false);
   const [hobby, setHobby] = useState("");
+
   useEffect(() => {
-    if (data?.length > 0) {
-      setInput(data);
-    }
+    setInput(data);
   }, [data]);
 
   const handleAddHobby = async (_hobby, isSelect = true) => {
@@ -91,7 +88,7 @@ export default function Hobby({ resumeID, data, step }) {
             sx={{ width: "100%" }}
             value={hobby}
             label={"Hobbies"}
-            defaultOptions={hobbies}
+            defaultOptions={interests}
             isAutoComplete={true}
             optionPlacement="top"
             onChange={(e) => setHobby(e.target.value)}

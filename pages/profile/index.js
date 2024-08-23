@@ -17,13 +17,13 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
-import Dashboard from "../../components/profile/profile";
 import ThemeButton from "../../components/widgets/themeButton";
 import ButtonAccount from "../../components/widgets/buttons/button-account";
 import PasswordChange from "../authentication/password-change";
 import Resume from "../../components/profile/resume";
 import Profile from "../../components/profile/profile";
-import NewResume from "../../components/profile/new-resume";
+import NewResume from "../../components/profile/edit-resume";
+import withAuth from "../../utils/withAuth";
 
 const menu_data = [
   {
@@ -34,22 +34,9 @@ const menu_data = [
   },
   {
     Icon: Article,
-    title: "Resumes",
-    param: "resumes",
-    Sub: [
-      {
-        Icon: Add,
-        title: "New Resume",
-        param: "newResume",
-        Comp: <NewResume />,
-      },
-      {
-        Icon: Article,
-        title: "My Resumes",
-        param: "myResumes",
-        Comp: <Resume />,
-      },
-    ],
+    title: "My Resumes",
+    param: "myResumes",
+    Comp: <Resume />,
   },
   {
     Icon: Password,
@@ -75,7 +62,7 @@ function findComponentByParam(menu, param) {
 
 export const profileContext = createContext(null);
 
-export default function Index() {
+function Index() {
   const router = useRouter();
   const [section, setSection] = useState(undefined);
   const [mainData, setMainData] = useState({
@@ -294,3 +281,5 @@ function Menu({ onSelect }) {
     </Stack>
   );
 }
+
+export default withAuth(Index);

@@ -4,6 +4,7 @@ const API = {
   resumes: "/api/resumes",
   resumes_user: "/api/resumes/user",
   resumes_resume: "/api/resumes/resume",
+  resumes_resume_section: "/api/resumes/resume/sections",
   resumes_resume_education: "/api/resumes/resume/education",
   resumes_resume_certification: "/api/resumes/resume/certification",
   resumes_resume_skill: "/api/resumes/resume/skill",
@@ -60,6 +61,12 @@ class ResumesAPI {
       ...data,
     });
   }
+  async updateResumeSection(id, data) {
+    return await axios.put(API.resumes_resume_section, {
+      resumeID: id,
+      ...data,
+    });
+  }
 
   async updateResumeEducation(id, educations) {
     return await axios.put(API.resumes_resume_education, {
@@ -78,6 +85,13 @@ class ResumesAPI {
     return await axios.put(API.resumes_resume_certification, {
       id: id,
       certifications: certifications,
+    });
+  }
+  async deleteResumeCertification(id) {
+    return await axios.delete(API.resumes_resume_certification, {
+      params: {
+        id: id,
+      },
     });
   }
   async updateResumeSkill(id, skills) {

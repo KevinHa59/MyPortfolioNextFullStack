@@ -23,7 +23,7 @@ import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
 import { asyncNoteContext } from "../../widgets/notification/async-notification";
-import { resumeContext } from "../../profile/new-resume";
+import { resumeContext } from "../../profile/edit-resume";
 const edu_template = {
   id: null,
   degree: "",
@@ -41,9 +41,7 @@ export default function Education({ resumeID, data, step }) {
   const [input, setInput] = useState([]);
 
   useEffect(() => {
-    if (data?.length > 0) {
-      setInput(data);
-    }
+    setInput(data);
   }, [data]);
 
   const handleAddEducation = () => {
@@ -72,7 +70,7 @@ export default function Education({ resumeID, data, step }) {
 
   const handleUpdateCertification = (newCer) => {
     setInput(newCer);
-    handleResumeDataChange({ certifications: newCer });
+    handleResumeDataChange({ education: newCer });
   };
 
   return (

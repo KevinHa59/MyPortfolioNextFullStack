@@ -19,7 +19,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Input from "../../widgets/input/Input";
 import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
-import { resumeContext } from "../../profile/new-resume";
+import { resumeContext } from "../../profile/edit-resume";
 import { asyncNoteContext } from "../../widgets/notification/async-notification";
 
 const award_template = {
@@ -34,9 +34,7 @@ export default function Award({ resumeID, data, step }) {
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
   useEffect(() => {
-    if (data?.length > 0) {
-      setInput(data);
-    }
+    setInput(data);
   }, [data]);
 
   const handleAddNew = () => {

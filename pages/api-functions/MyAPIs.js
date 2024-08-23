@@ -46,6 +46,14 @@ class MyAPIs {
           console.error(error);
         }
       },
+      updateResumeSections: async (id, data) => {
+        try {
+          const res = await ResumesAPI.updateResumeSection(id, data);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
       updateResumeEducation: async (id, educations) => {
         try {
           const res = await ResumesAPI.updateResumeEducation(id, educations);
@@ -65,6 +73,14 @@ class MyAPIs {
       updateResumeCertification: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeCertification(id, data);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      deleteResumeCertification: async (id) => {
+        try {
+          const res = await ResumesAPI.deleteResumeCertification(id);
           return res;
         } catch (error) {
           console.error(error);

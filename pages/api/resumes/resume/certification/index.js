@@ -12,7 +12,9 @@ const prisma = new PrismaClient();
 export default async function handler(req, res) {
   const method = req.method;
   if (method === "PUT") {
-    updateResumeCertification(req, res);
+    updateCertification(req, res);
+  } else if (method === "DELETE") {
+    removeCertification(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
@@ -20,7 +22,7 @@ export default async function handler(req, res) {
 
 // [PUT] handle update resume certification
 // input: id, update data
-async function updateResumeCertification(req, res) {
+async function updateCertification(req, res) {
   try {
     const { id, certifications } = req.body;
 
@@ -57,7 +59,28 @@ async function updateResumeCertification(req, res) {
         },
       },
     });
-    res.status(201).json(resume.certifications);
+    return res.status(201).json(resume.certifications);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ err: "Internal server error", error: err });
+  }
+}
+
+// [DELETE] handle delete resume certification
+// input: id
+async function removeCertification(req, res) {
+  try {
+    const { id } = req.query;
+
+    // input validation
+    if (!id) {
+      res.status(400).json({ error: "Incomplete data" });
+    }
+
+    const resume = await prisma.certification.delete({
+      where: { id: id },
+    });
+    res.status(201).json(resume);
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "Internal server error", error: err });
