@@ -8,6 +8,7 @@ import {
 } from "@mui/icons-material";
 import {
   Button,
+  Chip,
   Divider,
   IconButton,
   Paper,
@@ -24,6 +25,8 @@ import MyAPIs from "../../../pages/api-functions/MyAPIs";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
 import { asyncNoteContext } from "../../widgets/notification/async-notification";
 import { resumeContext } from "../../profile/edit-resume";
+import { getCookie } from "cookies-next";
+
 const edu_template = {
   id: null,
   degree: "",
@@ -33,6 +36,7 @@ const edu_template = {
   endDate: "",
   fieldOfStudy: "",
   gpa: "",
+  relevantCourseworks: [],
 };
 
 export default function Education({ resumeID, data, step }) {
@@ -123,7 +127,7 @@ function Form({ resumeID, data, onRemoveEducation, onChange }) {
   const { addNote } = useContext(asyncNoteContext);
   const [isEdit, setIsEdit] = useState(false);
   const [edu, setEdu] = useState(null);
-
+  const [searchCourse, setSearchCourse] = useState("");
   useEffect(() => {
     setEdu(data);
     if (data.id === null) {
@@ -143,6 +147,14 @@ function Form({ resumeID, data, onRemoveEducation, onChange }) {
 
   const handleUpdateEducation = async () => {
     try {
+      // create courses
+      if (edu.relevantCourseworks.length > 0) {
+        const user = getCookie("user");
+        await MyAPIs.Resume().createResumeCourses(
+          edu.relevantCourseworks,
+          JSON.parse(user).id
+        );
+      }
       const res = await addNote(
         "Update Education",
         MyAPIs.Resume().updateResumeEducation(resumeID, [edu])
@@ -152,6 +164,32 @@ function Form({ resumeID, data, onRemoveEducation, onChange }) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleAddRelaventCourseworks = (course) => {
+    let newCourses = _.isObject(course) ? course.name : course;
+    if (newCourses.length > 0) {
+      const newRelevantCourseworks = _.cloneDeep(edu.relevantCourseworks);
+      newCourses
+        .split(",")
+        .map((item) => item.trim())
+        .forEach((item) => {
+          if (!newRelevantCourseworks.includes(item)) {
+            newRelevantCourseworks.push(item);
+          }
+        });
+
+      handleInputChange({
+        relevantCourseworks: newRelevantCourseworks.sort(),
+      });
+      setSearchCourse("");
+    }
+  };
+
+  const handleRemoveCourse = (index) => {
+    const copy = _.cloneDeep(edu.relevantCourseworks);
+    copy.splice(index, 1);
+    handleInputChange({ relevantCourseworks: copy });
   };
   return (
     <Paper
@@ -278,6 +316,59 @@ function Form({ resumeID, data, onRemoveEducation, onChange }) {
             isEdit={isEdit}
             onChange={(e) => handleInputChange({ gpa: e.target.value })}
           />
+        </Stack>
+        <Stack direction={"row"} alignItems={"flex-end"} width={"100%"}>
+          <Input
+            isAutoComplete={true}
+            APIOptions={MyAPIs.Resume().getResumeCourse}
+            APIOptionKey={"name"}
+            label={"Relevant Courseworks"}
+            callbackOption={(r) => {
+              return (
+                <Stack>
+                  <Typography variant="body2" fontWeight={"bold"}>
+                    {r.name}
+                  </Typography>
+                </Stack>
+              );
+            }}
+            fullWidth={true}
+            value={searchCourse}
+            sx={{ width: "100%" }}
+            isEdit={isEdit}
+            onChange={(e) => setSearchCourse(e.target.value)}
+            onSelect={(value) => handleAddRelaventCourseworks(value)}
+          />
+          {isEdit && (
+            <Button
+              size="small"
+              onClick={() => handleAddRelaventCourseworks(searchCourse)}
+            >
+              Add
+            </Button>
+          )}
+        </Stack>
+        <Stack
+          paddingLeft={1}
+          width={"100%"}
+          direction="row"
+          gap={2}
+          flexWrap={"wrap"}
+        >
+          {isEdit ? (
+            edu?.relevantCourseworks?.map((course, index) => {
+              return (
+                <Chip
+                  key={index}
+                  label={course}
+                  size="small"
+                  onDelete={() => handleRemoveCourse(index)}
+                />
+              );
+            })
+          ) : (
+            <Typography>{edu?.relevantCourseworks.join(", ")}</Typography>
+          )}
         </Stack>
       </Stack>
     </Paper>

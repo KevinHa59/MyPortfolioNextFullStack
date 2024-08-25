@@ -70,6 +70,59 @@ class MyAPIs {
           console.error(error);
         }
       },
+      getResumeCourse: async (name, rowsPerPage, pageSize, approved) => {
+        try {
+          const res = await ResumesAPI.getResumeCourse(
+            name,
+            rowsPerPage,
+            pageSize,
+            approved
+          );
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      createResumeCourse: async (course, createdBy) => {
+        try {
+          const res = await ResumesAPI.createResumeCourse(course, createdBy);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      createResumeCourses: async (courses, createdBy) => {
+        try {
+          const res = await ResumesAPI.createResumeCourses(courses, createdBy);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      updateResumeCourse: async (course) => {
+        try {
+          const res = await ResumesAPI.updateResumeCourse(course);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      updateResumeCourses: async (courses) => {
+        try {
+          const res = await ResumesAPI.updateResumeCourses(courses);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      deleteResumeCourses: async (ids = []) => {
+        try {
+          const res = await ResumesAPI.deleteResumeCourses(ids);
+          return res;
+        } catch (error) {
+          console.error(error);
+        }
+      },
       updateResumeCertification: async (id, data) => {
         try {
           const res = await ResumesAPI.updateResumeCertification(id, data);

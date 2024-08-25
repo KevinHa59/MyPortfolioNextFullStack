@@ -33,6 +33,7 @@ import Permissions from "../../components/admin/permissions";
 import Dashboard from "../../components/admin/dashboard";
 import ThemeButton, { getMode } from "../../components/widgets/themeButton";
 import ButtonAccount from "../../components/widgets/buttons/button-account";
+import Courses from "../../components/admin/courses";
 
 const menu_data = [
   {
@@ -70,6 +71,12 @@ const menu_data = [
     param: "resumes",
     Icon: Article,
     Comp: <Resumes />,
+  },
+  {
+    title: "Courses",
+    param: "courses",
+    Icon: Article,
+    Comp: <Courses />,
   },
 ];
 

@@ -37,6 +37,7 @@ model Users {
   userType     UserTypes @relation(fields: [userTypeID], references: [id])
   refreshToken String?
   resumes      Resume[]
+  course       Course[]
 
   @@map("users")
 }
@@ -133,8 +134,18 @@ model Education {
   endDate      DateTime?
   fieldOfStudy String
   gpa          Float?
+  relevantCourseworks String[]
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String     @unique
+  approved    Boolean    @default(false)
+  createdBy   String     @db.ObjectId
+  createdAt   DateTime   @default(now()) 
+  user        Users      @relation(fields: [createdBy], references: [id])
 }
 
 model Skill {

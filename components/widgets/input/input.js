@@ -39,6 +39,8 @@ export default function Input({
   OptionListMinWidth,
   isAutoComplete = false,
   isSelect = false,
+  selectLabel = null,
+  selectValue = null,
   onSelect,
   isOpenOptionOnFocus = false,
   defaultOptions,
@@ -107,6 +109,8 @@ export default function Input({
               sx={sx_input}
               variant={variant}
               fullWidth={fullWidth}
+              item_field={selectLabel}
+              value_field={selectValue}
               selected_value={value}
               data={defaultOptions}
               onChange={(value) => onSelect && onSelect(value)}

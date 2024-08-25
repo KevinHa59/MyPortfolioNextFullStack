@@ -43,6 +43,7 @@ async function updateResumeEducation(req, res) {
           : null,
         fieldOfStudy: education.fieldOfStudy,
         gpa: education.gpa ? parseFloat(education.gpa) : null,
+        relevantCourseworks: education.relevantCourseworks,
       },
       update: {
         degree: education.degree,
@@ -54,6 +55,7 @@ async function updateResumeEducation(req, res) {
           : null,
         fieldOfStudy: education.fieldOfStudy,
         gpa: education.gpa ? parseFloat(education.gpa) : null,
+        relevantCourseworks: education.relevantCourseworks,
       },
     }));
 

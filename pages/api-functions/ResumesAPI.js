@@ -6,6 +6,7 @@ const API = {
   resumes_resume: "/api/resumes/resume",
   resumes_resume_section: "/api/resumes/resume/sections",
   resumes_resume_education: "/api/resumes/resume/education",
+  resumes_resume_course: "/api/resumes/resume/course",
   resumes_resume_certification: "/api/resumes/resume/certification",
   resumes_resume_skill: "/api/resumes/resume/skill",
   resumes_resume_work: "/api/resumes/resume/work",
@@ -78,6 +79,54 @@ class ResumesAPI {
     return await axios.delete(API.resumes_resume_education, {
       params: {
         id: id,
+      },
+    });
+  }
+  async getResumeCourse(
+    name = "",
+    rowsPerPage = null,
+    pageSize = null,
+    approved
+  ) {
+    return await axios.get(API.resumes_resume_course, {
+      params: {
+        name,
+        rowsPerPage,
+        pageSize,
+        approved: approved?.toString() || null,
+      },
+    });
+  }
+  async createResumeCourse(course = null, createdBy) {
+    return await axios.post(API.resumes_resume_course, {
+      course,
+      courses: [],
+      createdBy,
+    });
+  }
+  async createResumeCourses(courses = [], createdBy) {
+    return await axios.post(API.resumes_resume_course, {
+      course: null,
+      courses,
+      createdBy,
+    });
+  }
+  async updateResumeCourse(course = null) {
+    return await axios.put(API.resumes_resume_course, {
+      course,
+      courses: [],
+    });
+  }
+  async updateResumeCourses(courses = []) {
+    return await axios.put(API.resumes_resume_course, {
+      course: null,
+      courses,
+    });
+  }
+  async deleteResumeCourses(ids = []) {
+    return await axios.delete(API.resumes_resume_course, {
+      params: {
+        ids: ids.join(","),
       },
     });
   }

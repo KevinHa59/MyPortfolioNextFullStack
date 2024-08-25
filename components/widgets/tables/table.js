@@ -20,6 +20,7 @@ export default function Table({
   headers = [],
   sx,
   callback_cell,
+  callback_extension_search_area,
 }) {
   const [rows, setRows] = useState([]);
   const [search, setSearch] = useState("");
@@ -96,6 +97,7 @@ export default function Table({
               label="Search"
               onChange={(e) => handleSearchChange(e.target.value)}
             />
+            {callback_extension_search_area}
           </Stack>
           <Stack direction={"row"}>
             <Pagination quantity={rows.length} />
