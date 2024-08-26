@@ -34,7 +34,7 @@ export default function Award({ resumeID, data, step }) {
   const { handleResumeDataChange } = useContext(resumeContext);
   const [input, setInput] = useState([]);
   useEffect(() => {
-    setInput(data);
+    data && setInput(data);
   }, [data]);
 
   const handleAddNew = () => {

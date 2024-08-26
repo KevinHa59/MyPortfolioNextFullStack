@@ -41,8 +41,8 @@ const menu_data = [
   },
   {
     Icon: Apps,
-    title: "Portfolio Collection",
-    param: "portfolioCollection",
+    title: "My Portfolios",
+    param: "myPortfolios",
     Comp: <PortfolioCollection />,
   },
   {

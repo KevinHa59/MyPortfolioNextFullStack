@@ -94,19 +94,30 @@ model Resume {
 }
 
 model ResumeSections {
-  id                      String  @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID                String  @unique @db.ObjectId
-  workExperience          Boolean @default(false)
-  education               Boolean @default(true)
-  skills                  Boolean @default(true)
-  certifications          Boolean @default(false)
-  projects                Boolean @default(true)
-  awards                  Boolean @default(false)
-  volunteerExperience     Boolean @default(false)
-  languages               Boolean @default(true)
-  publications            Boolean @default(false)
-  professionalMemberships Boolean @default(false)
-  hobbies                 Boolean @default(true)
+  id                              String  @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID                        String  @unique @db.ObjectId
+  workExperience                  Boolean @default(false)
+  workExperiencePriority          Int     @default(1)
+  education                       Boolean @default(true)
+  educationPriority               Int     @default(2)
+  skills                          Boolean @default(true)
+  skillsPriority                  Int     @default(3)
+  certifications                  Boolean @default(false)
+  certificationsPriority          Int     @default(4)
+  projects                        Boolean @default(true)
+  projectsPriority                Int     @default(5)
+  awards                          Boolean @default(false)
+  awardsPriority                  Int     @default(6)
+  volunteerExperience             Boolean @default(false)
+  volunteerExperiencePriority     Int     @default(7)
+  languages                       Boolean @default(true)
+  languagesPriority               Int     @default(8)
+  publications                    Boolean @default(false)
+  publicationsPriority            Int     @default(9)
+  professionalMemberships         Boolean @default(false)
+  professionalMembershipsPriority Int     @default(10)
+  hobbies                         Boolean @default(true)
+  hobbiesPriority                 Int     @default(11)
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
 }

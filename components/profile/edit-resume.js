@@ -101,6 +101,11 @@ export default function EditResume() {
     }
   }, [router]);
 
+  // {
+  //   name: "Summary",
+  //   Icon: <Badge />,
+  //   visible: true,
+  // },
   const getResume = async (id) => {
     try {
       const res = await addNote(
@@ -109,7 +114,11 @@ export default function EditResume() {
       );
       const resume = { ...res.data };
       delete resume.userID;
-      initSections(resume.resumeSections);
+      const sections = resume.resumeSections;
+
+      // setStep(_steps);
+      // console.log(_steps);
+      initSections(sections);
       setResumeData(resume);
       setIsGettingResume(false);
     } catch (error) {
@@ -119,15 +128,8 @@ export default function EditResume() {
   };
 
   const initSections = (resumeSections) => {
-    const newSteps = _steps.map((st) => {
-      const key = (st.name[0].toLowerCase() + st.name.slice(1)).replaceAll(
-        " ",
-        ""
-      );
-      st.visible = resumeSections[key];
-      return st;
-    });
-    setSteps(newSteps);
+    const _steps = constructSteps(resumeSections);
+    setSteps(_steps);
   };
 
   const handleResumeDataChange = (newData) => {
@@ -187,7 +189,6 @@ export default function EditResume() {
       console.log(error);
     }
   };
-
   return (
     <resumeContext.Provider
       value={{
@@ -326,9 +327,9 @@ export default function EditResume() {
                   }}
                 >
                   {steps
-                    .filter(
-                      (st) => st.visible === true || st.visible === undefined
-                    )
+                    ?.filter((st) => {
+                      return st.visible === true;
+                    })
                     .map((_step, index) => {
                       return (
                         <>
@@ -390,7 +391,7 @@ export default function EditResume() {
                   }}
                 >
                   <Stack
-                    id={steps[0].name}
+                    id={steps[0]?.name}
                     width={"100%"}
                     height={"100%"}
                     sx={{
@@ -458,14 +459,37 @@ export default function EditResume() {
                       </Stack>
                     </Stack>
                   </Stack>
-                  <Paper
-                    id={steps[1].name}
+                  {steps?.map((section, index) => {
+                    if (index > 0) {
+                      return (
+                        <Paper
+                          key={index}
+                          id={section?.name}
+                          className="flat"
+                          variant="outlined"
+                          sx={{
+                            width: "100%",
+                            background: theme.palette.background.default,
+                            display: section?.visible ? "block" : "none",
+                          }}
+                        >
+                          <section.Comp
+                            resumeID={resumeData.id}
+                            data={resumeData[section.key]}
+                            step={section}
+                          />
+                        </Paper>
+                      );
+                    }
+                  })}
+                  {/* <Paper
+                    id={steps[1]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       width: "100%",
                       background: theme.palette.background.default,
-                      display: steps[1].visible ? "block" : "none",
+                      display: steps[1]?.visible ? "block" : "none",
                     }}
                   >
                     <Education
@@ -475,13 +499,13 @@ export default function EditResume() {
                     />
                   </Paper>
                   <Paper
-                    id={steps[2].name}
+                    id={steps[2]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       width: "100%",
                       background: theme.palette.background.default,
-                      display: steps[2].visible ? "block" : "none",
+                      display: steps[2]?.visible ? "block" : "none",
                     }}
                   >
                     <Certification
@@ -491,13 +515,13 @@ export default function EditResume() {
                     />
                   </Paper>
                   <Paper
-                    id={steps[3].name}
+                    id={steps[3]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       width: "100%",
                       background: theme.palette.background.default,
-                      display: steps[3].visible ? "block" : "none",
+                      display: steps[3]?.visible ? "block" : "none",
                     }}
                   >
                     <Skill
@@ -507,13 +531,13 @@ export default function EditResume() {
                     />
                   </Paper>
                   <Paper
-                    id={steps[4].name}
+                    id={steps[4]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       width: "100%",
                       background: theme.palette.background.default,
-                      display: steps[4].visible ? "block" : "none",
+                      display: steps[4]?.visible ? "block" : "none",
                     }}
                   >
                     <Project
@@ -523,13 +547,13 @@ export default function EditResume() {
                     />
                   </Paper>
                   <Paper
-                    id={steps[5].name}
+                    id={steps[5]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       width: "100%",
                       background: theme.palette.background.default,
-                      display: steps[5].visible ? "block" : "none",
+                      display: steps[5]?.visible ? "block" : "none",
                     }}
                   >
                     <WorkExperience
@@ -539,13 +563,13 @@ export default function EditResume() {
                     />
                   </Paper>
                   <Paper
-                    id={steps[6].name}
+                    id={steps[6]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       width: "100%",
                       background: theme.palette.background.default,
-                      display: steps[6].visible ? "block" : "none",
+                      display: steps[6]?.visible ? "block" : "none",
                     }}
                   >
                     <VolunteerExperience
@@ -555,13 +579,13 @@ export default function EditResume() {
                     />
                   </Paper>
                   <Paper
-                    id={steps[7].name}
+                    id={steps[7]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       width: "100%",
                       background: theme.palette.background.default,
-                      display: steps[7].visible ? "block" : "none",
+                      display: steps[7]?.visible ? "block" : "none",
                     }}
                   >
                     <Award
@@ -571,13 +595,13 @@ export default function EditResume() {
                     />
                   </Paper>
                   <Paper
-                    id={steps[8].name}
+                    id={steps[8]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       width: "100%",
                       background: theme.palette.background.default,
-                      display: steps[8].visible ? "block" : "none",
+                      display: steps[8]?.visible ? "block" : "none",
                     }}
                   >
                     <Language
@@ -587,12 +611,12 @@ export default function EditResume() {
                     />
                   </Paper>
                   <Paper
-                    id={steps[9].name}
+                    id={steps[9]?.name}
                     className="flat"
                     variant="outlined"
                     sx={{
                       background: theme.palette.background.default,
-                      display: steps[9].visible ? "block" : "none",
+                      display: steps[9]?.visible ? "block" : "none",
                     }}
                   >
                     <Hobby
@@ -600,7 +624,7 @@ export default function EditResume() {
                       data={resumeData.hobbies}
                       step={steps[9]}
                     />
-                  </Paper>
+                  </Paper> */}
                 </Stack>
               </Stack>
             </Stack>
@@ -611,55 +635,124 @@ export default function EditResume() {
   );
 }
 
+function constructSteps(sections) {
+  const _section = _.cloneDeep(sections);
+  delete _section["id"];
+  delete _section["resumeID"];
+  let sectionVisibility = Object.entries(_section)
+    .filter((section) => {
+      return typeof section[1] === "boolean";
+    })
+    .map((section) => {
+      const comp = Components[section[0]];
+      if (comp) {
+        return {
+          name: comp.name,
+          Icon: comp.Icon,
+          visible: section[1],
+          priority: _section[`${section[0]}Priority`],
+          Comp: comp.Comp,
+          key: section[0],
+        };
+      } else {
+        return null;
+      }
+    });
+  sectionVisibility.unshift({
+    name: "Summary",
+    Icon: <Badge />,
+    visible: true,
+    priority: 0,
+  });
+  sectionVisibility = sectionVisibility
+    .filter((item) => item !== null)
+    .sort((a, b) => a.priority - b.priority);
+  return sectionVisibility;
+}
+
 const _steps = [
   {
     name: "Summary",
     Icon: <Badge />,
     visible: true,
   },
-  {
-    name: "Education",
-    Icon: <School />,
-    visible: true,
-  },
-  {
-    name: "Certifications",
-    Icon: <HistoryEdu />,
-    visible: true,
-  },
-  {
-    name: "Skills",
-    Icon: <FitnessCenter />,
-    visible: true,
-  },
-  {
-    name: "Projects",
-    Icon: <SensorOccupied />,
-    visible: true,
-  },
-  {
+];
+
+const Components = {
+  workExperience: {
+    Comp: WorkExperience,
     name: "Work Experience",
     Icon: <Work />,
-    visible: true,
   },
-  {
+  education: { Comp: Education, name: "Education", Icon: <School /> },
+  skills: { Comp: Skill, name: "Skills", Icon: <FitnessCenter /> },
+  certifications: {
+    Comp: Certification,
+    name: "Certifications",
+    Icon: <HistoryEdu />,
+  },
+  projects: { Comp: Project, name: "Projects", Icon: <SensorOccupied /> },
+  awards: { Comp: Award, name: "Awards", Icon: <EmojiEvents /> },
+  volunteerExperience: {
+    Comp: VolunteerExperience,
     name: "Volunteer Experience",
     Icon: <Diversity1 />,
-    visible: true,
   },
-  {
-    name: "Awards",
-    Icon: <EmojiEvents />,
-    visible: true,
-  },
-  {
-    name: "Languages",
-    Icon: <LanguageIcon />,
-    visible: true,
-  },
-  {
-    name: "Hobbies",
-    Icon: <Pool />,
-    visible: true,
-  },
-];
+  languages: { Comp: Language, name: "Languages", Icon: <LanguageIcon /> },
+  publications: null,
+  professionalMemberships: null,
+  hobbies: { Comp: Hobby, name: "Hobbies", Icon: <Pool /> },
+};
+
+// const _steps = [
+//   {
+//     name: "Summary",
+//     Icon: <Badge />,
+//     visible: true,
+//   },
+//   {
+//     name: "Education",
+//     Icon: <School />,
+//     visible: true,
+//   },
+//   {
+//     name: "Certifications",
+//     Icon: <HistoryEdu />,
+//     visible: true,
+//   },
+//   {
+//     name: "Skills",
+//     Icon: <FitnessCenter />,
+//     visible: true,
+//   },
+//   {
+//     name: "Projects",
+//     Icon: <SensorOccupied />,
+//     visible: true,
+//   },
+//   {
+//     name: "Work Experience",
+//     Icon: <Work />,
+//     visible: true,
+//   },
+//   {
+//     name: "Volunteer Experience",
+//     Icon: <Diversity1 />,
+//     visible: true,
+//   },
+//   {
+//     name: "Awards",
+//     Icon: <EmojiEvents />,
+//     visible: true,
+//   },
+//   {
+//     name: "Languages",
+//     Icon: <LanguageIcon />,
+//     visible: true,
+//   },
+//   {
+//     name: "Hobbies",
+//     Icon: <Pool />,
+//     visible: true,
+//   },
+// ];

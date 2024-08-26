@@ -1,4 +1,8 @@
 import {
+  ArrowDownward,
+  ArrowDropDown,
+  ArrowDropUp,
+  ArrowUpward,
   Check,
   Clear,
   PriorityHigh,
@@ -6,8 +10,10 @@ import {
   Warning,
 } from "@mui/icons-material";
 import {
+  Divider,
   FormControlLabel,
   IconButton,
+  Paper,
   Stack,
   Switch,
   ToggleButton,
@@ -46,7 +52,10 @@ export default function Sections({ resumeID, data }) {
           ""
         );
         newSectionData[key] = st.visible;
+        newSectionData[`${key}Priority`] = st.priority;
       });
+      delete newSectionData["summary"];
+      delete newSectionData["summaryPriority"];
       const res = await addNote(
         "Save Sections",
         MyAPIs.Resume().updateResumeSections(resumeID, newSectionData)
@@ -57,6 +66,20 @@ export default function Sections({ resumeID, data }) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleChangeOrder = (isUp, index) => {
+    let copy = _.cloneDeep(steps);
+
+    if (isUp) {
+      copy[index].priority -= 1;
+      copy[index - 1].priority += 1;
+    } else {
+      copy[index].priority += 1;
+      copy[index + 1].priority -= 1;
+    }
+    copy = copy.sort((a, b) => a.priority - b.priority);
+    setSteps(copy);
   };
 
   return (
@@ -72,15 +95,14 @@ export default function Sections({ resumeID, data }) {
           width={"100%"}
           paddingX={1}
         >
-          <Typography variant="body1" fontWeight={"bold"}>
+          <Typography variant="h6" fontWeight={"bold"}>
             Sections
           </Typography>
           <Stack direction={"row"} width={"max-content"}>
-            <IconButton size="small" color="success" onClick={handleSave}>
+            <IconButton color="success" onClick={handleSave}>
               <Check />
             </IconButton>
             <IconButton
-              size="small"
               color="error"
               onClick={() => {
                 setOpen(false);
@@ -96,50 +118,78 @@ export default function Sections({ resumeID, data }) {
       size="small"
       isIconButton={true}
     >
-      <Stack paddingY={2} minWidth={"400px"} alignItems={"center"} gap={2}>
+      <Stack paddingY={2} minWidth={"500px"} alignItems={"center"} gap={2}>
         {steps?.map((section, index) => {
           const isChanged = data[index].visible !== section.visible;
           return (
-            <FormControlLabel
-              key={index}
-              labelPlacement="start"
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "calc(100% - 50px)",
-              }}
-              control={
-                <ToggleButtonGroup
-                  color="primary"
-                  value={section.visible}
-                  exclusive
-                  onChange={(e, value) => handleStepChange(index)}
-                  aria-label="Platform"
-                >
-                  <ToggleButton
-                    sx={{ paddingY: 0 }}
-                    color="secondary"
-                    size="small"
-                    value={true}
-                  >
-                    Active
-                  </ToggleButton>
-                  <ToggleButton
-                    sx={{ paddingY: 0 }}
-                    color="error"
-                    size="small"
-                    value={false}
-                  >
-                    Deactive
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              }
-              label={
-                <Stack direction={"row"} gap={1}>
-                  {section.name} {isChanged && <PriorityHigh color="warning" />}
-                </Stack>
-              }
-            />
+            index > 0 && (
+              <Stack direction={"row"} gap={5} width={"100%"} paddingX={1}>
+                <FormControlLabel
+                  key={index}
+                  labelPlacement="start"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "calc(100% - 50px)",
+                  }}
+                  control={
+                    <ToggleButtonGroup
+                      color="primary"
+                      value={section.visible}
+                      exclusive
+                      onChange={(e, value) => handleStepChange(index)}
+                      aria-label="Platform"
+                    >
+                      <ToggleButton
+                        sx={{ paddingY: 0 }}
+                        color="secondary"
+                        size="small"
+                        value={true}
+                      >
+                        Active
+                      </ToggleButton>
+                      <ToggleButton
+                        sx={{ paddingY: 0 }}
+                        color="error"
+                        size="small"
+                        value={false}
+                      >
+                        Deactive
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  }
+                  label={
+                    <Stack direction={"row"} gap={1}>
+                      {section.name}{" "}
+                      {isChanged && <PriorityHigh color="warning" />}
+                    </Stack>
+                  }
+                />
+                <Paper variant="outlined">
+                  <Stack direction={"row"}>
+                    <IconButton
+                      size="small"
+                      color="secondary"
+                      disabled={index === 1}
+                      sx={{ paddingY: 0 }}
+                      onClick={() => handleChangeOrder(true, index)}
+                    >
+                      <ArrowDropUp />
+                    </IconButton>
+                    <Divider orientation="vertical" flexItem />
+                    <IconButton
+                      size="small"
+                      color="secondary"
+                      disabled={index === steps.length - 1}
+                      sx={{ paddingY: 0 }}
+                      onClick={() => handleChangeOrder(false, index)}
+                    >
+                      <ArrowDropDown />
+                    </IconButton>
+                  </Stack>
+                </Paper>
+              </Stack>
+            )
           );
         })}
       </Stack>

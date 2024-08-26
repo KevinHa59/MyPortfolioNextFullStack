@@ -343,7 +343,9 @@ export default function Index() {
     const id = "6688542a94275f68c205f565";
     const res = await MyAPIs.Resume().getResumeByID(id);
     userData = res.data;
-    console.log(userData);
+    const sections = Object.entries(userData.resumeSections)
+      .filter((section) => section[1] === true)
+      .map((section) => section[0]);
     setData(res.data);
   };
   return (

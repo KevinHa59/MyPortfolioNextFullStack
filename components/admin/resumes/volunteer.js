@@ -39,7 +39,7 @@ export default function VolunteerExperience({ resumeID, data, step }) {
   const [input, setInput] = useState([]);
 
   useEffect(() => {
-    setInput(data);
+    data && setInput(data);
   }, [data]);
 
   const handleAddNew = () => {

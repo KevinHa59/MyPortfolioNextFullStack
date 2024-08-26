@@ -35,7 +35,7 @@ export default function Certification({ resumeID, data, step }) {
   const [input, setInput] = useState([]);
 
   useEffect(() => {
-    setInput(data);
+    data && setInput(data);
   }, [data]);
 
   const handleAddCertification = () => {

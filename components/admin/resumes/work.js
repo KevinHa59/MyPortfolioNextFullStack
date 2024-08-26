@@ -1,5 +1,6 @@
 import {
   Add,
+  ArrowRight,
   Check,
   Clear,
   DeleteForever,
@@ -239,7 +240,7 @@ function Form({ resumeID, data, onRemove, onChange }) {
           onChange={(e) => handleInputChange({ location: e.target.value })}
         />
         <Input
-          value={work?.responsibilities}
+          value={isEdit ? work?.responsibilities : ""}
           multiline={true}
           rows={5}
           label="Responsibilities"
@@ -248,6 +249,15 @@ function Form({ resumeID, data, onRemove, onChange }) {
             handleInputChange({ responsibilities: e.target.value })
           }
         />
+        {!isEdit && (
+          <Stack paddingLeft={2}>
+            <ul>
+              {work?.responsibilities.split("\n").map((res, index) => {
+                return <li key={index}>{res}</li>;
+              })}
+            </ul>
+          </Stack>
+        )}
       </Stack>
     </Paper>
   );

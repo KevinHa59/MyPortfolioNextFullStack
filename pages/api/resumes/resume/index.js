@@ -46,6 +46,13 @@ async function getResume(req, res) {
       },
     });
 
+    const sections = Object.entries(resume.resumeSections)
+      .filter((item) => item[1] === false)
+      .map((item) => item[0]);
+    sections.forEach((hideSection) => {
+      delete resume[hideSection];
+    });
+
     res.status(200).json(resume);
   } catch (error) {
     res.status(500).json({ err: "Internal server error" });
