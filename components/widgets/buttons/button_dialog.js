@@ -79,8 +79,11 @@ export default function ButtonDialog({
           direction={"row"}
           alignItems={"center"}
           justifyContent={"space-between"}
+          paddingX={1}
         >
-          {title}
+          <Typography variant="body2" fontWeight={"bold"}>
+            {title}
+          </Typography>
           {onClose && (
             <IconButton size="small" color="error" onClick={onClose}>
               <Clear />

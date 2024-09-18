@@ -34,6 +34,10 @@ import Dashboard from "../../components/admin/dashboard";
 import ThemeButton, { getMode } from "../../components/widgets/themeButton";
 import ButtonAccount from "../../components/widgets/buttons/button-account";
 import Courses from "../../components/admin/courses";
+import MenuRenderer, {
+  findComponentByParam,
+} from "../components/menu-renderer";
+import { menu_admin } from "../components/menu-admin";
 
 const menu_data = [
   {
@@ -100,17 +104,18 @@ function Index() {
   }, [router]);
   return (
     <Stack height={"100vh"} gap={"1px"} width={"clamp(500px, 100%, 100%)"}>
-      <Stack zIndex={1} direction={"row"} height={"100%"}>
-        <Stack height={"100%"} width="300px" padding={2}>
-          <Paper className="flat" sx={{ zIndex: 2, height: "100%" }}>
-            <Menu />
+      <Stack zIndex={1} direction={"row"} height={"100%"} gap={2}>
+        <Stack height={"100%"} width="300px">
+          <Paper className="flat br0" sx={{ zIndex: 2, height: "100%" }}>
+            <MenuRenderer value={menu_admin} />
+            {/* <Menu /> */}
           </Paper>
         </Stack>
         <Stack
           height={"100%"}
           width={"100%"}
-          paddingX={2}
-          paddingBottom={"15px"}
+          // paddingX={2}
+          // paddingBottom={"15px"}
           sx={{ overflowY: "auto" }}
         >
           <Stack
@@ -124,7 +129,7 @@ function Index() {
             <ButtonAccount />
           </Stack>
           <Stack height={"calc(100% - 60px)"} sx={{ overflowY: "auto" }}>
-            {menu_data.find((menu) => menu.param === section)?.Comp}
+            {findComponentByParam(section, menu_admin)}
           </Stack>
         </Stack>
       </Stack>
@@ -147,7 +152,7 @@ export function Menu() {
   return (
     <Stack
       paddingY={3}
-      gap={2}
+      // gap={2}
       alignItems={"center"}
       sx={{
         overflowY: "auto",
@@ -162,19 +167,20 @@ export function Menu() {
             height="100%"
             style={{ transitionDelay: 50 * index }}
           >
-            <Stack>
+            <Stack width={"100%"}>
               <Button
                 key={index}
                 color="inherit"
-                className={
+                fullWidth
+                className={`${
                   router.query.section === menu.param ? "active" : "inactive"
-                }
+                } br0`}
                 sx={{
                   display: "flex",
                   gap: 1,
                   justifyContent: "flex-start",
                   transition: "ease 0.1s",
-                  width: "150px",
+                  // width: "150px",
                   position: "relative",
                 }}
                 onClick={() => handleRoute(menu.param)}
@@ -185,9 +191,6 @@ export function Menu() {
                 >
                   <ArrowRight sx={{ position: "absolute", right: "100%" }} />
                 </Slide>
-                {/* {router.query.section === menu.param && (
-                  
-                )} */}
                 <menu.Icon fontSize="15px" />
                 <Typography
                   variant="subtitle2"

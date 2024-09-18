@@ -21,6 +21,7 @@ import {
   CopyAll,
   DateRange,
   Delete,
+  DeleteForever,
   Edit,
   Email,
   Label,
@@ -125,20 +126,22 @@ export default function Users() {
           overflow: "hidden",
         }}
       >
-        <Table
-          isLoading={isGettingData}
-          data={users}
-          headers={headers}
-          callback_cell={(row, key) => (
-            <Cell
-              row={row}
-              header={key}
-              onEdit={() => handleEditUserOpen(row)}
-              onPasswordChange={() => handlePasswordChangeOpen(row)}
-              onRefresh={initData}
-            />
-          )}
-        />
+        <Paper className="flat br0">
+          <Table
+            isLoading={isGettingData}
+            data={users}
+            headers={headers}
+            callback_cell={(row, key) => (
+              <Cell
+                row={row}
+                header={key}
+                onEdit={() => handleEditUserOpen(row)}
+                onPasswordChange={() => handlePasswordChangeOpen(row)}
+                onRefresh={initData}
+              />
+            )}
+          />
+        </Paper>
       </Stack>
     </Stack>
   );
@@ -192,7 +195,7 @@ function Cell({ row, header, onEdit, onRefresh }) {
           color={"error"}
           onConfirm={() => handleRemoveUser()}
         >
-          <Delete />
+          <DeleteForever color="error" />
         </ButtonDialogConfirm>
       </Stack>
     );

@@ -230,14 +230,16 @@ export default function Resumes({ defaultUser }) {
             })}
           </Stack>
         ) : (
-          <Table
-            isLoading={isGettingData}
-            data={generalData?.resumes}
-            headers={tableHeader}
-            callback_cell={(row, key) => (
-              <Cell row={row} header={key} onRemoveSuccess={initData} />
-            )}
-          />
+          <Paper className="flat br0">
+            <Table
+              isLoading={isGettingData}
+              data={generalData?.resumes}
+              headers={tableHeader}
+              callback_cell={(row, key) => (
+                <Cell row={row} header={key} onRemoveSuccess={initData} />
+              )}
+            />
+          </Paper>
         )}
       </Stack>
     </Stack>

@@ -166,18 +166,16 @@ export default function Permissions() {
             overflow: "hidden",
           }}
         >
-          <Stack></Stack>
-          {/* <Divider /> */}
           <Stack
             alignItems={"flex-start"}
-            gap={4}
+            gap={2}
             direction={"row"}
             height={"100%"}
           >
             {/* user type */}
             <Stack width={"300px"} height={"100%"}>
               {/* <Divider /> */}
-              <Paper height={"100%"} sx={{ height: "max-content" }}>
+              <Paper className="flat br0" sx={{ height: "100%" }}>
                 <Stack minHeight="30px" padding={1}>
                   <Typography
                     variant="body1"
@@ -188,8 +186,8 @@ export default function Permissions() {
                     User Types
                   </Typography>
                 </Stack>
-                {/* <Divider /> */}
-                <Stack width={"100%"} padding={1} sx={{ overflowY: "auto" }}>
+
+                <Stack width={"100%"} paddingY={1} sx={{ overflowY: "auto" }}>
                   {data.userTypes?.map((type, index) => {
                     return (
                       <Slide
@@ -211,6 +209,7 @@ export default function Permissions() {
                               gap: 1,
                               justifyContent: "flex-start",
                               transition: "ease 0.1s",
+                              borderRadius: 0,
                               // width: "150px",
                             }}
                             fullWidth
@@ -225,64 +224,58 @@ export default function Permissions() {
                 </Stack>
               </Paper>
             </Stack>
-            {/* <Divider orientation="vertical" flexItem /> */}
             {/* pages list */}
             <Stack width={"100%"} height={"100%"} gap={1}>
-              <Stack
-                minHeight="30px"
-                direction={"row"}
-                alignItems={"center"}
-                gap={2}
-                // className="reverse"
-                // sx={{ background: styles.background.menu }}
-              >
-                <Typography
-                  variant="body1"
-                  fontWeight={"bold"}
-                  textAlign={"center"}
-                  sx={{ color: "inherit" }}
-                >
-                  Pages
-                </Typography>
-                <ButtonLoading
-                  startIcon={<Save />}
-                  variant={"contained"}
-                  // className={"br0"}
-                  isLoading={isSaving}
-                  sx={{ width: "max-content", minWidth: 0 }}
-                  size="small"
-                  onClick={handleSave}
-                >
-                  Save
-                </ButtonLoading>
-              </Stack>
-              <Divider />
               <Stack height={"100%"}>
                 <Stack
                   width={"100%"}
                   height={"calc(100% - 50px)"}
-                  padding={1}
+                  // padding={1}
                   sx={{ overflowY: "auto" }}
                 >
-                  {selectedUserType ? (
-                    <Table
-                      isLoading={isGettingData}
-                      data={data.pages}
-                      headers={headers}
-                      callback_cell={(row, key) => (
-                        <Cell
-                          row={row}
-                          header={key}
-                          pages={data.pages}
-                          selectedUserType={selectedUserType}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <Typography textAlign={"center"}>
-                      No UserType Selected
-                    </Typography>
-                  )}
+                  <Paper className="flat br0">
+                    {selectedUserType ? (
+                      <Table
+                        isLoading={isGettingData}
+                        data={data.pages}
+                        headers={headers}
+                        callback_extension_search_area={
+                          <Stack
+                            minHeight="30px"
+                            direction={"row"}
+                            alignItems={"center"}
+                            gap={2}
+                            // className="reverse"
+                            // sx={{ background: styles.background.menu }}
+                          >
+                            <ButtonLoading
+                              startIcon={<Save />}
+                              variant={"contained"}
+                              // className={"br0"}
+                              isLoading={isSaving}
+                              sx={{ width: "max-content", minWidth: 0 }}
+                              size="small"
+                              onClick={handleSave}
+                            >
+                              Save
+                            </ButtonLoading>
+                          </Stack>
+                        }
+                        callback_cell={(row, key) => (
+                          <Cell
+                            row={row}
+                            header={key}
+                            pages={data.pages}
+                            selectedUserType={selectedUserType}
+                          />
+                        )}
+                      />
+                    ) : (
+                      <Typography textAlign={"center"}>
+                        No UserType Selected
+                      </Typography>
+                    )}
+                  </Paper>
                 </Stack>
               </Stack>
             </Stack>

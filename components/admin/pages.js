@@ -82,21 +82,23 @@ export default function Pages() {
           overflow: "hidden",
         }}
       >
-        <Table
-          isLoading={isGettingData}
-          data={pages}
-          headers={headers}
-          callback_cell={(row, key) => (
-            <Cell
-              row={row}
-              header={key}
-              pages={pages}
-              onEdit={() => handleEditUserOpen(row)}
-              onPasswordChange={() => handlePasswordChangeOpen(row)}
-              onRefresh={initData}
-            />
-          )}
-        />
+        <Paper className="flat br0">
+          <Table
+            isLoading={isGettingData}
+            data={pages}
+            headers={headers}
+            callback_cell={(row, key) => (
+              <Cell
+                row={row}
+                header={key}
+                pages={pages}
+                onEdit={() => handleEditUserOpen(row)}
+                onPasswordChange={() => handlePasswordChangeOpen(row)}
+                onRefresh={initData}
+              />
+            )}
+          />
+        </Paper>
       </Stack>
     </Stack>
   );

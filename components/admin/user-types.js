@@ -82,27 +82,28 @@ export default function UserTypes() {
         </Stack>
       </Header>
       <Stack
-        // variant="outlined"
         sx={{
           height: "100%",
           overflow: "hidden",
         }}
       >
-        <Table
-          isLoading={isGettingData}
-          data={userTypes}
-          headers={headers}
-          callback_cell={(row, key) => (
-            <Cell
-              row={row}
-              header={key}
-              onEditClick={() => {
-                setUpdateType(row);
-                setIsNewUserTypeOpen(true);
-              }}
-            />
-          )}
-        />
+        <Paper className="flat br0">
+          <Table
+            isLoading={isGettingData}
+            data={userTypes}
+            headers={headers}
+            callback_cell={(row, key) => (
+              <Cell
+                row={row}
+                header={key}
+                onEditClick={() => {
+                  setUpdateType(row);
+                  setIsNewUserTypeOpen(true);
+                }}
+              />
+            )}
+          />
+        </Paper>
       </Stack>
     </Stack>
   );
@@ -143,7 +144,7 @@ function Cell({ row, header, onEditClick }) {
           sx={{ padding: 0, minWidth: 0 }}
           onConfirm={handleRemoveUserType}
         >
-          <DeleteForever />
+          <DeleteForever color="error" />
         </ButtonDialogConfirm>
       </Stack>
     );

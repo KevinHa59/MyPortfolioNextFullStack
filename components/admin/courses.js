@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Stack, Typography } from "@mui/material";
+import { Autocomplete, Button, Paper, Stack, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import Header from "./header";
 import { People } from "@mui/icons-material";
@@ -6,7 +6,6 @@ import Table from "../widgets/tables/table";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
-import Input from "../widgets/input/Input";
 import SelectCustom from "../widgets/select/select-custom";
 
 export default function Courses() {
@@ -77,36 +76,38 @@ export default function Courses() {
           overflow: "hidden",
         }}
       >
-        <Table
-          isLoading={isGettingData}
-          data={courses}
-          headers={headers}
-          callback_extension_search_area={
-            <Stack>
-              <SelectCustom
-                label={""}
-                selected_value={filter.approved}
-                data={[
-                  { name: "Not Approve", value: false },
-                  { name: "Approve", value: true },
-                  { name: "All", value: "All" },
-                ]}
-                item_field={"name"}
-                value_field={"value"}
-                size="small"
-                onChange={(val) => handleFilterChange({ approved: val })}
+        <Paper className="flat br0">
+          <Table
+            isLoading={isGettingData}
+            data={courses}
+            headers={headers}
+            callback_extension_search_area={
+              <Stack>
+                <SelectCustom
+                  label={""}
+                  selected_value={filter.approved}
+                  data={[
+                    { name: "Not Approve", value: false },
+                    { name: "Approve", value: true },
+                    { name: "All", value: "All" },
+                  ]}
+                  item_field={"name"}
+                  value_field={"value"}
+                  size="small"
+                  onChange={(val) => handleFilterChange({ approved: val })}
+                />
+              </Stack>
+            }
+            callback_cell={(row, key) => (
+              <Cell
+                row={row}
+                header={key}
+                onDelete={(setOpen) => handleDeleteCourse(row.id, setOpen)}
+                onApprove={() => handleApproveCourse(row)}
               />
-            </Stack>
-          }
-          callback_cell={(row, key) => (
-            <Cell
-              row={row}
-              header={key}
-              onDelete={(setOpen) => handleDeleteCourse(row.id, setOpen)}
-              onApprove={() => handleApproveCourse(row)}
-            />
-          )}
-        />
+            )}
+          />
+        </Paper>
       </Stack>
     </Stack>
   );
