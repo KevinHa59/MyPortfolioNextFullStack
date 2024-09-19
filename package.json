@@ -29,6 +29,7 @@
     "lodash": "^4.17.21",
     "mongodb": "^6.7.0",
     "next": "13.4.13",
+    "next-auth": "^4.24.7",
     "next-js-app": "file:",
     "prisma": "^5.16.1",
     "react": "18.2.0",

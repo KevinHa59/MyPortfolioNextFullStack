@@ -10,6 +10,7 @@ import { StyleMode } from "../styles/useStyle";
 import { darkStyles } from "../theme/dark-theme-options";
 import { lightStyles } from "../theme/light-theme-options";
 import AsyncNotification from "../components/widgets/notification/async-notification";
+import { SessionProvider } from "next-auth/react";
 
 export const mainContext = createContext(null);
 
@@ -86,8 +87,9 @@ function MyApp({ Component, pageProps }) {
       )}
     >
       <Head>
-        <title>My Portfolio</title>
+        <title>EZ-Folio</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Head>
       <mainContext.Provider
         value={{
@@ -96,21 +98,23 @@ function MyApp({ Component, pageProps }) {
           themeToggle: handleUpdateTheme,
         }}
       >
-        <ThemeProvider
-          theme={createTheme({
-            mode: settings.theme,
-          })}
-        >
-          <CssBaseline />
-          <AsyncNotification>
-            <Component {...pageProps} />
-          </AsyncNotification>
-          <Notification
-            note={note.message}
-            type={note.type}
-            timeout={note.timeout}
-          />
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            theme={createTheme({
+              mode: settings.theme,
+            })}
+          >
+            <CssBaseline />
+            <AsyncNotification>
+              <Component {...pageProps} />
+            </AsyncNotification>
+            <Notification
+              note={note.message}
+              type={note.type}
+              timeout={note.timeout}
+            />
+          </ThemeProvider>
+        </SessionProvider>
       </mainContext.Provider>
     </Stack>
   );

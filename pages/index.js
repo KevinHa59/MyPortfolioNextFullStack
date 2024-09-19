@@ -1,32 +1,46 @@
-import { Divider, Fade, Stack, Typography } from "@mui/material";
-import Splash from "../components/widgets/splash";
-import { useState } from "react";
-import LoginBox from "../components/widgets/loginBox";
-import ChatBox from "../components/chatbox/chatBox";
+import { Button, Stack, Typography } from "@mui/material";
+import { LogoFull } from "../icons/logo";
+import IndexMenuWrapper from "./components/index-menu-wrapper";
 export default function Home() {
-  const [isSplashDone, setIsSplashDone] = useState(false);
   return (
-    <Stack sx={{ position: "relative" }}>
-      <ChatBox />
-      {/* <Splash
-        isDone={false}
-        timeout={3000}
-        onDone={() => setIsSplashDone(true)}
-      />
-      {isSplashDone && (
-        <Stack width={"100%"} direction={"row"} gap={1}>
-          <LoginBox />
-          <Stack height={"100vh"} width={"300px"}>
-            menu
+    <IndexMenuWrapper page={""}>
+      <Stack width="100%" height="100%" alignItems={"center"}>
+        <Stack
+          gap={5}
+          width="clamp(500px, 100vw, 1280px)"
+          height="100%"
+          alignItems={"center"}
+          padding={4}
+        >
+          <Stack height={"30vh"}>
+            <LogoFull
+              sx={{
+                width: "clamp(200px, 30vw, 600px)",
+                height: "100%",
+              }}
+            />
           </Stack>
-          <Stack sx={{ height: "100vh", width: "2px" }}>
-            <Divider orientation="vertical" />
-          </Stack>
-          <Stack height={"100$"} width={"100%"}>
-            body
-          </Stack>
+          <Typography variant="h4" fontWeight="bold" textAlign={"center"}>
+            Your Story - Your Portfolio - Your Way.
+          </Typography>
+          <Typography
+            variant="h6"
+            fontWeight={"200"}
+            sx={{ lineHeight: "30px" }}
+            textAlign={"center"}
+          >
+            {`Create your personalized portfolio with ease! Our platform allows
+            you to showcase your skills, experience, and achievements by simply
+            entering your information. Whether you're a professional, student,
+            or freelancer, our intuitive tool helps you build a standout
+            portfolio to share with potential employers, clients, or peers—no
+            coding required!`}
+          </Typography>
+          <Button className="highlight" sx={{ width: "max-content" }}>
+            Build Your Own Now
+          </Button>
         </Stack>
-      )} */}
-    </Stack>
+      </Stack>
+    </IndexMenuWrapper>
   );
 }
