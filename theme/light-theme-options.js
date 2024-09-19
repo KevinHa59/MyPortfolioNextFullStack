@@ -103,7 +103,7 @@ export const lightThemeOptions = {
     MuiButton: {
       styleOverrides: {
         root: {
-          color: "#000",
+          color: text.primary,
           "&:hover": {
             background: `rgba(200,200,200,0.1)`,
           },
@@ -149,6 +149,39 @@ export const lightThemeOptions = {
             boxShadow: `0px 2px 7px rgba(57, 165, 250, 0.4)`,
             "&:hover": {
               background: `${info.main}cc`,
+            },
+          },
+          "&.MuiButton-textSecondary": {
+            color: `${secondary.main}`,
+            "&:hover": {
+              background: `${secondary.main}1A`,
+            },
+          },
+
+          "&.MuiButton-textError": {
+            color: `${error.main}`,
+            "&:hover": {
+              background: `${error.main}1A`,
+            },
+          },
+
+          "&.MuiButton-textWarning": {
+            color: `${warning.main}`,
+            "&:hover": {
+              background: `${warning.main}1A`,
+            },
+          },
+
+          "&.MuiButton-textSuccess": {
+            color: `${success.main}`,
+            "&:hover": {
+              background: `${success.main}1A`,
+            },
+          },
+          "&.MuiButton-textInfo": {
+            color: `${info.main}`,
+            "&:hover": {
+              background: `${info.main}1A`,
             },
           },
           "&.Mui-disabled": {
@@ -227,10 +260,10 @@ export const lightThemeOptions = {
     MuiOutlinedInput: {
       styleOverrides: {
         notchedOutline: {
-          borderColor: divider,
+          borderColor: "rgba(0, 0, 0, 0.7)",
         },
         "&:hover MuiOutlinedInput-notchedOutline": {
-          borderColor: "rgba(120, 120, 120, 0.2)",
+          borderColor: "rgba(120, 120, 120, 0.7)",
         },
       },
     },
@@ -238,7 +271,6 @@ export const lightThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: "25px",
-          background: "rgba(0,0,0,0.05)",
         },
       },
     },

@@ -33,6 +33,14 @@ export const baseThemeOptions = {
           fontWeight: 400,
           "&.active": {
             color: "#ff0f50",
+            borderLeft: "5px solid #ff0f50",
+            backgroundColor: "#ff0f501A !important",
+            fontWeight: "bold",
+          },
+          "&.active-bottom": {
+            color: "#ff0f50",
+            borderBottom: "5px solid #ff0f50",
+            backgroundColor: "#ff0f501A !important",
             fontWeight: "bold",
           },
           "&.dark-active": {
@@ -67,6 +75,9 @@ export const baseThemeOptions = {
           "&.bw": {
             filter: "grayScale(1)",
             opacity: 0.7,
+          },
+          "&.highlight": {
+            background: "linear-gradient(25deg, #f99899 0%, #d60436 100%)",
           },
         },
         sizeSmall: {
