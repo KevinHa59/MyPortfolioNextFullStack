@@ -13,7 +13,7 @@ const neutral = {
 };
 
 const background = {
-  default: "#efefef",
+  default: "#ffffff",
   paper: "#ffffff",
   menu: "#2b3240",
   subMenu: "#304152",

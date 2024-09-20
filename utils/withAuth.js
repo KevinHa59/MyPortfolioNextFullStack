@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import MyAPIs from "../pages/api-functions/MyAPIs";
 import { CircularProgress, Stack } from "@mui/material";
+import { useSession } from "next-auth/react";
 
 const isTokenExpired = (token) => {
   if (!token) return true;
@@ -19,52 +20,57 @@ const isTokenExpired = (token) => {
 
 const withAuth = (WrappedComponent) => {
   const ComponentWithAuth = (props) => {
-    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
-    let cookies = getCookie("user");
-    cookies = cookies ? JSON.parse(cookies) : null;
+    const [isLoading, setIsLoading] = useState(true);
+    const { data: session, status } = useSession();
     useEffect(() => {
-      validateToken();
-    }, [cookies, router]);
+      if (status === "authenticated") {
+        if (session.user) {
+        }
+        setIsLoading(false);
+      } else if (status === "unauthenticated") {
+        router.replace("/401");
+      }
+    }, [status]);
 
     async function validateToken() {
-      if (!cookies || isTokenExpired(cookies.token)) {
-        // if there is no cookie -> redirect to login
-        if (!cookies) {
-          localStorage.setItem("redirectPath", router.asPath);
-          router.replace("/authentication/login");
-        }
-        // if there is cookie but token expired -> refresh new token
-        else {
-          try {
-            const newToken = await MyAPIs.User().refreshToken();
-            // if refresh token success
-            if (newToken) {
-              let newCookies = getCookie("user");
-              cookies = newCookies ? JSON.parse(newCookies) : null;
-            } else {
-              // store current page
-              localStorage.setItem("redirectPath", router.asPath);
-              router.replace("/authentication/login");
-            }
-          } catch (error) {
-            console.error("Error refreshing token:", error);
-            localStorage.setItem("redirectPath", router.asPath);
-            router.replace("/authentication/login");
-          }
-        }
-      } else {
-        const userTypeID = cookies.userTypeID;
-        const pages = await MyAPIs.Permission().getPermissionsByUserType(
-          userTypeID
-        );
-        if (pages?.data?.some((page) => page.path === router.pathname)) {
-          setIsLoading(false);
-        } else {
-          localStorage.setItem("redirectPath", router.asPath);
-          router.replace("/401");
-        }
-      }
+      // if (!cookies || isTokenExpired(cookies.token)) {
+      //   // if there is no cookie -> redirect to login
+      //   if (!cookies) {
+      //     localStorage.setItem("redirectPath", router.asPath);
+      //     router.replace("/authentication/login");
+      //   }
+      //   // if there is cookie but token expired -> refresh new token
+      //   else {
+      //     try {
+      //       const newToken = await MyAPIs.User().refreshToken();
+      //       // if refresh token success
+      //       if (newToken) {
+      //         let newCookies = getCookie("user");
+      //         cookies = newCookies ? JSON.parse(newCookies) : null;
+      //       } else {
+      //         // store current page
+      //         localStorage.setItem("redirectPath", router.asPath);
+      //         router.replace("/authentication/login");
+      //       }
+      //     } catch (error) {
+      //       console.error("Error refreshing token:", error);
+      //       localStorage.setItem("redirectPath", router.asPath);
+      //       router.replace("/authentication/login");
+      //     }
+      //   }
+      // } else {
+      //   const userTypeID = cookies.userTypeID;
+      //   const pages = await MyAPIs.Permission().getPermissionsByUserType(
+      //     userTypeID
+      //   );
+      //   if (pages?.data?.some((page) => page.path === router.pathname)) {
+      //     setIsLoading(false);
+      //   } else {
+      //     localStorage.setItem("redirectPath", router.asPath);
+      //     router.replace("/401");
+      //   }
+      // }
     }
 
     if (isLoading) {

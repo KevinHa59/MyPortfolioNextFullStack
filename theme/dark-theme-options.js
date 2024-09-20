@@ -123,6 +123,7 @@ export const darkThemeOptions = {
           },
           "&.MuiButton-containedSecondary": {
             boxShadow: `0px 2px 7px rgba(23, 166, 119, 0.4)`,
+            color: "#000",
             "&:hover": {
               color: "#fff",
               background: `${secondary.main}cc`,
@@ -142,6 +143,7 @@ export const darkThemeOptions = {
           },
           "&.MuiButton-containedSuccess": {
             boxShadow: `0px 2px 7px rgba(21, 163, 148, 0.4)`,
+            color: "#000",
             "&:hover": {
               background: `${success.main}cc`,
               color: "#fff",

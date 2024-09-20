@@ -291,8 +291,6 @@ export const baseThemeOptions = {
           backgroundImage: "none",
           position: "relative",
           color: "#000",
-          boxShadow:
-            "inset 0px 0px 100px rgba(255,255,255,0.02), 0px 0px 10px rgba(0,0,0,0.2)",
           "&.MuiPaper-outlined": {
             borderColor: "rgba(180,180,180,0.1)",
           },
