@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ButtonPopover from "./button_popover";
 import {
   AccountCircle,
@@ -11,13 +11,22 @@ import {
 import { Button, Divider, Stack } from "@mui/material";
 import { useRouter } from "next/router";
 import { deleteCookie, getCookie } from "cookies-next";
+import { signOut } from "next-auth/react";
+import { profileContext } from "../../../pages/profile";
 
 export default function ButtonAccount() {
+  const { mainData } = useContext(profileContext);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState(null);
   const router = useRouter();
-  let user = getCookie("user");
-  if (user) {
-    user = JSON.parse(user);
-  }
+
+  useEffect(() => {
+    if (mainData.user?.userType?.type === "Admin") {
+      setIsAdmin(true);
+      setUser(mainData.user);
+    }
+  }, [mainData]);
+
   return (
     <Stack>
       <ButtonPopover
@@ -48,13 +57,16 @@ export default function ButtonAccount() {
             router={router}
           />
           <Divider />
-          <RoutingButton
-            Icon={AdminPanelSettings}
-            path={"/admin"}
-            query={{ section: "dashboard" }}
-            title={"Admin"}
-            router={router}
-          />
+          {isAdmin && (
+            <RoutingButton
+              Icon={AdminPanelSettings}
+              path={"/admin"}
+              query={{ section: "dashboard" }}
+              title={"Admin"}
+              router={router}
+            />
+          )}
+
           <Divider />
           <LogoutButton router={router} />
         </Stack>
@@ -109,7 +121,8 @@ function UserChangingPasswordButton({ router }) {
 function LogoutButton({ router }) {
   const handleLogout = () => {
     deleteCookie("user");
-    router.reload();
+    signOut({ callbackUrl: "/" });
+    // router.reload();
   };
 
   return (

@@ -213,257 +213,279 @@ export default function Profile() {
   return (
     <Fade in={true}>
       <Stack
-        gap={5}
-        direction={"row"}
         height={"100%"}
         padding={2}
         position={"relative"}
+        alignItems={"center"}
+        sx={{ overflowY: "auto" }}
       >
-        <Paper
-          sx={{ minWidth: "clamp(300px, 30vw, 400px)", height: "max-content" }}
-        >
-          <Stack padding={1}>
-            <Stack height={"300px"}>
-              <Stack
-                alignItems={"center"}
-                justifyContent={"center"}
-                width={"100%"}
-                sx={{ aspectRatio: "1/1" }}
-              >
-                <Paper
-                  className="brMAX"
-                  sx={{ height: "100%", aspectRatio: "1/1" }}
-                ></Paper>
+        <Stack width={"clamp(400px, 50vw, 500px)"} gap={5}>
+          <Paper
+            variant="outlined"
+            sx={{
+              minWidth: "clamp(300px, 30vw, 400px)",
+              height: "max-content",
+            }}
+          >
+            <Stack padding={3} gap={2}>
+              <Stack height={"300px"}>
+                <Stack
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  width={"100%"}
+                  sx={{ aspectRatio: "1/1" }}
+                >
+                  <Paper
+                    variant="outlined"
+                    className="brMAX"
+                    sx={{ height: "100%", aspectRatio: "1/1" }}
+                  ></Paper>
+                </Stack>
+                <Typography
+                  textAlign={"center"}
+                  sx={{ fontSize: "clamp(20px,3vw,50px)" }}
+                >{`${mainData.user?.name || ""} ${
+                  mainData.user?.firstName || ""
+                } ${mainData.user?.lastName || ""}`}</Typography>
+                <Typography
+                  textAlign={"center"}
+                  sx={{ fontSize: "clamp(12px,1.5vw,20px)" }}
+                >{`${mainData.user?.email}`}</Typography>
               </Stack>
-              <Typography
-                textAlign={"center"}
-                sx={{ fontSize: "clamp(20px,3vw,50px)" }}
-              >{`${mainData.user?.firstName} ${mainData.user?.lastName}`}</Typography>
-              <Typography
-                textAlign={"center"}
-                sx={{ fontSize: "clamp(12px,1.5vw,20px)" }}
-              >{`${mainData.user?.email}`}</Typography>
-            </Stack>
-            <Divider />
 
-            <Stack gap={2} sx={{ padding: 2 }}>
-              <Input
-                label={"Cell Phone"}
-                value={profileData.basic.cellPhone}
-                onChange={(e) =>
-                  handleProfileChange("basic", { cellPhone: e.target.value })
-                }
-              />
-              <Input
-                type={"date"}
-                label={"Date of Birth"}
-                value={profileData.basic.dob?.split("T")[0]}
-                onChange={(e) =>
-                  handleProfileChange("basic", { dob: e.target.value })
-                }
-              />
-              <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Button variant="contained" onClick={handleSaveBasic}>
-                  Save
-                </Button>
+              <Stack gap={2}>
+                <Input
+                  label={"Cell Phone"}
+                  value={profileData.basic.cellPhone}
+                  onChange={(e) =>
+                    handleProfileChange("basic", { cellPhone: e.target.value })
+                  }
+                />
+                <Input
+                  type={"date"}
+                  label={"Date of Birth"}
+                  value={profileData.basic.dob?.split("T")[0]}
+                  onChange={(e) =>
+                    handleProfileChange("basic", { dob: e.target.value })
+                  }
+                />
+                <Stack direction={"row"} justifyContent={"flex-end"}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleSaveBasic}
+                  >
+                    Save
+                  </Button>
+                </Stack>
               </Stack>
             </Stack>
-          </Stack>
-        </Paper>
-        <Stack
-          gap={5}
-          height={"100%"}
-          alignItems={"center"}
-          width={"100%"}
-          sx={{ overflowY: "auto" }}
-        >
-          <Paper sx={{ padding: 3, width: "100%" }}>
-            <Stack gap={2}>
-              <Stack gap={1}>
-                <Stack position={"relative"}>
-                  <Input
-                    label={"Address"}
-                    value={profileData.address.address}
-                    onChange={(e) =>
-                      handleAddressChange("address", {
-                        address: e.target.value,
-                      })
-                    }
-                    inputProps={{
-                      endAdornment: isFetchingData && (
-                        <CircularProgress color="inherit" size={20} />
-                      ),
+          </Paper>
+          <Paper variant="outlined" sx={{ padding: 3, width: "100%" }}>
+            <Stack gap={4}>
+              <Typography variant="body2" fontWeight={"bold"}>
+                Address
+              </Typography>
+              <Stack position={"relative"} gap={2}>
+                <Input
+                  label={"Address"}
+                  value={profileData.address.address}
+                  onChange={(e) =>
+                    handleAddressChange("address", {
+                      address: e.target.value,
+                    })
+                  }
+                  inputProps={{
+                    endAdornment: isFetchingData && (
+                      <CircularProgress color="inherit" size={20} />
+                    ),
+                  }}
+                />
+                {addresses?.length > 0 && (
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      position: "absolute",
+                      top: "100%",
+                      width: "100%",
+                      left: 0,
+                      zIndex: 2,
+                      padding: 1,
                     }}
-                  />
-                  {addresses?.length > 0 && (
-                    <Paper
-                      variant="outlined"
-                      sx={{
-                        position: "absolute",
-                        top: "100%",
-                        width: "100%",
-                        left: 0,
-                        zIndex: 2,
-                        padding: 1,
-                      }}
-                    >
-                      <Stack gap={1}>
-                        {addresses?.map((ad, index) => {
-                          return (
-                            <Button
-                              className="flex-start"
-                              key={index}
-                              onClick={() => {
-                                handleAddressChange(
-                                  "address",
-                                  {
-                                    address: ad.data.number,
-                                    city: ad.data.city,
-                                    state: ad.data.state,
-                                    zipCode: ad.data.postcode,
-                                    country: ad.data.country_code,
-                                  },
-                                  false
-                                );
-                                setAddresses([]);
-                              }}
-                            >
-                              {ad.addressString}
-                            </Button>
-                          );
-                        })}
-                      </Stack>
-                    </Paper>
-                  )}
-                </Stack>
-                <Stack direction={"row"} gap={1}>
-                  <Input
-                    label={"City"}
-                    value={profileData.address.city}
-                    onChange={(e) =>
-                      handleProfileChange("address", { city: e.target.value })
-                    }
-                  />
-                  <Input
-                    label={"State"}
-                    value={profileData.address.state}
-                    onChange={(e) =>
-                      handleProfileChange("address", { state: e.target.value })
-                    }
-                  />
-                  <Input
-                    label={"Zip Code"}
-                    value={profileData.address.zipCode}
-                    onChange={(e) =>
-                      handleProfileChange("address", {
-                        zipCode: e.target.value,
-                      })
-                    }
-                  />
-                </Stack>
+                  >
+                    <Stack gap={1}>
+                      {addresses?.map((ad, index) => {
+                        return (
+                          <Button
+                            className="flex-start"
+                            key={index}
+                            onClick={() => {
+                              handleAddressChange(
+                                "address",
+                                {
+                                  address: ad.data.number,
+                                  city: ad.data.city,
+                                  state: ad.data.state,
+                                  zipCode: ad.data.postcode,
+                                  country: ad.data.country_code,
+                                },
+                                false
+                              );
+                              setAddresses([]);
+                            }}
+                          >
+                            {ad.addressString}
+                          </Button>
+                        );
+                      })}
+                    </Stack>
+                  </Paper>
+                )}
+                <Input
+                  label={"City"}
+                  value={profileData.address.city}
+                  onChange={(e) =>
+                    handleProfileChange("address", { city: e.target.value })
+                  }
+                />
+                <Input
+                  label={"State"}
+                  value={profileData.address.state}
+                  onChange={(e) =>
+                    handleProfileChange("address", { state: e.target.value })
+                  }
+                />
+                <Input
+                  label={"Zip Code"}
+                  value={profileData.address.zipCode}
+                  onChange={(e) =>
+                    handleProfileChange("address", {
+                      zipCode: e.target.value,
+                    })
+                  }
+                />
                 <Input
                   label={"Country"}
                   value={profileData.address.country}
                   onChange={(e) =>
-                    handleProfileChange("address", { country: e.target.value })
+                    handleProfileChange("address", {
+                      country: e.target.value,
+                    })
                   }
                 />
               </Stack>
               <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Button variant="contained" onClick={handleSaveAddress}>
+                <Button
+                  color="success"
+                  variant="contained"
+                  onClick={handleSaveAddress}
+                >
                   Save
                 </Button>
               </Stack>
             </Stack>
           </Paper>
-          <Paper sx={{ padding: 3, width: "100%" }}>
-            <Stack gap={2}>
-              <Input
-                inputProps={{
-                  startAdornment: (
-                    <Stack paddingRight={2}>
-                      <LinkedIn />
-                    </Stack>
-                  ),
-                }}
-                label={"Linkedin"}
-                onChange={(e) =>
-                  handleProfileChange("socials", { linkedIn: e.target.value })
-                }
-                value={profileData.socials.linkedIn || ""}
-              />
-              <Input
-                inputProps={{
-                  startAdornment: (
-                    <Stack paddingRight={2}>
-                      <GitHub />
-                    </Stack>
-                  ),
-                }}
-                label={"Github"}
-                onChange={(e) =>
-                  handleProfileChange("socials", { github: e.target.value })
-                }
-                value={profileData.socials.github || ""}
-              />
-              <Input
-                inputProps={{
-                  startAdornment: (
-                    <Stack paddingRight={2}>
-                      <Twitter />
-                    </Stack>
-                  ),
-                }}
-                label={"Twitter"}
-                onChange={(e) =>
-                  handleProfileChange("socials", { twitter: e.target.value })
-                }
-                value={profileData.socials.twitter || ""}
-              />
-              <Input
-                inputProps={{
-                  startAdornment: (
-                    <Stack paddingRight={2}>
-                      <Facebook />
-                    </Stack>
-                  ),
-                }}
-                label={"Facebook"}
-                onChange={(e) =>
-                  handleProfileChange("socials", { facebook: e.target.value })
-                }
-                value={profileData.socials.facebook || ""}
-              />
-              <Input
-                inputProps={{
-                  startAdornment: (
-                    <Stack paddingRight={2}>
-                      <Instagram />
-                    </Stack>
-                  ),
-                }}
-                label={"Instagram"}
-                onChange={(e) =>
-                  handleProfileChange("socials", { instagram: e.target.value })
-                }
-                value={profileData.socials.instagram || ""}
-              />
-              <Input
-                inputProps={{
-                  startAdornment: (
-                    <Stack paddingRight={2}>
-                      <Public />
-                    </Stack>
-                  ),
-                }}
-                label={"Portfolio"}
-                onChange={(e) =>
-                  handleProfileChange("socials", { portfolio: e.target.value })
-                }
-                value={profileData.socials.portfolio || ""}
-              />
+          <Paper variant="outlined" sx={{ padding: 3, width: "100%" }}>
+            <Stack gap={4}>
+              <Typography variant="body2" fontWeight={"bold"}>
+                Social
+              </Typography>
+              <Stack gap={2}>
+                <Input
+                  inputProps={{
+                    startAdornment: (
+                      <Stack paddingRight={2}>
+                        <LinkedIn />
+                      </Stack>
+                    ),
+                  }}
+                  label={"Linkedin"}
+                  onChange={(e) =>
+                    handleProfileChange("socials", { linkedIn: e.target.value })
+                  }
+                  value={profileData.socials.linkedIn || ""}
+                />
+                <Input
+                  inputProps={{
+                    startAdornment: (
+                      <Stack paddingRight={2}>
+                        <GitHub />
+                      </Stack>
+                    ),
+                  }}
+                  label={"Github"}
+                  onChange={(e) =>
+                    handleProfileChange("socials", { github: e.target.value })
+                  }
+                  value={profileData.socials.github || ""}
+                />
+                <Input
+                  inputProps={{
+                    startAdornment: (
+                      <Stack paddingRight={2}>
+                        <Twitter />
+                      </Stack>
+                    ),
+                  }}
+                  label={"Twitter"}
+                  onChange={(e) =>
+                    handleProfileChange("socials", { twitter: e.target.value })
+                  }
+                  value={profileData.socials.twitter || ""}
+                />
+                <Input
+                  inputProps={{
+                    startAdornment: (
+                      <Stack paddingRight={2}>
+                        <Facebook />
+                      </Stack>
+                    ),
+                  }}
+                  label={"Facebook"}
+                  onChange={(e) =>
+                    handleProfileChange("socials", { facebook: e.target.value })
+                  }
+                  value={profileData.socials.facebook || ""}
+                />
+                <Input
+                  inputProps={{
+                    startAdornment: (
+                      <Stack paddingRight={2}>
+                        <Instagram />
+                      </Stack>
+                    ),
+                  }}
+                  label={"Instagram"}
+                  onChange={(e) =>
+                    handleProfileChange("socials", {
+                      instagram: e.target.value,
+                    })
+                  }
+                  value={profileData.socials.instagram || ""}
+                />
+                <Input
+                  inputProps={{
+                    startAdornment: (
+                      <Stack paddingRight={2}>
+                        <Public />
+                      </Stack>
+                    ),
+                  }}
+                  label={"Portfolio"}
+                  onChange={(e) =>
+                    handleProfileChange("socials", {
+                      portfolio: e.target.value,
+                    })
+                  }
+                  value={profileData.socials.portfolio || ""}
+                />
+              </Stack>
               <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Button variant="contained" onClick={handleSaveSocial}>
+                <Button
+                  color="success"
+                  variant="contained"
+                  onClick={handleSaveSocial}
+                >
                   Save
                 </Button>
               </Stack>
