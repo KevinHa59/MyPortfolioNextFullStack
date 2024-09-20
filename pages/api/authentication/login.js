@@ -28,10 +28,10 @@ async function Login(req, res) {
     const body = req.body;
     // input validation
     if (!body.email || !body.password) {
-      res.status(400).json({ error: "Incomplete data" });
+      return res.status(400).json({ error: "Incomplete data" });
     }
     // find user by email
-    const user = await prisma.users.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email: body.email },
     });
     // if user not exist -> return error code
@@ -40,6 +40,7 @@ async function Login(req, res) {
     }
     // check if given password match stored password
     const isMatch = await verifyPassword(body.password, user.password);
+
     // if matched -> return user info with code 201, otherwise return error
     if (isMatch) {
       // generate and add access token to user data

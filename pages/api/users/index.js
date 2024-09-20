@@ -26,8 +26,8 @@ async function getUsers(req, res) {
     const { isQuantity } = req.query;
     const isCount = ["1", "true"].includes(isQuantity.toString());
     const users = isCount
-      ? await prisma.users.count()
-      : await prisma.users.findMany({
+      ? await prisma.user.count()
+      : await prisma.user.findMany({
           include: {
             resumes: true,
             userType: true,
@@ -46,25 +46,19 @@ async function createUser(req, res) {
   try {
     const body = req.body;
     // input validation
-    if (
-      !body.email ||
-      !body.password ||
-      !body.firstName ||
-      !body.lastName ||
-      !body.dob ||
-      !body.userTypeID
-    ) {
+    if (!body.email || !body.firstName) {
       res.status(400).json({ error: "Incomplete data" });
     }
-    const hashedPassword = await hashPassword(body.password);
-    const user = await prisma.users.create({
+    const hashedPassword = body.password
+      ? await hashPassword(body.password)
+      : null;
+    const user = await prisma.user.create({
       data: {
         email: body.email,
         password: hashedPassword,
         firstName: body.firstName,
-        lastName: body.lastName,
-        dob: new Date(body.dob),
-        userTypeID: body.userTypeID,
+        lastName: body.lastName || "",
+        userTypeID: "6682ce65add598fe72845318",
       },
     });
     res.status(201).json(user);

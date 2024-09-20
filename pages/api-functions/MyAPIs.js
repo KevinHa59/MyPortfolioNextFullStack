@@ -304,22 +304,14 @@ class MyAPIs {
           console.error(error);
         }
       },
-      createUser: async (
-        email,
-        firstName,
-        lastName,
-        dob,
-        password,
-        userTypeID
-      ) => {
+      createUser: async (email, firstName, lastName, dob, password) => {
         try {
           const res = await UsersAPI.createUser(
             email,
             firstName,
             lastName,
             dob,
-            password,
-            userTypeID
+            password
           );
           return res;
         } catch (error) {}
@@ -374,6 +366,12 @@ class MyAPIs {
       getUserByID: async (id) => {
         try {
           const res = await UsersAPI.getUserByID(id);
+          return res;
+        } catch (error) {}
+      },
+      getUserByEmail: async (email) => {
+        try {
+          const res = await UsersAPI.getUserByEmail(email);
           return res;
         } catch (error) {}
       },

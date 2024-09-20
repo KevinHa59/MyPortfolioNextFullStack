@@ -26,6 +26,7 @@ const MenuDetail = ({ menuItem, onRoute, activeRoute }) => {
         sx={{
           gap: 1,
           justifyContent: "space-between",
+          paddingY: 1.5,
         }}
         onClick={() =>
           isSubMenu ? setOpen((prev) => !prev) : onRoute(menuItem.param)
@@ -93,7 +94,7 @@ export default function MenuRenderer({ value }) {
   };
 
   return (
-    <Stack gap={1}>
+    <Stack>
       {value.map((item, index) => (
         <MenuDetail
           key={index}

@@ -30,7 +30,7 @@ async function getUserByID(req, res) {
     if (!id) {
       res.status(400).json({ error: "Incomplete data" });
     }
-    const user = await prisma.users.findUnique({ where: { id: id } });
+    const user = await prisma.user.findUnique({ where: { id: id } });
     res.status(200).json(user);
   } catch (err) {
     const { statusCode, message } = errorMapping[err.code];
@@ -43,7 +43,6 @@ async function getUserByID(req, res) {
 async function UpdateUser(req, res) {
   try {
     const { id, dob, userTypeID, ...rest } = req.body;
-
     // Validate required fields
     if (!id) {
       return res.status(400).json({ error: "Incomplete data" });
@@ -53,8 +52,9 @@ async function UpdateUser(req, res) {
       ...rest,
       dob: dob ? new Date(dob) : null,
     };
+
     delete dataToUpdate.id;
-    const user = await prisma.users.update({
+    const user = await prisma.user.update({
       where: { id: id },
       data: dataToUpdate,
     });
@@ -75,7 +75,7 @@ async function removeUserByID(req, res) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const user = await prisma.users.delete({
+    const user = await prisma.user.delete({
       where: {
         id: id,
       },

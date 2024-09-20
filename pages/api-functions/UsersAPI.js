@@ -4,6 +4,7 @@ axios.defaults.withCredentials = true;
 const API = {
   users: "/api/users",
   users_user: "/api/users/user",
+  users_email: "/api/users/email",
   users_user_password: "/api/users/user/password",
   users_user_token: "/api/users/user/token",
   users_user_token_refresh: "/api/users/user/token/refresh",
@@ -20,14 +21,12 @@ class UsersAPI {
       },
     });
   }
-  async createUser(email, firstName, lastName, dob, password, userTypeID) {
+  async createUser(email, firstName, lastName, password) {
     return await axios.post(API.users, {
       email,
       firstName,
       lastName,
-      dob,
       password,
-      userTypeID,
     });
   }
   async getUserByID(id) {
@@ -35,6 +34,14 @@ class UsersAPI {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
       params: {
         id,
+      },
+    });
+  }
+  async getUserByEmail(email) {
+    return await axios.get(API.users_email, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+      params: {
+        email,
       },
     });
   }
