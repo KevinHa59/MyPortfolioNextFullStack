@@ -7,11 +7,12 @@ import ButtonAccount from "../../components/widgets/buttons/button-account";
 import withAuth from "../../utils/withAuth";
 import MenuRenderer, {
   findComponentByParam,
-} from "../components/menu-renderer";
-import { menu_profile } from "../components/menu-profile";
+} from "../../components/menu-renderer";
+import { menu_profile } from "../../components/menu-profile";
 import { useSession } from "next-auth/react";
 import MyAPIs from "../api-functions/MyAPIs";
 import { LogoRow } from "../../icons/logo";
+import axios from "axios";
 
 export const profileContext = createContext(null);
 
@@ -21,6 +22,7 @@ function Index() {
   const { data: session, status } = useSession();
   const [mainData, setMainData] = useState({
     user: null,
+    resumes: [],
   });
 
   useEffect(() => {
@@ -57,10 +59,22 @@ function Index() {
     }
   }, [status]);
 
+  const initData = async (userID) => {
+    const APIs = [MyAPIs.Resume().getResumesByUser(userID)];
+    try {
+      const res = await axios.all(APIs);
+      const _resumes = res[0].data;
+      handleUpdateMainData({ resumes: _resumes });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   async function getUser(user) {
     try {
       const _user = await MyAPIs.User().getUserByEmail(user.email);
       handleUpdateMainData({ user: _user.data });
+      initData(_user.data.id);
     } catch (error) {}
   }
 

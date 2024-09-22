@@ -4,6 +4,7 @@ import Resumes from "../admin/resumes";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import EditResume from "./edit-resume";
+import List from "./resume/list";
 
 export default function Resume() {
   const router = useRouter();
@@ -13,5 +14,5 @@ export default function Resume() {
   if (user) {
     user = JSON.parse(user);
   }
-  return id ? <EditResume /> : <Resumes defaultUser={user} />;
+  return id ? <EditResume /> : <List />;
 }

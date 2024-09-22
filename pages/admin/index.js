@@ -36,8 +36,8 @@ import ButtonAccount from "../../components/widgets/buttons/button-account";
 import Courses from "../../components/admin/courses";
 import MenuRenderer, {
   findComponentByParam,
-} from "../components/menu-renderer";
-import { menu_admin } from "../components/menu-admin";
+} from "../../components/menu-renderer";
+import { menu_admin } from "../../components/menu-admin";
 
 const menu_data = [
   {

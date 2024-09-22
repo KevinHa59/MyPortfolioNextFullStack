@@ -123,22 +123,7 @@ model User {
  
   @@map("users")
 }
-// model User {
-//   id            String          @id @default(auto()) @map("_id") @db.ObjectId
-//   name          String?
-//   email         String?         @unique
-//   emailVerified DateTime?
-//   image         String?
-//   userTypeID   String
-//   userType     UserTypes @relation(fields: [userTypeID], references: [id])
-//   resumes      Resume[]
-//   course       Course[]
-//   accounts      Account[]
-//   sessions      Session[]
- 
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
+
 
 model UserTypes {
   id          String              @id @default(auto()) @map("_id") @db.ObjectId
@@ -148,6 +133,8 @@ model UserTypes {
   users       User[]
   pageLinks   UserTypePageLinks[]
 
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("user_types")
 }
 
@@ -157,6 +144,8 @@ model Pages {
   description   String?             @default("")
   userTypeLinks UserTypePageLinks[]
 
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("pages")
 }
 
@@ -191,6 +180,8 @@ model Resume {
   user                    User                    @relation(fields: [userID], references: [id])
   resumeSections          ResumeSection?
 
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("resumes")
 }
 
@@ -221,6 +212,9 @@ model ResumeSection {
   hobbiesPriority                 Int     @default(11)
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("resume_sections")
 }
 
@@ -235,6 +229,8 @@ model WorkExperience {
   responsibilities String
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("work_experiences")
 }
 
@@ -251,7 +247,8 @@ model Education {
   relevantCourseworks String[]
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("educations")
 }
 
@@ -263,6 +260,7 @@ model Course {
   createdAt   DateTime   @default(now()) 
   user        User      @relation(fields: [createdBy], references: [id])
 
+  updatedAt            DateTime?                @updatedAt
   @@map("courses")
 }
 
@@ -273,7 +271,8 @@ model Skill {
   group    String?
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("skills")
 }
 
@@ -285,7 +284,8 @@ model Certification {
   dateObtained        DateTime
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("certifications")
 }
 
@@ -299,7 +299,8 @@ model Project {
   achievements String
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("projects")
 }
 
@@ -311,7 +312,8 @@ model Award {
   dateReceived        DateTime?
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("awards")
 }
 
@@ -326,7 +328,8 @@ model VolunteerExperience {
   responsibilities String?
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("volunteer_experiences")
 }
 
@@ -337,7 +340,8 @@ model Language {
   proficiencyLevel String
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("languages")
 }
 
@@ -349,7 +353,8 @@ model Publication {
   datePublished   DateTime
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("publications")
 }
 
@@ -362,7 +367,8 @@ model ProfessionalMembership {
   endDate          DateTime?
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("professional_memberships")
 }
 
@@ -372,6 +378,7 @@ model Hobby {
   name     String
 
   resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-
+  createdAt               DateTime?                @default(now())
+  updatedAt               DateTime?                @updatedAt
   @@map("hobbies")
 }

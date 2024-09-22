@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Home from "../components/main/home";
 
 import Pricing from "../components/main/pricing";
-import IndexMenuWrapper from "./components/index-menu-wrapper";
+import IndexMenuWrapper from "../components/index-menu-wrapper";
 import About from "../components/main/about";
 import APIDoc from "../components/main/api-doc";
 

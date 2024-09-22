@@ -137,6 +137,7 @@ export const darkThemeOptions = {
           },
           "&.MuiButton-containedWarning": {
             boxShadow: `0px 2px 7px rgba(207, 145, 33, 0.4)`,
+            color: text.black,
             "&:hover": {
               background: `${warning.main}cc`,
             },
@@ -420,7 +421,7 @@ export const darkThemeOptions = {
           background: `${background.paper}`,
           // backdropFilter: "blur(5px)",
           "&.normal": {
-            boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
+            boxShadow: "3px 3px 10px rgba(0,0,0,0.4)",
           },
           "&.MuiPaper-outlined": {
             // background: background.paper,

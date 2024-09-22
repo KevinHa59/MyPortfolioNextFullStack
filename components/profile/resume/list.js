@@ -1,0 +1,140 @@
+import React, { useContext, useEffect, useState } from "react";
+import { profileContext } from "../../../pages/profile";
+import {
+  Button,
+  Chip,
+  Divider,
+  Fade,
+  Grid,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { stringUtil } from "../../../utils/stringUtil";
+import { Add } from "@mui/icons-material";
+import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
+
+export default function List() {
+  const { mainData } = useContext(profileContext);
+  const [resumes, setResumes] = useState([]);
+  useEffect(() => {
+    if (mainData.resumes) {
+      setResumes(mainData.resumes);
+    }
+  }, [mainData]);
+
+  return (
+    <Stack padding={4} gap={2}>
+      <Stack direction={"row"}>
+        <Typography variant="h5">My Resumes</Typography>
+      </Stack>
+      <Grid container spacing={4}>
+        {resumes.map((resume, index) => {
+          return (
+            <Grid key={index} item xs={12} md={6} lg={4} xl={3}>
+              <ResumeItem resume={resume} index={index} />
+            </Grid>
+          );
+        })}
+
+        <Grid item xs={12} md={6} lg={4} xl={3}>
+          <Fade in={true} style={{ transitionDelay: resumes.length * 100 }}>
+            <Stack
+              alignItems={"center"}
+              justifyContent={"center"}
+              height={"100%"}
+            >
+              <Button startIcon={<Add />} variant="outlined" color="success">
+                Create New Resume
+              </Button>
+            </Stack>
+          </Fade>
+        </Grid>
+      </Grid>
+    </Stack>
+  );
+}
+
+function ResumeItem({ resume, index }) {
+  const tags = Object.entries(resume).reduce((res, cur) => {
+    if (Array.isArray(cur[1]) && cur[1].length > 0) {
+      res.push(cur[0]);
+    }
+    return res;
+  }, []);
+  return (
+    <Fade in={true} style={{ transitionDelay: index * 100 }}>
+      <Paper
+        className="outlined normal"
+        variant="outlined"
+        sx={{ width: "100%", height: "100%" }}
+      >
+        <Stack justifyContent={"space-between"} height={"100%"}>
+          <Stack padding={2} gap={2}>
+            <Typography variant="body1" fontWeight={"bold"}>
+              {resume.title}
+            </Typography>
+
+            <Stack>
+              <Typography
+                variant="body2"
+                sx={{ textAlign: "justify", opacity: 0.7 }}
+              >
+                {stringUtil.ellipsis(resume.summary, 150)}
+              </Typography>
+            </Stack>
+          </Stack>
+          <Stack direction={"row"} flexWrap={"wrap"} gap={0.5} paddingX={2}>
+            {tags?.map((tag, index) => {
+              return (
+                <Chip
+                  color="primary"
+                  key={index}
+                  label={tag}
+                  size="small"
+                  sx={{ fontSize: "12px" }}
+                />
+              );
+            })}
+          </Stack>
+          <Stack>
+            <Stack padding={2}>
+              <Typography variant="body2" sx={{ color: "info.main" }}>
+                Created: {new Date(resume.createdAt).toLocaleDateString()}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "info.main" }}>
+                Modified: {new Date(resume.updatedAt).toLocaleDateString()}
+              </Typography>
+            </Stack>
+            <Stack width={"100%"}>
+              <Divider />
+              <Stack direction={"row"} width={"100%"}>
+                <Stack width={"50%"}>
+                  <ButtonDialogConfirm
+                    sx={{ width: "100%" }}
+                    className="br0"
+                    dialog_title={"Delete Resume"}
+                    dialog_message={
+                      <Typography
+                        textAlign={"center"}
+                        sx={{ whiteSpace: "pre-wrap" }}
+                      >{`Are you sure?\nResume will not be recovered`}</Typography>
+                    }
+                    color={"error"}
+                    dialog_color={"error"}
+                  >
+                    Delete
+                  </ButtonDialogConfirm>
+                </Stack>
+                <Divider orientation="vertical" />
+                <Button sx={{ width: "50%" }} className="br0" color="success">
+                  Detail
+                </Button>
+              </Stack>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Paper>
+    </Fade>
+  );
+}

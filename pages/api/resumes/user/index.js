@@ -21,6 +21,7 @@ export default async function handler(req, res) {
 async function getResumesByUser(req, res) {
   try {
     const { userID, isQuantity } = req.query;
+
     const isCount = ["1", "true"].includes(isQuantity.toString());
     const resumes = isCount
       ? await prisma.resume.count({ where: { userID: userID } })
@@ -41,6 +42,7 @@ async function getResumesByUser(req, res) {
         });
     res.status(200).json(resumes);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ err: "Internal server error" });
   }
 }

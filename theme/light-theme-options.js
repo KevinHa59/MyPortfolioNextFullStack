@@ -388,7 +388,10 @@ export const lightThemeOptions = {
         root: {
           "&.normal": {
             background: background.paper,
-            boxShadow: "3px 3px 10px rgba(200,200,200,0.2)",
+            boxShadow: "3px 3px 10px rgba(150,150,150,0.4)",
+          },
+          "&.outlined": {
+            borderColor: divider,
           },
         },
       },

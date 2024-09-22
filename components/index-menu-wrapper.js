@@ -4,21 +4,29 @@ import {
   Divider,
   Fade,
   Grid,
+  ListItemIcon,
   MenuItem,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import ButtonPopover from "../../components/widgets/buttons/button_popover";
+import ButtonPopover from "./widgets/buttons/button_popover";
 import BackgroundPattern from "./background-pattern";
-import { LogoRow } from "../../icons/logo";
+import { LogoRow } from "../icons/logo";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
-import ButtonDialog from "../../components/widgets/buttons/button_dialog";
-import { Facebook, GitHub, Google } from "@mui/icons-material";
-import MyAPIs from "../api-functions/MyAPIs";
-import { pages } from "../[page]";
+import ButtonDialog from "./widgets/buttons/button_dialog";
+import {
+  AccountBox,
+  AdminPanelSettings,
+  Facebook,
+  GitHub,
+  Google,
+  LogoutOutlined,
+} from "@mui/icons-material";
+import MyAPIs from "../pages/api-functions/MyAPIs";
+import { pages } from "../pages/[page]";
 
 export default function IndexMenuWrapper({ children, page }) {
   const router = useRouter();
@@ -166,10 +174,27 @@ export default function IndexMenuWrapper({ children, page }) {
                         size="small"
                         onClick={() => router.push("/profile")}
                       >
+                        <ListItemIcon>
+                          <AccountBox />
+                        </ListItemIcon>
                         Profile
                       </MenuItem>
+                      {user?.userType?.type === "Admin" && (
+                        <MenuItem
+                          size="small"
+                          onClick={() => router.push("/admin")}
+                        >
+                          <ListItemIcon>
+                            <AdminPanelSettings />
+                          </ListItemIcon>
+                          Admin Dashboard
+                        </MenuItem>
+                      )}
                       <Divider />
                       <MenuItem size="small" onClick={handleAuth}>
+                        <ListItemIcon>
+                          <LogoutOutlined />
+                        </ListItemIcon>
                         Sign-out
                       </MenuItem>
                     </Stack>

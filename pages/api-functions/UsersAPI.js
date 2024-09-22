@@ -1,11 +1,11 @@
 import axios from "axios";
-import jwt from "../../utils/jwtUtil";
 axios.defaults.withCredentials = true;
 const API = {
   users: "/api/users",
   users_user: "/api/users/user",
   users_email: "/api/users/email",
   users_user_password: "/api/users/user/password",
+  users_user_userType: "/api/users/user/userType",
   users_user_token: "/api/users/user/token",
   users_user_token_refresh: "/api/users/user/token/refresh",
   userTypes: "/api/userTypes",
@@ -122,6 +122,12 @@ class UsersAPI {
     return await axios.put(API.users_user_password, {
       email,
       password,
+    });
+  }
+  async updateType(userIDs, userTypeID) {
+    return await axios.put(API.users_user_userType, {
+      userIDs,
+      userTypeID,
     });
   }
   async generateToken(email) {

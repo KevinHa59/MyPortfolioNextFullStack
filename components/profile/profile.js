@@ -228,11 +228,11 @@ export default function Profile() {
             }}
           >
             <Stack padding={3} gap={2}>
-              <Stack height={"300px"}>
+              <Stack height={"100%"} alignItems={"center"}>
                 <Stack
                   alignItems={"center"}
                   justifyContent={"center"}
-                  width={"100%"}
+                  width={"50%"}
                   sx={{ aspectRatio: "1/1" }}
                 >
                   <Paper

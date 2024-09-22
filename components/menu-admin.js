@@ -9,13 +9,13 @@ import {
   People,
   VerifiedUser,
 } from "@mui/icons-material";
-import Dashboard from "../../components/admin/dashboard";
-import Users from "../../components/admin/users";
-import UserTypes from "../../components/admin/user-types";
-import Pages from "../../components/admin/pages";
-import Permissions from "../../components/admin/permissions";
-import Resumes from "../../components/admin/resumes";
-import Courses from "../../components/admin/courses";
+import Dashboard from "./admin/dashboard";
+import Users from "./admin/users";
+import UserTypes from "./admin/user-types";
+import Pages from "./admin/pages";
+import Permissions from "./admin/permissions";
+import Resumes from "./admin/resumes";
+import Courses from "./admin/courses";
 
 export const menu_admin = [
   {

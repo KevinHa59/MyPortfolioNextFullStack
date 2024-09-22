@@ -1,9 +1,20 @@
+import AuthAPI from "./AuthAPI";
 import GeneralsAPI from "./GeneralsAPI";
 import PagesAPI from "./PagesAPI";
 import PermissionsAPI from "./PermissionsAPI";
 import ResumesAPI from "./ResumesAPI";
 import UsersAPI from "./UsersAPI";
 class MyAPIs {
+  Auth() {
+    return {
+      verifyInstallation: async () => {
+        try {
+          const res = await AuthAPI.installation();
+          return res;
+        } catch (error) {}
+      },
+    };
+  }
   Resume() {
     return {
       getResumes: async (isQuantity = false) => {
@@ -392,6 +403,14 @@ class MyAPIs {
       updatePassword: async (email, password) => {
         try {
           const res = await UsersAPI.updatePassword(email, password);
+          return res;
+        } catch (error) {
+          return error.response;
+        }
+      },
+      updateType: async (userIDs, userTypeID) => {
+        try {
+          const res = await UsersAPI.updateType(userIDs, userTypeID);
           return res;
         } catch (error) {
           return error.response;
