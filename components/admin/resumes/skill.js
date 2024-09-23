@@ -102,7 +102,7 @@ export default function Skill({ resumeID, data, step }) {
         >
           <Stack alignItems={"center"} direction={"row"} gap={1}>
             {step.Icon}
-            <Typography>{step.name}</Typography>
+            <Typography>{step.title}</Typography>
           </Stack>
         </Stack>
       </Paper>
@@ -243,7 +243,7 @@ function SkillButton({ skill, groups, theme, onDelete, onMoveToGroup }) {
             sx={{ padding: 0, minWidth: 0 }}
             onConfirm={(setOpen) => onDelete(skill, setOpen)}
           >
-            <Clear />
+            Delete
           </ButtonDialogConfirm>
         </Stack>
       }

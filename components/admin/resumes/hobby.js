@@ -72,7 +72,7 @@ export default function Hobby({ resumeID, data, step }) {
         >
           <Stack alignItems={"center"} direction={"row"} gap={1}>
             {step.Icon}
-            <Typography>{step.name}</Typography>
+            <Typography>{step.title}</Typography>
           </Stack>
           <Stack
             direction={"row"}

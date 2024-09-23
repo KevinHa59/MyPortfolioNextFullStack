@@ -58,6 +58,15 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+model Credential {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  apiKey          String    @unique
+  allowedOrigins  String[]
+  user            User?    
+  createdAt       DateTime  @default(now())
+  @@map("credentials")
+}
+
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
@@ -83,14 +92,16 @@ model User {
   instagram    String?
   portfolio    String?
   password     String?
-  userTypeID   String
-  userType     UserTypes @relation(fields: [userTypeID], references: [id])
+  userTypeID   String?
+  userType     UserTypes? @relation(fields: [userTypeID], references: [id])
+  credentialID String?  @unique @db.ObjectId
+  credential   Credential? @relation(fields: [credentialID], references: [id])
   refreshToken String?
   resumes      Resume[]
   course       Course[]
  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
  
   @@map("users")
 }

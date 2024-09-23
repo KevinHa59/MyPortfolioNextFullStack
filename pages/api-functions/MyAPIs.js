@@ -1,4 +1,5 @@
 import AuthAPI from "./AuthAPI";
+import CredentialsAPI from "./CredentialsAPI";
 import GeneralsAPI from "./GeneralsAPI";
 import PagesAPI from "./PagesAPI";
 import PermissionsAPI from "./PermissionsAPI";
@@ -327,6 +328,14 @@ class MyAPIs {
           return res;
         } catch (error) {}
       },
+      updateUserMaster: async (userID, data) => {
+        try {
+          const res = await UsersAPI.updateUserMaster(userID, data);
+          return res;
+        } catch (error) {
+          return error.response;
+        }
+      },
       updateUserBasic: async (id, dob, cellPhone) => {
         try {
           const res = await UsersAPI.updateUserBasic(id, dob, cellPhone);
@@ -494,6 +503,16 @@ class MyAPIs {
       deletePermissions: async (ids) => {
         try {
           const res = await PermissionsAPI.deletePermissions(ids);
+          return res;
+        } catch (error) {}
+      },
+    };
+  }
+  Credential() {
+    return {
+      createCredential: async (userID) => {
+        try {
+          const res = await CredentialsAPI.createCredential(userID);
           return res;
         } catch (error) {}
       },

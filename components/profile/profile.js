@@ -272,7 +272,7 @@ export default function Profile() {
                 />
                 <Stack direction={"row"} justifyContent={"flex-end"}>
                   <Button
-                    variant="contained"
+                    className="bold"
                     color="success"
                     onClick={handleSaveBasic}
                   >
@@ -381,8 +381,8 @@ export default function Profile() {
               </Stack>
               <Stack direction={"row"} justifyContent={"flex-end"}>
                 <Button
+                  className="bold"
                   color="success"
-                  variant="contained"
                   onClick={handleSaveAddress}
                 >
                   Save
@@ -491,8 +491,8 @@ export default function Profile() {
               </Stack>
               <Stack direction={"row"} justifyContent={"flex-end"}>
                 <Button
+                  className="bold"
                   color="success"
-                  variant="contained"
                   onClick={handleSaveSocial}
                 >
                   Save

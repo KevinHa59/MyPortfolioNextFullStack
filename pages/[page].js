@@ -6,6 +6,7 @@ import Pricing from "../components/main/pricing";
 import IndexMenuWrapper from "../components/index-menu-wrapper";
 import About from "../components/main/about";
 import APIDoc from "../components/main/api-doc";
+import { getSession } from "next-auth/react";
 
 export const pages = {
   home: <Home />,
@@ -13,6 +14,16 @@ export const pages = {
   about: <About />,
   "api-doc": <APIDoc />,
 };
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+  if (session) {
+    console.log("Access Token:", session.accessToken);
+  }
+  return {
+    props: { session },
+  };
+}
 
 export default function Page() {
   const router = useRouter();

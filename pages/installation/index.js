@@ -34,6 +34,7 @@ export default function Index() {
       if (result === true) {
         const APIs = [MyAPIs.User().getUsers(), MyAPIs.User().getUserTypes()];
         const _data = await axios.all(APIs);
+        console.log(_data);
         const _users = _data[0].data;
         const _types = _data[1].data;
         setData((prev) => {
@@ -82,7 +83,7 @@ export default function Index() {
               <SelectCustom
                 selected_value={selectUser}
                 data={data.users}
-                item_field={"firstName"}
+                item_field={"email"}
                 value_field={"id"}
                 size="small"
                 onChange={(value) => setSelectUser(value)}
@@ -96,7 +97,7 @@ export default function Index() {
                       textAlign={"center"}
                       sx={{ whiteSpace: "pre-wrap" }}
                     >{`${
-                      data?.users?.find((u) => u.id === selectUser)?.firstName
+                      data?.users?.find((u) => u.id === selectUser)?.email
                     } will be Admin. Are you sure? \nThe Admin role is unique, and only the existing Admin can assign this role to another user.`}</Typography>
                   </Stack>
                 }
@@ -107,7 +108,7 @@ export default function Index() {
               </ButtonDialogConfirm>
             </Stack>
           ) : (
-            "No Installation Required"
+            ""
           )}
         </Stack>
       </Dialog>

@@ -56,10 +56,11 @@ export default function WorkExperience({ resumeID, data, step }) {
     try {
       const copy = _.cloneDeep(input);
       copy.splice(index, 1);
-      await addNote(
-        "Remove Work Experience",
-        MyAPIs.Resume().deleteResumeWork(id)
-      );
+      id &&
+        (await addNote(
+          "Remove Work Experience",
+          MyAPIs.Resume().deleteResumeWork(id)
+        ));
       handleResumeDataChange({ workExperience: copy });
       setOpen(false);
     } catch (error) {
@@ -84,7 +85,7 @@ export default function WorkExperience({ resumeID, data, step }) {
         >
           <Stack alignItems={"center"} direction={"row"} gap={1}>
             {step.Icon}
-            <Typography>{step.name}</Typography>
+            <Typography>{step.title}</Typography>
           </Stack>
           <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
             <Button
@@ -172,29 +173,31 @@ function Form({ resumeID, data, onRemove, onChange }) {
             {work?.jobTitle}
           </Typography>
         </Stack>
-        <Stack direction={"row"}>
+        <Stack direction={"row"} alignItems={"center"}>
           {isEdit && (
-            <IconButton color="success" onClick={() => handleUpdate()}>
-              <Check />
-            </IconButton>
+            <Button color="success" onClick={() => handleUpdate()}>
+              Save
+            </Button>
           )}
-          <IconButton
-            color={isEdit ? "error" : "warning"}
-            onClick={() => setIsEdit((prev) => !prev)}
-          >
-            {isEdit ? <Clear /> : <Edit />}
-          </IconButton>
+          {work?.id && (
+            <Button
+              color={isEdit ? "error" : "warning"}
+              onClick={() => setIsEdit((prev) => !prev)}
+            >
+              {isEdit ? "Discard" : "Edit"}
+            </Button>
+          )}
 
           <ButtonDialogConfirm
             size="small"
             color="error"
-            sx={{ minWidth: "40px", paddingX: 0 }}
             dialog_color={"error"}
             dialog_title={"Remove Work"}
             dialog_message={"Are You Sure?"}
+            isConfirmRequired={work?.id === undefined}
             onConfirm={onRemove}
           >
-            {work?.id ? <DeleteForever /> : <Remove />}
+            {work?.id ? "Delete" : "Discard"}
           </ButtonDialogConfirm>
         </Stack>
       </Stack>

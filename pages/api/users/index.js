@@ -15,6 +15,8 @@ export default async function handler(req, res) {
     getUsers(req, res);
   } else if (method === "POST") {
     createUser(req, res);
+  } else if (method === "PUT") {
+    updateUser(req, res);
   } else {
     res.status(405).json({ error: "Method not allows" });
   }
@@ -59,6 +61,29 @@ async function createUser(req, res) {
         firstName: body.firstName,
         lastName: body.lastName || "",
         userTypeID: "6682ce65add598fe72845318",
+      },
+    });
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(500).json({ err: "Internal server error" });
+  }
+}
+// [PUT] handle update user master
+// input: anything but password
+async function updateUser(req, res) {
+  try {
+    const body = req.body;
+    // input validation
+    if (!body.id || body.password) {
+      res.status(400).json({ error: "Incomplete data" });
+    }
+
+    const userID = body.id;
+    delete body.id;
+    const user = await prisma.user.update({
+      where: { id: userID },
+      data: {
+        ...body,
       },
     });
     res.status(201).json(user);

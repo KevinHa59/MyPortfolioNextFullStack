@@ -50,8 +50,11 @@ async function UpdateUser(req, res) {
     // Prepare data object with optional fields
     const dataToUpdate = {
       ...rest,
-      dob: dob ? new Date(dob) : null,
     };
+
+    if (dob) {
+      dataToUpdate["dob"] = new Date(dob);
+    }
 
     delete dataToUpdate.id;
     const user = await prisma.user.update({

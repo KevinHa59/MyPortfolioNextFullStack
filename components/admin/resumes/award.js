@@ -50,7 +50,8 @@ export default function Award({ resumeID, data, step }) {
     try {
       const copy = _.cloneDeep(input);
       copy.splice(index, 1);
-      await addNote("Remove Award", MyAPIs.Resume().deleteResumeAward(id));
+      id &&
+        (await addNote("Remove Award", MyAPIs.Resume().deleteResumeAward(id)));
       handleResumeDataChange({ awards: copy });
       setOpen(false);
     } catch (error) {
@@ -75,7 +76,7 @@ export default function Award({ resumeID, data, step }) {
         >
           <Stack alignItems={"center"} direction={"row"} gap={1}>
             {step.Icon}
-            <Typography>{step.name}</Typography>
+            <Typography>{step.title}</Typography>
           </Stack>
           <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
             <Button
@@ -163,18 +164,20 @@ function Form({ resumeID, data, onRemove, onChange }) {
             {award?.awardName}
           </Typography>
         </Stack>
-        <Stack direction={"row"}>
+        <Stack direction={"row"} alignItems={"center"}>
           {isEdit && (
-            <IconButton color="success" onClick={() => handleUpdate()}>
-              <Check />
-            </IconButton>
+            <Button color="success" onClick={() => handleUpdate()}>
+              Save
+            </Button>
           )}
-          <IconButton
-            color={isEdit ? "error" : "warning"}
-            onClick={() => setIsEdit((prev) => !prev)}
-          >
-            {isEdit ? <Clear /> : <Edit />}
-          </IconButton>
+          {award?.id && (
+            <Button
+              color={isEdit ? "error" : "warning"}
+              onClick={() => setIsEdit((prev) => !prev)}
+            >
+              {isEdit ? "Discard" : "Edit"}
+            </Button>
+          )}
 
           <ButtonDialogConfirm
             size="small"
@@ -183,9 +186,10 @@ function Form({ resumeID, data, onRemove, onChange }) {
             dialog_color={"error"}
             dialog_title={"Remove Award"}
             dialog_message={"Are You Sure?"}
+            isConfirmRequired={award?.id === undefined}
             onConfirm={onRemove}
           >
-            {award?.id ? <DeleteForever /> : <Remove />}
+            {award?.id ? "Delete" : "Discard"}
           </ButtonDialogConfirm>
         </Stack>
       </Stack>

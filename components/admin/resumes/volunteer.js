@@ -55,10 +55,11 @@ export default function VolunteerExperience({ resumeID, data, step }) {
     try {
       const copy = _.cloneDeep(input);
       copy.splice(index, 1);
-      await addNote(
-        "Remove Volunteer",
-        MyAPIs.Resume().deleteResumeVolunteer(id)
-      );
+      id &&
+        (await addNote(
+          "Remove Volunteer",
+          MyAPIs.Resume().deleteResumeVolunteer(id)
+        ));
       handleResumeDataChange({ volunteerExperience: copy });
       setOpen(false);
     } catch (error) {
@@ -83,7 +84,7 @@ export default function VolunteerExperience({ resumeID, data, step }) {
         >
           <Stack alignItems={"center"} direction={"row"} gap={1}>
             {step.Icon}
-            <Typography>{step.name}</Typography>
+            <Typography>{step.title}</Typography>
           </Stack>
           <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
             <Button
@@ -171,18 +172,20 @@ function Form({ resumeID, data, onRemove, onChange }) {
             {volunteer?.role}
           </Typography>
         </Stack>
-        <Stack direction={"row"}>
+        <Stack direction={"row"} alignItems={"center"}>
           {isEdit && (
-            <IconButton color="success" onClick={() => handleUpdate()}>
-              <Check />
-            </IconButton>
+            <Button color="success" onClick={() => handleUpdate()}>
+              Save
+            </Button>
           )}
-          <IconButton
-            color={isEdit ? "error" : "warning"}
-            onClick={() => setIsEdit((prev) => !prev)}
-          >
-            {isEdit ? <Clear /> : <Edit />}
-          </IconButton>
+          {volunteer?.id && (
+            <Button
+              color={isEdit ? "error" : "warning"}
+              onClick={() => setIsEdit((prev) => !prev)}
+            >
+              {isEdit ? "Discard" : "Edit"}
+            </Button>
+          )}
 
           <ButtonDialogConfirm
             size="small"
@@ -191,9 +194,10 @@ function Form({ resumeID, data, onRemove, onChange }) {
             dialog_color={"error"}
             dialog_title={"Remove Volunteer"}
             dialog_message={"Are You Sure?"}
+            isConfirmRequired={volunteer?.id === undefined}
             onConfirm={onRemove}
           >
-            {volunteer?.id ? <DeleteForever /> : <Remove />}
+            {volunteer?.id ? "Delete" : "Discard"}
           </ButtonDialogConfirm>
         </Stack>
       </Stack>

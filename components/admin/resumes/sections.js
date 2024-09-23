@@ -10,6 +10,7 @@ import {
   Warning,
 } from "@mui/icons-material";
 import {
+  Button,
   Divider,
   FormControlLabel,
   IconButton,
@@ -47,7 +48,7 @@ export default function Sections({ resumeID, data }) {
     try {
       const newSectionData = {};
       steps.forEach((st) => {
-        const key = (st.name[0].toLowerCase() + st.name.slice(1)).replaceAll(
+        const key = (st.title[0].toLowerCase() + st.title.slice(1)).replaceAll(
           " ",
           ""
         );
@@ -87,6 +88,10 @@ export default function Sections({ resumeID, data }) {
       open={open}
       isCloseOnClickOut={false}
       onClick={() => setOpen(true)}
+      onClose={() => {
+        setOpen(false);
+        setSteps(data);
+      }}
       title={
         <Stack
           direction={"row"}
@@ -98,20 +103,6 @@ export default function Sections({ resumeID, data }) {
           <Typography variant="h6" fontWeight={"bold"}>
             Sections
           </Typography>
-          <Stack direction={"row"} width={"max-content"}>
-            <IconButton color="success" onClick={handleSave}>
-              <Check />
-            </IconButton>
-            <IconButton
-              color="error"
-              onClick={() => {
-                setOpen(false);
-                setSteps(data);
-              }}
-            >
-              <Clear />
-            </IconButton>
-          </Stack>
         </Stack>
       }
       icon={<Settings />}
@@ -160,7 +151,7 @@ export default function Sections({ resumeID, data }) {
                   }
                   label={
                     <Stack direction={"row"} gap={1}>
-                      {section.name}{" "}
+                      {section.title}{" "}
                       {isChanged && <PriorityHigh color="warning" />}
                     </Stack>
                   }
@@ -192,6 +183,12 @@ export default function Sections({ resumeID, data }) {
             )
           );
         })}
+      </Stack>
+      <Divider flexItem />
+      <Stack direction={"row"} width={"100%"} justifyContent={"flex-end"}>
+        <Button className="br0" color="success" onClick={handleSave}>
+          Save
+        </Button>
       </Stack>
     </ButtonDialog>
   );

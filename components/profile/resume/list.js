@@ -15,7 +15,7 @@ import { Add } from "@mui/icons-material";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
 
 export default function List() {
-  const { mainData } = useContext(profileContext);
+  const { mainData, router } = useContext(profileContext);
   const [resumes, setResumes] = useState([]);
   useEffect(() => {
     if (mainData.resumes) {
@@ -41,8 +41,8 @@ export default function List() {
       <Grid container spacing={4}>
         {resumes.map((resume, index) => {
           return (
-            <Grid key={index} item xs={12} md={6} lg={4} xl={3}>
-              <ResumeItem resume={resume} index={index} />
+            <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+              <ResumeItem resume={resume} index={index} router={router} />
             </Grid>
           );
         })}
@@ -51,13 +51,24 @@ export default function List() {
   );
 }
 
-function ResumeItem({ resume, index }) {
+function ResumeItem({ resume, index, router }) {
   const tags = Object.entries(resume).reduce((res, cur) => {
     if (Array.isArray(cur[1]) && cur[1].length > 0) {
       res.push(cur[0]);
     }
     return res;
   }, []);
+
+  const onDetail = () => {
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        id: resume.id,
+      },
+    });
+  };
+
   return (
     <Fade in={true} style={{ transitionDelay: index * 100 }}>
       <Paper
@@ -123,7 +134,12 @@ function ResumeItem({ resume, index }) {
                   </ButtonDialogConfirm>
                 </Stack>
                 <Divider orientation="vertical" />
-                <Button sx={{ width: "50%" }} className="br0" color="success">
+                <Button
+                  sx={{ width: "50%" }}
+                  className="br0"
+                  color="success"
+                  onClick={onDetail}
+                >
                   Detail
                 </Button>
               </Stack>

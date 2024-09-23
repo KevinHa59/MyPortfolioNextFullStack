@@ -24,83 +24,88 @@ export default async function handler(req, res) {
 // [GET] handle get user types
 // input: userIncluding: "1" or "true" to include users in response, otherwise users wont be including in response
 async function getUserTypes(req, res) {
-  const { userIncluding, pageIncluding, isQuantity } = req.query;
-  let isUserIncluding = false;
-  let isPageIncluding = false;
-  const method =
-    isQuantity && ["1", "true"].includes(isQuantity) ? "count" : "findMany";
-  if (
-    userIncluding &&
-    (parseInt(userIncluding) === 1 || userIncluding?.toLowerCase() === "true")
-  ) {
-    isUserIncluding = true;
-  }
-  if (
-    pageIncluding &&
-    (parseInt(pageIncluding) === 1 || pageIncluding?.toLowerCase() === "true")
-  ) {
-    isPageIncluding = true;
-  }
-  let userTypes = [];
-  if (isUserIncluding || isPageIncluding) {
-    if (isUserIncluding && !isPageIncluding) {
-      userTypes = await prisma.userTypes[method]({
-        include: {
-          users: isUserIncluding,
-        },
-      });
-    } else if (isPageIncluding && !isUserIncluding) {
-      userTypes = await prisma.userTypes[method]({
-        include: {
-          pageLinks: {
-            include: {
-              page: true,
-            },
-          },
-        },
-      });
-      userTypes = userTypes.map((type) => {
-        const types = {
-          ...type,
-          pages: type.pageLinks.map((link) => {
-            return {
-              ...link.page,
-              linkID: link.id,
-            };
-          }),
-        };
-        delete types.pageLinks;
-        return types;
-      });
-    } else {
-      userTypes = await prisma.userTypes[method]({
-        include: {
-          users: true,
-          pageLinks: {
-            include: {
-              page: true,
-            },
-          },
-        },
-      });
-      userTypes = userTypes.map((type) => {
-        const types = {
-          ...page,
-          pages: type.pageLinks.map((link) => {
-            return {
-              ...link.page,
-              linkID: link.id,
-            };
-          }),
-        };
-        delete types.pageLinks;
-        return types;
-      });
+  try {
+    const { userIncluding, pageIncluding, isQuantity } = req.query;
+    let isUserIncluding = false;
+    let isPageIncluding = false;
+    const method =
+      isQuantity && ["1", "true"].includes(isQuantity) ? "count" : "findMany";
+    if (
+      userIncluding &&
+      (parseInt(userIncluding) === 1 || userIncluding?.toLowerCase() === "true")
+    ) {
+      isUserIncluding = true;
     }
-  } else {
-    userTypes = await prisma.userTypes[method]();
+    if (
+      pageIncluding &&
+      (parseInt(pageIncluding) === 1 || pageIncluding?.toLowerCase() === "true")
+    ) {
+      isPageIncluding = true;
+    }
+    let userTypes = [];
+    if (isUserIncluding || isPageIncluding) {
+      if (isUserIncluding && !isPageIncluding) {
+        userTypes = await prisma.userTypes[method]({
+          include: {
+            users: isUserIncluding,
+          },
+        });
+      } else if (isPageIncluding && !isUserIncluding) {
+        userTypes = await prisma.userTypes[method]({
+          include: {
+            pageLinks: {
+              include: {
+                page: true,
+              },
+            },
+          },
+        });
+        userTypes = userTypes.map((type) => {
+          const types = {
+            ...type,
+            pages: type.pageLinks.map((link) => {
+              return {
+                ...link.page,
+                linkID: link.id,
+              };
+            }),
+          };
+          delete types.pageLinks;
+          return types;
+        });
+      } else {
+        userTypes = await prisma.userTypes[method]({
+          include: {
+            users: true,
+            pageLinks: {
+              include: {
+                page: true,
+              },
+            },
+          },
+        });
+        userTypes = userTypes.map((type) => {
+          const types = {
+            ...page,
+            pages: type.pageLinks.map((link) => {
+              return {
+                ...link.page,
+                linkID: link.id,
+              };
+            }),
+          };
+          delete types.pageLinks;
+          return types;
+        });
+      }
+    } else {
+      userTypes = await prisma.userTypes[method]();
+    }
+    res.status(200).json(userTypes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ err: "Internal server error" });
   }
-  res.status(200).json(userTypes);
 }
 
 // [POST] handle create user type

@@ -30,6 +30,7 @@ async function getUserByEmail(req, res) {
       where: { email: email },
       include: {
         userType: true,
+        credential: true,
       },
     });
     if (user !== null) {
@@ -40,6 +41,7 @@ async function getUserByEmail(req, res) {
       return res.status(404).json({ message: "User not found" });
     }
   } catch (err) {
+    console.log(err);
     const { statusCode, message } = errorMapping[err.code];
     res.status(statusCode).json({ err: message });
   }

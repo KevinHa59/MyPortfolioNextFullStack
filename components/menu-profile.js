@@ -14,6 +14,7 @@ import Profile from "./profile/profile";
 import Resume from "./profile/resume";
 import PortfolioCollection from "./profile/portfolio-collections";
 import PasswordChange from "../pages/authentication/password-change";
+import Credential from "./profile/credential";
 
 export const menu_profile = [
   {
@@ -55,7 +56,7 @@ export const menu_profile = [
         Icon: KeyRounded,
         title: "Credential",
         param: "credential",
-        // Comp: <Profile />,
+        Comp: <Credential />,
       },
       {
         Icon: Rule,

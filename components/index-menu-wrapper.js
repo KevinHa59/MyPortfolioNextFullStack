@@ -63,13 +63,7 @@ export default function IndexMenuWrapper({ children, page }) {
   async function checkUser(email, user) {
     try {
       const res = await MyAPIs.User().getUserByEmail(email);
-      if (res === undefined) {
-        const newUser = await createUser(email, user.name, "", null, null);
-        setUser(newUser.data);
-      } else {
-        const _user = res.data;
-        setUser(_user);
-      }
+      setUser(res.data);
       setIsAuthDone(true);
     } catch (error) {
       console.log(error);
@@ -77,17 +71,13 @@ export default function IndexMenuWrapper({ children, page }) {
     }
   }
 
-  const handleAuth = () => {
-    if (user === null) {
-      router.push("/sign-in");
+  const handleSignOut = () => {
+    if (sessionStorage.getItem("user")) {
+      sessionStorage.removeItem("user");
+      router.push(`/${router.query.page}`);
+      setUser(null);
     } else {
-      if (sessionStorage.getItem("user")) {
-        sessionStorage.removeItem("user");
-        router.push(`/${router.query.page}`);
-        setUser(null);
-      } else {
-        signOut({ callbackUrl: `/${router.query.page}` });
-      }
+      signOut({ callbackUrl: `/${router.query.page}` });
     }
   };
 
@@ -177,7 +167,9 @@ export default function IndexMenuWrapper({ children, page }) {
                     variant="contained"
                     sx_button={{ paddingX: 1, paddingY: 0 }}
                     isIconButton={false}
-                    label={`${user?.firstName}`}
+                    label={`${
+                      user?.name || `${user?.firstName}${user?.lastName || ""}`
+                    }`}
                   >
                     <Stack paddingY={2} minWidth={"150px"}>
                       <MenuItem
@@ -201,7 +193,7 @@ export default function IndexMenuWrapper({ children, page }) {
                         </MenuItem>
                       )}
                       <Divider />
-                      <MenuItem size="small" onClick={handleAuth}>
+                      <MenuItem size="small" onClick={handleSignOut}>
                         <ListItemIcon>
                           <LogoutOutlined />
                         </ListItemIcon>

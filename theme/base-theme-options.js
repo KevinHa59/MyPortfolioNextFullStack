@@ -79,6 +79,9 @@ export const baseThemeOptions = {
           "&.highlight": {
             background: "linear-gradient(25deg, #f99899 0%, #d60436 100%)",
           },
+          "&.bold": {
+            fontWeight: "bold",
+          },
         },
         sizeSmall: {
           padding: "6px 16px",

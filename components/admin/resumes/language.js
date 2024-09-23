@@ -49,14 +49,14 @@ export default function Language({ resumeID, data, step }) {
 
   const handleRemove = async (id, index, setOpen) => {
     try {
-      const res = await addNote(
-        "Remove Language",
-        MyAPIs.Resume().deleteResumeLanguage(id)
-      );
+      id &&
+        (await addNote(
+          "Remove Language",
+          MyAPIs.Resume().deleteResumeLanguage(id)
+        ));
       const copy = _.cloneDeep(input);
       copy.splice(index, 1);
       handleResumeDataChange({ languages: copy });
-      // setInput(copy);
       setOpen(false);
     } catch (error) {
       console.log(error);
@@ -80,7 +80,7 @@ export default function Language({ resumeID, data, step }) {
         >
           <Stack alignItems={"center"} direction={"row"} gap={1}>
             {step.Icon}
-            <Typography>{step.name}</Typography>
+            <Typography>{step.title}</Typography>
           </Stack>
           <Stack direction={"row"} gap={"1px"} justifyContent={"flex-end"}>
             <Button
@@ -170,18 +170,20 @@ function Form({ resumeID, data, onRemove, onChange }) {
             {language?.language}
           </Typography>
         </Stack>
-        <Stack direction={"row"}>
+        <Stack direction={"row"} alignItems={"center"}>
           {isEdit && (
-            <IconButton color="success" onClick={() => handleUpdate()}>
-              <Check />
-            </IconButton>
+            <Button color="success" onClick={() => handleUpdate()}>
+              Save
+            </Button>
           )}
-          <IconButton
-            color={isEdit ? "error" : "warning"}
-            onClick={() => setIsEdit((prev) => !prev)}
-          >
-            {isEdit ? <Clear /> : <Edit />}
-          </IconButton>
+          {language?.id && (
+            <Button
+              color={isEdit ? "error" : "warning"}
+              onClick={() => setIsEdit((prev) => !prev)}
+            >
+              {isEdit ? "Discard" : "Edit"}
+            </Button>
+          )}
 
           <ButtonDialogConfirm
             size="small"
@@ -190,9 +192,10 @@ function Form({ resumeID, data, onRemove, onChange }) {
             dialog_color={"error"}
             dialog_title={"Remove Project"}
             dialog_message={"Are You Sure?"}
+            isConfirmRequired={language?.id === undefined}
             onConfirm={onRemove}
           >
-            {language?.id ? <DeleteForever /> : <Remove />}
+            {language?.id ? "Delete" : "Discard"}
           </ButtonDialogConfirm>
         </Stack>
       </Stack>

@@ -9,7 +9,7 @@ export default function Header({
   children,
 }) {
   return (
-    <Stack width={"100%"}>
+    <Paper className="normal br0" width={"100%"}>
       <Stack
         direction={"row"}
         gap={3}
@@ -56,6 +56,6 @@ export default function Header({
           {children}
         </Stack>
       </Stack>
-    </Stack>
+    </Paper>
   );
 }

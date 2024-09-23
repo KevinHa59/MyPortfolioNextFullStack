@@ -8,6 +8,8 @@ const nextConfig = {
     NEXT_PUBLIC_API_LAYER_KEY: "MgnWVJlWYN6cOeavcLJloCSF3UHjCECr",
     NEXT_PUBLIC_SALT_ROUND: 5,
     NEXT_PUBLIC_ACCESS_TOKEN_EXPIRE_TIME: 3600,
+    NEXT_PUBLIC_DEVELOPMENT_URL: "http://localhost:3000",
+    NEXT_PUBLIC_PRODUCTION_URL: "",
   },
   reactStrictMode: false,
 };

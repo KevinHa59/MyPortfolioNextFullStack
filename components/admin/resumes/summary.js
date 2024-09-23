@@ -36,7 +36,7 @@ export default function Summary({ data, step, onChange }) {
       >
         <Stack alignItems={"center"} direction={"row"} gap={1}>
           {step.Icon}
-          <Typography>{step.name}</Typography>
+          <Typography>{step.title}</Typography>
         </Stack>
         <ButtonLoading
           size="small"

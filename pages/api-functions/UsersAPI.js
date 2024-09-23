@@ -52,6 +52,12 @@ class UsersAPI {
       },
     });
   }
+  async updateUserMaster(userID, data) {
+    return await axios.put(API.users, {
+      id: userID,
+      ...data,
+    });
+  }
   async updateUserBasic(id, dob, cellPhone, homePhone) {
     return await axios.put(API.users_user, {
       id,

@@ -102,7 +102,11 @@ function Index() {
 
   return (
     <profileContext.Provider
-      value={{ mainData: mainData, updateMainData: handleUpdateMainData }}
+      value={{
+        router: router,
+        mainData: mainData,
+        updateMainData: handleUpdateMainData,
+      }}
     >
       <Stack height={"100vh"} width={"clamp(500px, 100%, 100%)"}>
         <Paper variant="outlined">
