@@ -3,6 +3,7 @@ import { verifyPassword } from "../../../utils/hash";
 import jwt from "../../../utils/jwtUtil";
 import { serialize } from "cookie";
 import { getCookie } from "cookies-next";
+import { getSession } from "next-auth/react";
 
 const prisma = new PrismaClient();
 /**
@@ -51,30 +52,19 @@ async function Login(req, res) {
       // store refresh token to cookie and access only from endpoint
       delete user.password;
       delete user.refreshToken;
-      // Serialize cookies into a single Set-Cookie header
-      const cookies = [
-        serialize("refreshToken", refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-          path: "/",
-          maxAge: 7 * 24 * 60 * 60, // 1 week
-        }),
-        serialize("user", JSON.stringify(user), {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-          path: "/",
-          maxAge: 7 * 24 * 60 * 60, // 1 week
-        }),
-      ];
-      res.setHeader("Set-Cookie", cookies);
 
-      res.status(201).json(user);
+      const userSession = {
+        id: user.id,
+        email: user.email,
+        name: `${user.firstName}${user.lastName ? " " + user.lastName : ""}`,
+      };
+
+      res.status(201).json({ session: userSession });
     } else {
       res.status(401).json({ message: "Invalid credentials" });
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({ err: "Internal server error" });
   }
 }

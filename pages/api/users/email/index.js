@@ -32,7 +32,13 @@ async function getUserByEmail(req, res) {
         userType: true,
       },
     });
-    res.status(200).json(user);
+    if (user !== null) {
+      user["hasPassword"] = user.password !== null && user.password.length > 0;
+      delete user.password;
+      return res.status(200).json(user);
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
   } catch (err) {
     const { statusCode, message } = errorMapping[err.code];
     res.status(statusCode).json({ err: message });

@@ -24,10 +24,20 @@ export default function List() {
   }, [mainData]);
 
   return (
-    <Stack padding={4} gap={2}>
-      <Stack direction={"row"}>
+    <Stack padding={4} gap={5}>
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
         <Typography variant="h5">My Resumes</Typography>
+        <Button startIcon={<Add />} color="success">
+          Create New Resume
+        </Button>
       </Stack>
+      {resumes.length === 0 && (
+        <Typography textAlign={"center"}>You do not have any resume</Typography>
+      )}
       <Grid container spacing={4}>
         {resumes.map((resume, index) => {
           return (
@@ -36,20 +46,6 @@ export default function List() {
             </Grid>
           );
         })}
-
-        <Grid item xs={12} md={6} lg={4} xl={3}>
-          <Fade in={true} style={{ transitionDelay: resumes.length * 100 }}>
-            <Stack
-              alignItems={"center"}
-              justifyContent={"center"}
-              height={"100%"}
-            >
-              <Button startIcon={<Add />} variant="outlined" color="success">
-                Create New Resume
-              </Button>
-            </Stack>
-          </Fade>
-        </Grid>
       </Grid>
     </Stack>
   );

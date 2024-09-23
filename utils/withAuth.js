@@ -29,7 +29,23 @@ const withAuth = (WrappedComponent) => {
         }
         setIsLoading(false);
       } else if (status === "unauthenticated") {
-        router.replace("/401");
+        // check local session
+        let localSession = sessionStorage.getItem("user");
+
+        if (localSession) {
+          setIsLoading(false);
+          // localSession = JSON.parse(localSession);
+          // getUser(localSession);
+          // setSection("profile");
+          // router.push({
+          //   pathname: router.pathname,
+          //   query: {
+          //     section: "profile",
+          //   },
+          // });
+        } else {
+          router.replace("/401");
+        }
       }
     }, [status]);
 

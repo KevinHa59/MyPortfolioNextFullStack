@@ -221,6 +221,7 @@ export default function Profile() {
       >
         <Stack width={"clamp(400px, 50vw, 500px)"} gap={5}>
           <Paper
+            className="normal"
             variant="outlined"
             sx={{
               minWidth: "clamp(300px, 30vw, 400px)",
@@ -281,7 +282,11 @@ export default function Profile() {
               </Stack>
             </Stack>
           </Paper>
-          <Paper variant="outlined" sx={{ padding: 3, width: "100%" }}>
+          <Paper
+            className="normal"
+            variant="outlined"
+            sx={{ padding: 3, width: "100%" }}
+          >
             <Stack gap={4}>
               <Typography variant="body2" fontWeight={"bold"}>
                 Address
@@ -385,7 +390,11 @@ export default function Profile() {
               </Stack>
             </Stack>
           </Paper>
-          <Paper variant="outlined" sx={{ padding: 3, width: "100%" }}>
+          <Paper
+            className="normal"
+            variant="outlined"
+            sx={{ padding: 3, width: "100%" }}
+          >
             <Stack gap={4}>
               <Typography variant="body2" fontWeight={"bold"}>
                 Social

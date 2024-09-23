@@ -55,7 +55,20 @@ function Index() {
         },
       });
     } else if (status === "unauthenticated") {
-      router.push({ pathname: "/401" });
+      // check local session
+      let localSession = sessionStorage.getItem("user");
+
+      if (localSession) {
+        localSession = JSON.parse(atob(localSession));
+        getUser(localSession);
+        setSection("profile");
+        router.push({
+          pathname: router.pathname,
+          query: {
+            section: "profile",
+          },
+        });
+      }
     }
   }, [status]);
 
@@ -88,7 +101,9 @@ function Index() {
   }
 
   return (
-    <profileContext.Provider value={{ mainData: mainData }}>
+    <profileContext.Provider
+      value={{ mainData: mainData, updateMainData: handleUpdateMainData }}
+    >
       <Stack height={"100vh"} width={"clamp(500px, 100%, 100%)"}>
         <Paper variant="outlined">
           <Stack

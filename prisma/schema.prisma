@@ -58,35 +58,6 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-// model Users {
-//   id           String    @id @default(auto()) @map("_id") @db.ObjectId
-//   email        String    @unique
-//   firstName    String?
-//   lastName     String?
-//   dob          DateTime?
-//   address      String?
-//   city         String?
-//   state        String?
-//   country      String?
-//   zipCode      String?
-//   cellPhone    String?
-//   homePhone    String?
-//   linkedIn     String?
-//   github       String?
-//   twitter      String?
-//   facebook     String?
-//   instagram    String?
-//   portfolio    String?
-//   password     String?
-//   userTypeID   String
-//   userType     UserTypes @relation(fields: [userTypeID], references: [id])
-//   refreshToken String?
-//   resumes      Resume[]
-//   course       Course[]
-
-//   @@map("users")
-// }
-
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?

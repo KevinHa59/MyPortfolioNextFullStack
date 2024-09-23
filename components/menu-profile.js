@@ -8,6 +8,7 @@ import {
   Password,
   People,
   PersonRounded,
+  Rule,
 } from "@mui/icons-material";
 import Profile from "./profile/profile";
 import Resume from "./profile/resume";
@@ -29,7 +30,7 @@ export const menu_profile = [
         Icon: Password,
         title: "Change Password",
         param: "changePassword",
-        Comp: <PasswordChange useLoggedInUser={true} />,
+        Comp: <PasswordChange />,
       },
     ],
   },
@@ -54,6 +55,12 @@ export const menu_profile = [
         Icon: KeyRounded,
         title: "Credential",
         param: "credential",
+        // Comp: <Profile />,
+      },
+      {
+        Icon: Rule,
+        title: "CORS",
+        param: "cors",
         // Comp: <Profile />,
       },
       {

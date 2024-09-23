@@ -120,9 +120,12 @@ function UserChangingPasswordButton({ router }) {
 // logout button
 function LogoutButton({ router }) {
   const handleLogout = () => {
-    deleteCookie("user");
-    signOut({ callbackUrl: "/" });
-    // router.reload();
+    if (sessionStorage.getItem("user")) {
+      sessionStorage.removeItem("user");
+      router.push(`/`);
+    } else {
+      signOut({ callbackUrl: "/" });
+    }
   };
 
   return (

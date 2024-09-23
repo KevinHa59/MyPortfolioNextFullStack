@@ -400,9 +400,13 @@ class MyAPIs {
           return res;
         } catch (error) {}
       },
-      updatePassword: async (email, password) => {
+      updatePassword: async (email, password, currentPassword) => {
         try {
-          const res = await UsersAPI.updatePassword(email, password);
+          const res = await UsersAPI.updatePassword(
+            email,
+            password,
+            currentPassword
+          );
           return res;
         } catch (error) {
           return error.response;

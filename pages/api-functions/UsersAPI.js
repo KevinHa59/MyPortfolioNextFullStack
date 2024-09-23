@@ -118,10 +118,11 @@ class UsersAPI {
       color,
     });
   }
-  async updatePassword(email, password) {
+  async updatePassword(email, password, currentPassword) {
     return await axios.put(API.users_user_password, {
       email,
       password,
+      currentPassword,
     });
   }
   async updateType(userIDs, userTypeID) {

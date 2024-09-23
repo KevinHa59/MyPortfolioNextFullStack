@@ -27,6 +27,7 @@ import {
 } from "@mui/icons-material";
 import MyAPIs from "../pages/api-functions/MyAPIs";
 import { pages } from "../pages/[page]";
+import ButtonLoading from "./widgets/buttons/button-loading";
 
 export default function IndexMenuWrapper({ children, page }) {
   const router = useRouter();
@@ -47,19 +48,26 @@ export default function IndexMenuWrapper({ children, page }) {
           setIsAuthDone(true);
         }
       } else if (status === "unauthenticated") {
+        // check manually login session
+        let localSession = sessionStorage.getItem("user");
+        if (localSession) {
+          localSession = atob(localSession);
+          localSession = JSON.parse(localSession);
+          checkUser(localSession.email, localSession);
+        }
         setIsAuthDone(true);
       }
     }
-  }, [status]);
+  }, [status, isAuthDone]);
 
   async function checkUser(email, user) {
     try {
       const res = await MyAPIs.User().getUserByEmail(email);
-      const _user = res.data;
-      if (_user === null) {
+      if (res === undefined) {
         const newUser = await createUser(email, user.name, "", null, null);
         setUser(newUser.data);
       } else {
+        const _user = res.data;
         setUser(_user);
       }
       setIsAuthDone(true);
@@ -73,7 +81,13 @@ export default function IndexMenuWrapper({ children, page }) {
     if (user === null) {
       router.push("/sign-in");
     } else {
-      signOut({ callbackUrl: `/${router.query.page}` });
+      if (sessionStorage.getItem("user")) {
+        sessionStorage.removeItem("user");
+        router.push(`/${router.query.page}`);
+        setUser(null);
+      } else {
+        signOut({ callbackUrl: `/${router.query.page}` });
+      }
     }
   };
 
@@ -95,14 +109,10 @@ export default function IndexMenuWrapper({ children, page }) {
       signInInput.email,
       signInInput.password
     );
-    console.log(res);
-    if (res) {
-      // const currentPath = localStorage.getItem("redirectPath")
-      //   ? localStorage.getItem("redirectPath")
-      //   : "/";
-      // router.push(currentPath);
-      // // Clear the stored path after successful login
-      // localStorage.removeItem("redirectPath");
+    if (res?.data) {
+      const session = res.data.session;
+      sessionStorage.setItem("user", btoa(JSON.stringify(session)));
+      setIsAuthDone(false);
     }
 
     setIsLogin(false);
@@ -223,9 +233,13 @@ export default function IndexMenuWrapper({ children, page }) {
                           handleSignInChange({ password: e.target.value })
                         }
                       />
-                      <Button variant="contained" onClick={handleSignIn}>
+                      <ButtonLoading
+                        isLoading={isLogin}
+                        variant="contained"
+                        onClick={handleSignIn}
+                      >
                         Sign In
-                      </Button>
+                      </ButtonLoading>
                     </Stack>
                     <Divider />
                     <Stack gap={2} paddingX={2}>
