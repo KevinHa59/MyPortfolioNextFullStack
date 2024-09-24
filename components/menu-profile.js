@@ -14,7 +14,8 @@ import Profile from "./profile/profile";
 import Resume from "./profile/resume";
 import PortfolioCollection from "./profile/portfolio-collections";
 import PasswordChange from "../pages/authentication/password-change";
-import Credential from "./profile/credential";
+import Credential from "./profile/for-dev/credential";
+import CORS from "./profile/for-dev/cors";
 
 export const menu_profile = [
   {
@@ -62,7 +63,7 @@ export const menu_profile = [
         Icon: Rule,
         title: "CORS",
         param: "cors",
-        // Comp: <Profile />,
+        Comp: <CORS />,
       },
       {
         Icon: ApiRounded,

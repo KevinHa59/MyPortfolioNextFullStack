@@ -13,14 +13,14 @@ const neutral = {
 };
 
 const background = {
-  default: "#ffffff",
+  default: "#f5f7f7",
   paper: "#ffffff",
   menu: "#2b3240",
   subMenu: "#304152",
   button: "#ff0f50",
 };
 
-const divider = "#2D37481A";
+const divider = "#dddddd";
 
 const primary = {
   main: "#7582EB",
@@ -197,6 +197,8 @@ export const lightThemeOptions = {
     MuiChip: {
       styleOverrides: {
         root: {
+          color: text.primary,
+          background: background.paper,
           "&.MuiChip-filledDefault": {
             // backgroundColor: neutral[800],
             "& .MuiChip-deleteIcon": {
@@ -390,8 +392,8 @@ export const lightThemeOptions = {
             background: background.paper,
             boxShadow: "3px 3px 10px rgba(150,150,150,0.4)",
           },
-          "&.outlined": {
-            borderColor: divider,
+          "&.MuiPaper-outlined": {
+            // borderColor: divider,
           },
         },
       },

@@ -1,4 +1,11 @@
-import { Divider, Paper, Stack } from "@mui/material";
+import {
+  CircularProgress,
+  Divider,
+  Fade,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { createContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
@@ -19,6 +26,7 @@ export const profileContext = createContext(null);
 function Index() {
   const router = useRouter();
   const [section, setSection] = useState(undefined);
+  const [isInitDone, setIsInitDone] = useState(false);
   const { data: session, status } = useSession();
   const [mainData, setMainData] = useState({
     user: null,
@@ -26,13 +34,12 @@ function Index() {
   });
 
   useEffect(() => {
-    const _section = router.query.section;
-
     if (router.isReady === true) {
       const _section = router.query.section;
+
       if (_section && _section !== section) {
         setSection(_section);
-      } else if (section === null) {
+      } else {
         setSection("profile");
         router.push({
           pathname: router.pathname,
@@ -47,13 +54,6 @@ function Index() {
   useEffect(() => {
     if (status === "authenticated") {
       getUser(session.user);
-      setSection("profile");
-      router.push({
-        pathname: router.pathname,
-        query: {
-          section: "profile",
-        },
-      });
     } else if (status === "unauthenticated") {
       // check local session
       let localSession = sessionStorage.getItem("user");
@@ -87,7 +87,8 @@ function Index() {
     try {
       const _user = await MyAPIs.User().getUserByEmail(user.email);
       handleUpdateMainData({ user: _user.data });
-      initData(_user.data.id);
+      await initData(_user.data.id);
+      setIsInitDone(true);
     } catch (error) {}
   }
 
@@ -131,7 +132,12 @@ function Index() {
           </Stack>
         </Paper>
         <Divider />
-        <Stack zIndex={1} direction={"row"} height={"calc(100% - 63px)"}>
+        <Stack
+          zIndex={1}
+          direction={"row"}
+          height={"calc(100% - 63px)"}
+          width={"100%"}
+        >
           <Stack height={"100%"} width="300px">
             <Paper
               variant="outlined"
@@ -143,14 +149,21 @@ function Index() {
           </Stack>
 
           <Stack height={"100%"} width={"100%"} sx={{ overflowY: "auto" }}>
-            <Stack
-              height={"100%"}
-              sx={{
-                scrollBehavior: "smooth",
-              }}
-            >
-              {findComponentByParam(section, menu_profile)}
-            </Stack>
+            {!isInitDone && (
+              <Stack alignItems={"center"} width={"100%"}>
+                <CircularProgress />
+              </Stack>
+            )}
+            <Fade in={isInitDone}>
+              <Stack
+                height={"100%"}
+                sx={{
+                  scrollBehavior: "smooth",
+                }}
+              >
+                {findComponentByParam(section, menu_profile)}
+              </Stack>
+            </Fade>
           </Stack>
         </Stack>
       </Stack>

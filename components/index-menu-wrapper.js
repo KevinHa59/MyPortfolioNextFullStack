@@ -39,6 +39,7 @@ export default function IndexMenuWrapper({ children, page }) {
     email: "",
     password: "",
   });
+
   useEffect(() => {
     if (isAuthDone === false) {
       if (status === "authenticated") {
@@ -111,6 +112,7 @@ export default function IndexMenuWrapper({ children, page }) {
   return (
     <Stack height={"100vh"} sx={{ position: "relative" }} width="100%">
       <BackgroundPattern />
+
       <Grid container sx={{ position: "relative", zIndex: 2 }}>
         <Grid item xs={3}>
           <LogoRow

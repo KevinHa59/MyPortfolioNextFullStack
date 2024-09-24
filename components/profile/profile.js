@@ -245,9 +245,9 @@ export default function Profile() {
                 <Typography
                   textAlign={"center"}
                   sx={{ fontSize: "clamp(20px,3vw,50px)" }}
-                >{`${mainData.user?.name || ""} ${
-                  mainData.user?.firstName || ""
-                } ${mainData.user?.lastName || ""}`}</Typography>
+                >{`${mainData.user?.firstName || ""} ${
+                  mainData.user?.lastName || ""
+                }`}</Typography>
                 <Typography
                   textAlign={"center"}
                   sx={{ fontSize: "clamp(12px,1.5vw,20px)" }}

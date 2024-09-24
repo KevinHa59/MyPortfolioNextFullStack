@@ -62,7 +62,7 @@ export default function Hobby({ resumeID, data, step }) {
 
   return (
     <Stack height={"100%"} width={"100%"}>
-      <Paper sx={{ position: "sticky", top: 0, zIndex: 5 }}>
+      <Paper className="br0" sx={{ position: "sticky", top: 0, zIndex: 5 }}>
         <Stack
           direction={"row"}
           gap={"1px"}
@@ -81,8 +81,7 @@ export default function Hobby({ resumeID, data, step }) {
           ></Stack>
         </Stack>
       </Paper>
-      <Divider />
-      <Stack gap={3} padding={5} paddingTop={2}>
+      <Stack gap={3} padding={5}>
         <Stack direction={"row"} gap={1} alignItems={"flex-end"}>
           <Input
             sx={{ width: "100%" }}

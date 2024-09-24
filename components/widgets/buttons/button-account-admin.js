@@ -12,10 +12,10 @@ import { Button, Divider, ListItemIcon, MenuItem, Stack } from "@mui/material";
 import { useRouter } from "next/router";
 import { deleteCookie, getCookie } from "cookies-next";
 import { signOut } from "next-auth/react";
-import { profileContext } from "../../../pages/profile";
+import { adminContext } from "../../../pages/admin";
 
-export default function ButtonAccount() {
-  const { mainData } = useContext(profileContext);
+export default function ButtonAccountAdmin() {
+  const { mainData } = useContext(adminContext);
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState(null);
   const router = useRouter();
@@ -41,25 +41,14 @@ export default function ButtonAccount() {
           horizontal: "right",
         }}
       >
-        <Stack paddingY={1} minWidth={"150px"}>
+        <Stack minWidth={"150px"} paddingY={1}>
           <RoutingButton
-            Icon={Password}
+            Icon={Person}
             path={"/profile"}
-            query={{ section: "changePassword" }}
-            title={"Change Password"}
+            query={{ section: "profile", id: user?.id }}
+            title={"User Profile"}
             router={router}
           />
-          <Divider />
-          {isAdmin && (
-            <RoutingButton
-              Icon={AdminPanelSettings}
-              path={"/admin"}
-              query={{ section: "dashboard" }}
-              title={"Admin"}
-              router={router}
-            />
-          )}
-
           <Divider />
           <LogoutButton router={router} />
         </Stack>

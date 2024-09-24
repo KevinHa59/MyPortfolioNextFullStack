@@ -292,7 +292,7 @@ export default function EditResume() {
           resumeData.id !== null && (
             <Stack direction={"row"} height={"calc(100% - 100px)"}>
               <Paper
-                className="normal br0"
+                className="   br0"
                 sx={{
                   minWidth: "250px",
                   height: "100%",
@@ -315,7 +315,7 @@ export default function EditResume() {
                     />
                   )}
                 </Stack>
-                <Divider />
+                {/* <Divider /> */}
                 <Stack
                   sx={{
                     overflowY: "auto",
@@ -368,29 +368,17 @@ export default function EditResume() {
                 <Stack
                   width={"100%"}
                   height={"calc(100%)"}
-                  gap={2}
                   position={"relative"}
                   sx={{
-                    paddingX: 2,
-                    paddingBottom: 2,
                     overflowY: "auto",
                     scrollBehavior: "smooth",
                     opacity: 0.8,
-                    background: `repeating-linear-gradient( -45deg, transparent, transparent 5px, ${theme.palette.background.paper} 5px, ${theme.palette.background.paper} 25px )`,
                   }}
                 >
-                  <Stack
-                    id={steps[0]?.title}
-                    width={"100%"}
-                    height={"100%"}
-                    sx={{
-                      marginTop: 2,
-                      // background: theme.palette.background.default,
-                    }}
-                  >
+                  <Stack id={steps[0]?.title} width={"100%"} height={"100%"}>
                     <Paper
                       variant="outlined"
-                      className="normal"
+                      className="flat br0"
                       width={"100%"}
                       sx={{
                         height: "100%",
@@ -401,7 +389,7 @@ export default function EditResume() {
                         width={"100%"}
                         sx={{ overflowY: "auto" }}
                         gap={3}
-                        paddingX={5}
+                        padding={5}
                         direction={"row"}
                       >
                         <Input
@@ -451,11 +439,9 @@ export default function EditResume() {
                   {steps?.map((section, index) => {
                     if (index > 0) {
                       return (
-                        <Paper
+                        <Stack
                           key={index}
                           id={section?.title}
-                          className="normal"
-                          variant="outlined"
                           sx={{
                             width: "100%",
                             background: theme.palette.background.default,
@@ -467,7 +453,7 @@ export default function EditResume() {
                             data={resumeData[section.key]}
                             step={section}
                           />
-                        </Paper>
+                        </Stack>
                       );
                     }
                   })}

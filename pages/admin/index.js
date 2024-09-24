@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   Collapse,
   Divider,
   Fade,
@@ -10,7 +11,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import UserTypes from "../../components/admin/user-types";
 import { useRouter } from "next/router";
 import Users from "../../components/admin/users";
@@ -38,6 +39,10 @@ import MenuRenderer, {
   findComponentByParam,
 } from "../../components/menu-renderer";
 import { menu_admin } from "../../components/menu-admin";
+import { LogoRow } from "../../icons/logo";
+import { useSession } from "next-auth/react";
+import MyAPIs from "../api-functions/MyAPIs";
+import ButtonAccountAdmin from "../../components/widgets/buttons/button-account-admin";
 
 const menu_data = [
   {
@@ -84,9 +89,17 @@ const menu_data = [
   },
 ];
 
+export const adminContext = createContext(null);
+
 function Index() {
   const router = useRouter();
   const [section, setSection] = useState(null);
+  const [isInitDone, setIsInitDone] = useState(false);
+  const { data: session, status } = useSession();
+  const [mainData, setMainData] = useState({
+    user: null,
+    resumes: [],
+  });
 
   useEffect(() => {
     const _section = router.query.section;
@@ -102,38 +115,124 @@ function Index() {
       });
     }
   }, [router]);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      getUser(session.user);
+    } else if (status === "unauthenticated") {
+      // check local session
+      let localSession = sessionStorage.getItem("user");
+
+      if (localSession) {
+        localSession = JSON.parse(atob(localSession));
+        getUser(localSession);
+        setSection("profile");
+        router.push({
+          pathname: router.pathname,
+          query: {
+            section: "profile",
+          },
+        });
+      }
+    }
+  }, [status]);
+
+  const initData = async (userID) => {
+    const APIs = [MyAPIs.Resume().getResumesByUser(userID)];
+    try {
+      const res = await axios.all(APIs);
+      const _resumes = res[0].data;
+      handleUpdateMainData({ resumes: _resumes });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  async function getUser(user) {
+    try {
+      const _user = await MyAPIs.User().getUserByEmail(user.email);
+      handleUpdateMainData({ user: _user.data });
+      await initData(_user.data.id);
+      setIsInitDone(true);
+    } catch (error) {}
+  }
+
+  function handleUpdateMainData(newValue) {
+    setMainData((prev) => {
+      return {
+        ...prev,
+        ...newValue,
+      };
+    });
+  }
+
   return (
-    <Stack height={"100vh"} gap={"1px"} width={"clamp(500px, 100%, 100%)"}>
-      <Stack zIndex={1} direction={"row"} height={"100%"} gap={2}>
-        <Stack height={"100%"} width="300px">
-          <Paper className="flat br0" sx={{ zIndex: 2, height: "100%" }}>
-            <MenuRenderer value={menu_admin} />
-            {/* <Menu /> */}
-          </Paper>
-        </Stack>
-        <Stack
-          height={"100%"}
-          width={"100%"}
-          // paddingX={2}
-          // paddingBottom={"15px"}
-          sx={{ overflowY: "auto" }}
-        >
+    <adminContext.Provider
+      value={{
+        router: router,
+        mainData: mainData,
+        updateMainData: handleUpdateMainData,
+      }}
+    >
+      <Stack height={"100vh"} width={"clamp(500px, 100%, 100%)"}>
+        <Paper variant="outlined">
           <Stack
             height={"60px"}
             direction={"row"}
-            justifyContent={"flex-end"}
+            justifyContent={"space-between"}
             alignItems={"center"}
-            paddingX={2}
           >
-            <ThemeButton />
-            <ButtonAccount />
+            <Stack height={"60px"}>
+              <LogoRow
+                sx={{
+                  width: "clamp(100px, 30vw, 200px)",
+                  height: "100%",
+                }}
+              />
+            </Stack>
+            <Stack direction={"row"} alignItems={"center"}>
+              <ThemeButton />
+              <ButtonAccountAdmin />
+            </Stack>
           </Stack>
-          <Stack height={"calc(100% - 60px)"} sx={{ overflowY: "auto" }}>
-            {findComponentByParam(section, menu_admin)}
+        </Paper>
+        <Divider />
+        <Stack
+          zIndex={1}
+          direction={"row"}
+          height={"calc(100% - 63px)"}
+          width={"100%"}
+        >
+          <Stack height={"100%"} width="300px">
+            <Paper
+              variant="outlined"
+              className="br0"
+              sx={{ zIndex: 2, height: "100%", paddingY: 4 }}
+            >
+              <MenuRenderer value={menu_admin} />
+            </Paper>
+          </Stack>
+          <Divider orientation="vertical" />
+          <Stack height={"100%"} width={"100%"} sx={{ overflowY: "auto" }}>
+            {!isInitDone && (
+              <Stack alignItems={"center"} width={"100%"}>
+                <CircularProgress />
+              </Stack>
+            )}
+            <Fade in={isInitDone}>
+              <Stack
+                height={"100%"}
+                sx={{
+                  scrollBehavior: "smooth",
+                }}
+              >
+                {findComponentByParam(section, menu_admin)}
+              </Stack>
+            </Fade>
           </Stack>
         </Stack>
       </Stack>
-    </Stack>
+    </adminContext.Provider>
   );
 }
 

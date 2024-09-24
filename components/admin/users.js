@@ -157,7 +157,7 @@ function Cell({ row, header, onEdit, onRefresh }) {
     );
   } else if (header === "dob") {
     return new Date(
-      row["dob"].split("T")[0] + "T05:00:00.000Z"
+      row["dob"]?.split("T")[0] + "T05:00:00.000Z"
     ).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",

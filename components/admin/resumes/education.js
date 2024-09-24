@@ -81,7 +81,7 @@ export default function Education({ resumeID, data, step }) {
 
   return (
     <Stack width={"100%"} position={"relative"}>
-      <Paper sx={{ position: "sticky", top: 0, zIndex: 5 }}>
+      <Paper className="br0" sx={{ position: "sticky", top: 0, zIndex: 5 }}>
         <Stack
           direction={"row"}
           gap={"1px"}
@@ -105,8 +105,7 @@ export default function Education({ resumeID, data, step }) {
           </Stack>
         </Stack>
       </Paper>
-      <Divider />
-      <Stack gap={3} padding={1} paddingX={5}>
+      <Stack gap={3} padding={5}>
         {input.map((edu, index) => {
           return (
             <Form
@@ -194,11 +193,7 @@ function Form({ resumeID, data, onRemoveEducation, onChange }) {
     handleInputChange({ relevantCourseworks: copy });
   };
   return (
-    <Paper
-      // variant="outlined"
-      className="flat"
-      sx={{ background: isEdit === false && "transparent" }}
-    >
+    <Paper>
       <Stack
         direction={"row"}
         paddingX={2}

@@ -70,7 +70,7 @@ export default function Language({ resumeID, data, step }) {
 
   return (
     <Stack height={"100%"} width={"100%"}>
-      <Paper sx={{ position: "sticky", top: 0, zIndex: 5 }}>
+      <Paper className="br0" sx={{ position: "sticky", top: 0, zIndex: 5 }}>
         <Stack
           direction={"row"}
           gap={"1px"}
@@ -94,15 +94,12 @@ export default function Language({ resumeID, data, step }) {
           </Stack>
         </Stack>
       </Paper>
-      <Divider />
       <Stack
         height={"calc(100% - 37px)"}
         sx={{ overflowY: "auto" }}
-        gap={1}
-        padding={1}
-        paddingX={5}
+        padding={5}
       >
-        <Stack gap={1}>
+        <Stack gap={4}>
           {input.map((lang, index) => {
             return (
               <Form
@@ -155,10 +152,7 @@ function Form({ resumeID, data, onRemove, onChange }) {
     }
   };
   return (
-    <Paper
-      className="flat"
-      sx={{ background: isEdit === false && "transparent" }}
-    >
+    <Paper>
       <Stack
         direction={"row"}
         paddingX={2}
@@ -200,7 +194,7 @@ function Form({ resumeID, data, onRemove, onChange }) {
         </Stack>
       </Stack>
       <Divider />
-      <Stack gap={1} paddingX={5} paddingY={3}>
+      <Stack gap={1} paddingX={5} paddingY={1}>
         <Stack direction={"row"} gap={1}>
           <Input
             sx={{ width: "100%" }}
@@ -223,27 +217,6 @@ function Form({ resumeID, data, onRemove, onChange }) {
             onSelect={(value) => handleInputChange({ proficiencyLevel: value })}
           />
         </Stack>
-
-        {/* <Input
-          value={language?.technologies}
-          label="Technologies"
-          isEdit={isEdit}
-          onChange={(e) => handleInputChange({ technologies: e.target.value })}
-        />
-        <Input
-          value={language?.achievements}
-          label="Achievements"
-          isEdit={isEdit}
-          onChange={(e) => handleInputChange({ achievements: e.target.value })}
-        />
-        <Input
-          value={language?.description}
-          label="Description"
-          multiline={true}
-          rows={5}
-          isEdit={isEdit}
-          onChange={(e) => handleInputChange({ description: e.target.value })}
-        /> */}
       </Stack>
     </Paper>
   );

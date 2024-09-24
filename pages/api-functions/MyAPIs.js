@@ -16,6 +16,34 @@ class MyAPIs {
       },
     };
   }
+  Credential() {
+    return {
+      createCredential: async (userID) => {
+        try {
+          const res = await CredentialsAPI.createCredential(userID);
+          return res;
+        } catch (error) {}
+      },
+      updateCredential: async (id) => {
+        try {
+          const res = await CredentialsAPI.updateCredential(id);
+          return res;
+        } catch (error) {}
+      },
+      updateOrigins: async (id, origins) => {
+        try {
+          const res = await CredentialsAPI.updateOrigins(id, origins);
+          return res;
+        } catch (error) {}
+      },
+      deleteCredential: async (id) => {
+        try {
+          const res = await CredentialsAPI.deleteCredential(id);
+          return res;
+        } catch (error) {}
+      },
+    };
+  }
   Resume() {
     return {
       getResumes: async (isQuantity = false) => {
@@ -503,16 +531,6 @@ class MyAPIs {
       deletePermissions: async (ids) => {
         try {
           const res = await PermissionsAPI.deletePermissions(ids);
-          return res;
-        } catch (error) {}
-      },
-    };
-  }
-  Credential() {
-    return {
-      createCredential: async (userID) => {
-        try {
-          const res = await CredentialsAPI.createCredential(userID);
           return res;
         } catch (error) {}
       },

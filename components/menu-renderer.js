@@ -10,11 +10,17 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const MenuDetail = ({ menuItem, onRoute, activeRoute }) => {
+const MenuDetail = ({ menuItem, onRoute, activeRoute, onOpen }) => {
   const [open, setOpen] = useState(false);
   const isSubMenu = menuItem.sub !== undefined;
+
+  useEffect(() => {
+    if (activeRoute === menuItem.param) {
+      onOpen && onOpen(true);
+    }
+  }, [menuItem]);
 
   return (
     <Stack width={"100%"}>
@@ -71,6 +77,7 @@ const MenuDetail = ({ menuItem, onRoute, activeRoute }) => {
                   menuItem={subItem}
                   onRoute={onRoute}
                   activeRoute={activeRoute}
+                  onOpen={setOpen}
                 />
               </Stack>
             ))}
