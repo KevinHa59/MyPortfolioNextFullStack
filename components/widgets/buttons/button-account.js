@@ -13,6 +13,8 @@ import { useRouter } from "next/router";
 import { deleteCookie, getCookie } from "cookies-next";
 import { signOut } from "next-auth/react";
 import { profileContext } from "../../../pages/profile";
+import Image from "next/image";
+import axios from "axios";
 
 export default function ButtonAccount() {
   const { mainData } = useContext(profileContext);
@@ -21,6 +23,7 @@ export default function ButtonAccount() {
   const router = useRouter();
 
   useEffect(() => {
+    // mainData.user && getAvatar(mainData.user.image);
     if (mainData.user?.userType?.type === "Admin") {
       setIsAdmin(true);
       setUser(mainData.user);
@@ -30,8 +33,26 @@ export default function ButtonAccount() {
   return (
     <Stack>
       <ButtonPopover
-        size="large"
-        label={<AccountCircle sx={{ fontSize: "35px" }} />}
+        variant="outlined"
+        size="small"
+        isIconButton={false}
+        label={
+          <Stack direction={"row"} alignItems={"center"} gap={1}>
+            {user?.name}{" "}
+            {user?.image ? (
+              <Image
+                src={user?.image}
+                alt="Profile Picture"
+                width={25} // Desired width
+                height={25} // Desired height
+                style={{ borderRadius: "50%" }} // Adjust styles as needed
+                priority // Optional: for priority loading
+              />
+            ) : (
+              <AccountCircle sx={{ fontSize: "25px" }} />
+            )}
+          </Stack>
+        }
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "right",
@@ -42,6 +63,19 @@ export default function ButtonAccount() {
         }}
       >
         <Stack paddingY={1} minWidth={"150px"}>
+          {isAdmin && (
+            <>
+              <RoutingButton
+                Icon={AdminPanelSettings}
+                path={"/admin"}
+                query={{ section: "dashboard" }}
+                title={"Admin"}
+                router={router}
+              />
+              <Divider />
+            </>
+          )}
+
           <RoutingButton
             Icon={Password}
             path={"/profile"}
@@ -50,17 +84,7 @@ export default function ButtonAccount() {
             router={router}
           />
           <Divider />
-          {isAdmin && (
-            <RoutingButton
-              Icon={AdminPanelSettings}
-              path={"/admin"}
-              query={{ section: "dashboard" }}
-              title={"Admin"}
-              router={router}
-            />
-          )}
 
-          <Divider />
           <LogoutButton router={router} />
         </Stack>
       </ButtonPopover>

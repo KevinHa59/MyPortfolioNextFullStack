@@ -158,7 +158,7 @@ function Cell({ row, header, onApprove, onDelete, onRefresh }) {
     return row[header].replace("T", " ").split(".")[0];
   } else if (header === "user") {
     const user = row["user"];
-    return `${user.firstName} ${user.lastName}`;
+    return user ? `${user?.firstName} ${user?.lastName}` : "N/A";
   } else if (header === "approved") {
     const isApproved = row[header] === true;
     return (

@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ["lh3.googleusercontent.com"],
+  },
   env: {
     NEXT_PUBLIC_AXIOS_TIMEOUT: 5000,
     NEXT_PUBLIC_TOKEN_KEY: "1234@abcd",

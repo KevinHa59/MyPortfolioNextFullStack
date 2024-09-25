@@ -43,6 +43,7 @@ import { LogoRow } from "../../icons/logo";
 import { useSession } from "next-auth/react";
 import MyAPIs from "../api-functions/MyAPIs";
 import ButtonAccountAdmin from "../../components/widgets/buttons/button-account-admin";
+import axios from "axios";
 
 const menu_data = [
   {
@@ -99,6 +100,8 @@ function Index() {
   const [mainData, setMainData] = useState({
     user: null,
     resumes: [],
+    users: [],
+    status: [],
   });
 
   useEffect(() => {
@@ -137,12 +140,23 @@ function Index() {
     }
   }, [status]);
 
-  const initData = async (userID) => {
-    const APIs = [MyAPIs.Resume().getResumesByUser(userID)];
+  const initData = async () => {
+    const APIs = [
+      MyAPIs.Resume().getResumes(),
+      MyAPIs.User().getUsers(),
+      MyAPIs.Status().getStatus(),
+    ];
     try {
       const res = await axios.all(APIs);
+
       const _resumes = res[0].data;
-      handleUpdateMainData({ resumes: _resumes });
+      const _users = res[1].data;
+      const _status = res[2].data;
+      handleUpdateMainData({
+        resumes: _resumes,
+        users: _users,
+        status: _status,
+      });
     } catch (error) {
       console.log(error);
     }

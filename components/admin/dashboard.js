@@ -84,58 +84,17 @@ export default function Dashboard() {
           />
         )}
       </Grid>
-      {/* <Stack gap={1}>
-        <Button>Text</Button>
-        <Button variant="outlined">Outlined</Button>
-        <Button variant="contained">Contained</Button>
-        <Button variant="outlined" color="primary">
-          Outlined primary
-        </Button>
-        <Button variant="contained" color="primary">
-          Contained primary
-        </Button>
-        <Button variant="outlined" color="secondary">
-          Outlined secondary
-        </Button>
-        <Button variant="contained" color="secondary">
-          Contained secondary
-        </Button>
-        <Button variant="outlined" color="error">
-          Outlined error
-        </Button>
-        <Button variant="contained" color="error">
-          Contained error
-        </Button>
-        <Button variant="outlined" color="info">
-          Outlined info
-        </Button>
-        <Button variant="contained" color="info">
-          Contained info
-        </Button>
-        <Button variant="outlined" color="success">
-          Outlined success
-        </Button>
-        <Button variant="contained" color="success">
-          Contained success
-        </Button>
-        <Button variant="outlined" color="warning">
-          Outlined warning
-        </Button>
-        <Button variant="contained" color="warning">
-          Contained warning
-        </Button>
-      </Stack> */}
     </Stack>
   );
 }
 
 function StatsItem({ index = 0, title, value }) {
   return (
-    <Grid item xs={6}>
+    <Grid item xs={12} sm={6} md={4} lg={3}>
       <Zoom in={true} style={{ transitionDelay: index * 50 }}>
         <Paper
-          // className="normal"
-          // variant="outlined"
+          className="normal"
+          variant="outlined"
           sx={{ overflow: "hidden" }}
         >
           <Stack
@@ -145,19 +104,6 @@ function StatsItem({ index = 0, title, value }) {
             sx={{ position: "relative" }}
             justifyContent={"space-between"}
           >
-            {/* <Stack
-              sx={{
-                position: "absolute",
-                width: "200%",
-                height: "150%",
-                transform: "translate(-50%)",
-                top: "-50%",
-                background:
-                  "linear-gradient(180deg, transparent 40%, rgba(150,150,150,0.1) 100%)",
-                rotate: "-25deg",
-                transformOrigin: "top left",
-              }}
-            /> */}
             <FormHeader title={title} variant="h3" sx={{ height: "100%" }} />
             <Typography variant="h4" textAlign={"right"} fontWeight={200}>
               {value}

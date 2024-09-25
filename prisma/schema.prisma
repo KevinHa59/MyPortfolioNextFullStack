@@ -100,6 +100,8 @@ model User {
   refreshToken String?
   resumes      Resume[]
   course       Course[]
+  statusID     String?  @db.ObjectId
+  status       Status?   @relation(fields: [statusID], references: [id])
  
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
@@ -159,13 +161,26 @@ model Resume {
   publications            Publication[]
   professionalMemberships ProfessionalMembership[]
   hobbies                 Hobby[]
-  resumeSectionsID        String?                  @db.ObjectId
-  user                    User                    @relation(fields: [userID], references: [id])
+  resumeSectionsID        String?                   @db.ObjectId
+  user                    User                      @relation(fields: [userID], references: [id])
   resumeSections          ResumeSection?
+  statusID                String?                   @db.ObjectId
+  status                  Status?                   @relation(fields: [statusID], references: [id])
 
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  createdAt               DateTime?                 @default(now())
+  updatedAt               DateTime?                 @updatedAt
   @@map("resumes")
+}
+
+model Status{
+  id      String        @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  color   String?       
+
+  resume  Resume[]
+  user    User[]      
+
+  @@map("status")
 }
 
 model ResumeSection {

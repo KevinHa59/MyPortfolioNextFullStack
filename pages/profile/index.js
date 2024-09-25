@@ -36,7 +36,6 @@ function Index() {
   useEffect(() => {
     if (router.isReady === true) {
       const _section = router.query.section;
-
       if (_section && _section !== section) {
         setSection(_section);
       } else {
@@ -48,6 +47,13 @@ function Index() {
           },
         });
       }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (router.isReady && isInitDone) {
+      const _section = router.query.section;
+      setSection(_section);
     }
   }, [router]);
 
@@ -125,7 +131,7 @@ function Index() {
                 }}
               />
             </Stack>
-            <Stack direction={"row"} alignItems={"center"}>
+            <Stack direction={"row"} alignItems={"center"} gap={1}>
               <ThemeButton />
               <ButtonAccount />
             </Stack>

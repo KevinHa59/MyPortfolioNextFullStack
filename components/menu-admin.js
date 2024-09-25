@@ -4,9 +4,11 @@ import {
   BusinessCenter,
   DashboardCustomize,
   Hub,
+  Inventory,
   ManageAccounts,
   PagesRounded,
   People,
+  Style,
   VerifiedUser,
 } from "@mui/icons-material";
 import Dashboard from "./admin/dashboard";
@@ -16,6 +18,7 @@ import Pages from "./admin/pages";
 import Permissions from "./admin/permissions";
 import Resumes from "./admin/resumes";
 import Courses from "./admin/courses";
+import Status from "./admin/status";
 
 export const menu_admin = [
   {
@@ -69,9 +72,22 @@ export const menu_admin = [
     Comp: <Resumes />,
   },
   {
-    title: "Courses",
-    param: "courses",
-    Icon: BusinessCenter,
-    Comp: <Courses />,
+    title: "General Data",
+    param: "generalData",
+    Icon: Inventory,
+    sub: [
+      {
+        title: "Courses",
+        param: "courses",
+        Icon: BusinessCenter,
+        Comp: <Courses />,
+      },
+      {
+        title: "Status",
+        param: "status",
+        Icon: Style,
+        Comp: <Status />,
+      },
+    ],
   },
 ];
