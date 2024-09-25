@@ -30,7 +30,7 @@ import { adminContext } from "../../pages/admin";
 
 export default function Permissions() {
   const router = useRouter();
-  const { addNote } = useContext(asyncNoteContext);
+  const { setNote } = useContext(mainContext);
   const { mainData, updateMainData } = useContext(adminContext);
   const { pages, userTypes, permissions } = mainData;
   const [currentPermissions, setCurrentPermissions] = useState([]);
@@ -39,6 +39,25 @@ export default function Permissions() {
 
   useEffect(() => {
     setCurrentPermissions(permissions);
+    if (userTypes.length > 0) {
+      const userTypeID = userTypes[0].id;
+      const { user_type } = router.query;
+      if (user_type === undefined) {
+        router.push({
+          pathname: router.pathname,
+          query: {
+            ...router.query,
+            user_type: userTypeID,
+          },
+        });
+        setSelectedUserType(userTypes[0]);
+      } else {
+        const _userType = userTypes.find((item) => item.id === user_type);
+        if (_userType) {
+          setSelectedUserType(_userType);
+        }
+      }
+    }
   }, [permissions]);
 
   const handleTypeSelect = (type) => {
@@ -68,51 +87,50 @@ export default function Permissions() {
   // save
   const handleSave = async () => {
     setIsSaving(true);
-    const pages = document.querySelectorAll(".pageItem");
-    const newLinks = [];
+    const newLinks = currentPermissions.filter((item) => item.id === undefined);
     const removeLinks = [];
-    Array.from(pages).forEach((item) => {
-      const currentCheck = item.querySelector("input[type='checkbox']").checked;
-      const pageInfo = JSON.parse(item.getAttribute("data-page"));
-
-      if (currentCheck && !pageInfo.defaultChecked) {
-        newLinks.push({
-          userTypeID: selectedUserType.id,
-          pageID: pageInfo.id,
-        });
-      } else if (!currentCheck && pageInfo.defaultChecked) {
-        removeLinks.push(pageInfo.linkID);
+    permissions.forEach((item) => {
+      if (
+        currentPermissions.some(
+          (_item) =>
+            item.userTypeID === _item.userTypeID && item.pageID === _item.pageID
+        ) === false
+      ) {
+        removeLinks.push(item.id);
       }
     });
+
     const APIs = [];
-    if (newLinks.length > 0) {
-      APIs.push(
-        addNote(
-          "Create Permissions",
-          MyAPIs.Permission().createPermissions(newLinks)
-        )
-      );
-    }
-    if (removeLinks.length > 0) {
-      APIs.push(
-        addNote(
-          "Remove Permissions",
-          MyAPIs.Permission().deletePermissions(removeLinks)
-        )
-      );
-    }
+    APIs.push(MyAPIs.Permission().createPermissions(newLinks));
+    APIs.push(MyAPIs.Permission().deletePermissions(removeLinks));
 
     try {
       const res = await axios.all(APIs);
+      if (res) {
+        handleUpdateMainData(res[0].data, removeLinks);
+        setNote.success("Update Success");
+      } else {
+        setNote.error("Update Fail");
+      }
       setIsSaving(false);
     } catch (error) {
+      setNote.error("Update Fail");
       setIsSaving(false);
       console.log(error);
     }
   };
 
   const handleUpdateMainData = (newLinks, removeLinks) => {
-    const copy = _.cloneDeep(mainData.permissions);
+    let copy = _.cloneDeep(mainData.permissions);
+    if (newLinks.length > 0) {
+      copy.push(...newLinks);
+    }
+    if (removeLinks.length > 0) {
+      copy = copy.filter(
+        (link) => !removeLinks.some((item) => item === link.id)
+      );
+    }
+    updateMainData({ ...mainData, permissions: copy });
   };
 
   const handleUpdatePermissions = (permission, isChecked) => {
@@ -269,11 +287,6 @@ function Cell({ row, header, selectedUserType, permissions, onChange }) {
             <Checkbox
               checked={isChecked}
               className="pageItem"
-              // data-page={JSON.stringify({
-              //   defaultChecked: isChecked,
-              //   id: row.id,
-              //   linkID: isChecked ? existPage.linkID : null,
-              // })}
               onChange={(e) =>
                 onChange(
                   { userTypeID: selectedUserType.id, pageID: row.id },

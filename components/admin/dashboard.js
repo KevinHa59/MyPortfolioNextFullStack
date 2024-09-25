@@ -1,87 +1,36 @@
-import React, { useEffect, useState } from "react";
-import MyAPIs from "../../pages/api-functions/MyAPIs";
-import axios from "axios";
-import {
-  Button,
-  CircularProgress,
-  Fade,
-  Grid,
-  LinearProgress,
-  Paper,
-  Stack,
-  Typography,
-  Zoom,
-} from "@mui/material";
-import { styles } from "../../styles/useStyle";
+import React, { useContext } from "react";
+import { Grid, Paper, Stack, Typography, Zoom } from "@mui/material";
 import FormHeader from "../widgets/texts/form-header";
+import { adminContext } from "../../pages/admin";
 
 export default function Dashboard() {
-  const [isGettingData, setIsGettingData] = useState(false);
-  const [statistic, setStatistic] = useState({
-    users: null,
-    userTypes: null,
-    pages: null,
-    resumes: null,
-  });
-
-  useEffect(() => {
-    initData();
-  }, []);
-
-  const handleUpdateStatistic = (newValue) => {
-    setStatistic((prev) => {
-      return {
-        ...prev,
-        ...newValue,
-      };
-    });
-  };
-
-  const initData = async () => {
-    setIsGettingData(true);
-    const APIs = [
-      MyAPIs.User().getUsers(true),
-      MyAPIs.User().getUserTypes(false, false, true),
-      MyAPIs.Page().getPages(null, true),
-      MyAPIs.Resume().getResumes(true),
-    ];
-    const res = await axios.all(APIs);
-    handleUpdateStatistic({
-      users: res[0].data || [],
-      userTypes: res[1].data || [],
-      pages: res[2].data || [],
-      resumes: res[3].data || [],
-    });
-    setIsGettingData(false);
-  };
-
+  const { mainData } = useContext(adminContext);
+  const { resumes, users, userTypes, status, courses, pages, permissions } =
+    mainData;
   return (
     <Stack padding={5}>
-      {isGettingData && (
-        <Typography textAlign={"center"}>
-          <LinearProgress />
-        </Typography>
-      )}
       <Grid container spacing={5}>
-        {statistic.users && (
-          <StatsItem index={1} title={"Users"} value={statistic.users || 0} />
+        {users && (
+          <StatsItem index={1} title={"Users"} value={users.length || 0} />
         )}
-        {statistic.userTypes && (
+        {userTypes && (
           <StatsItem
             index={2}
             title={"User Types"}
-            value={statistic.userTypes || 0}
+            value={userTypes.length || 0}
           />
         )}
-        {statistic.pages && (
-          <StatsItem index={3} title={"Pages"} value={statistic.pages || 0} />
+        {pages && (
+          <StatsItem index={3} title={"Pages"} value={pages.length || 0} />
         )}
-        {statistic.resumes && (
-          <StatsItem
-            index={4}
-            title={"Resumes"}
-            value={statistic.resumes || 0}
-          />
+        {resumes && (
+          <StatsItem index={4} title={"Resumes"} value={resumes.length || 0} />
+        )}
+        {courses && (
+          <StatsItem index={4} title={"Courses"} value={courses.length || 0} />
+        )}
+        {status && (
+          <StatsItem index={4} title={"Status"} value={status.length || 0} />
         )}
       </Grid>
     </Stack>

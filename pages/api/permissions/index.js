@@ -71,10 +71,10 @@ async function createPermissions(req, res) {
     if (!body.links) {
       res.status(400).json({ error: "Incomplete data" });
     }
-    const links = await prisma.userTypePageLinks.createMany({
-      data: body.links,
-    });
-    res.status(201).json(links);
+    const result = await Promise.all(
+      body.links.map((data) => prisma.userTypePageLinks.create({ data }))
+    );
+    res.status(201).json(result);
   } catch (err) {
     res.status(500).json({ err: "Internal server error" });
   }

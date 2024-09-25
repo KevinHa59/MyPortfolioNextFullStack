@@ -17,30 +17,19 @@ import ButtonLoading from "../widgets/buttons/button-loading";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import { mainContext } from "../../pages/_app";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
+import { adminContext } from "../../pages/admin";
 
 export default function Pages() {
   const { addNote } = useContext(asyncNoteContext);
-  const [pages, setPages] = useState([]);
-  const [isGettingData, setIsGettingData] = useState(true);
+  const { mainData } = useContext(adminContext);
+  const { pages } = mainData;
   const [isNewPageOpen, setIsNewPageOpen] = useState(false);
   const [editPage, setEditPage] = useState(null);
-
-  useEffect(() => {
-    initData();
-  }, []);
-
-  async function initData() {
-    setIsGettingData(true);
-    let data = await addNote("Get Pages", MyAPIs.Page().getPages());
-    setPages(data.data);
-    setIsGettingData(false);
-  }
 
   return (
     <Stack width={"100%"} height={"100%"} gap={"1px"}>
       <Header title={"Pages"} icon={<PagesRounded />}></Header>
       <Stack
-        // variant="outlined"
         sx={{
           height: "100%",
           overflow: "hidden",
@@ -48,8 +37,7 @@ export default function Pages() {
       >
         <Paper className="flat br0">
           <Table
-            isLoading={isGettingData}
-            data={pages}
+            data={pages || []}
             headers={headers}
             callback_cell={(row, key) => (
               <Cell
@@ -58,7 +46,7 @@ export default function Pages() {
                 pages={pages}
                 onEdit={() => handleEditUserOpen(row)}
                 onPasswordChange={() => handlePasswordChangeOpen(row)}
-                onRefresh={initData}
+                // onRefresh={initData}
               />
             )}
             callback_extension_search_area={

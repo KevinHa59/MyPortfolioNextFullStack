@@ -8,19 +8,20 @@ import { IconButton, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import SelectCustom from "../select/select-custom";
 
-export default function Pagination({ quantity }) {
+export default function Pagination({ quantity, onChange }) {
   const [pageSetting, setPageSetting] = useState({
     rows: 10,
     page: 1,
   });
 
   const handlePageSettingChange = (value) => {
-    setPageSetting((prev) => {
-      return {
-        ...prev,
-        ...value,
-      };
-    });
+    let copy = _.cloneDeep(pageSetting);
+    copy = {
+      ...copy,
+      ...value,
+    };
+    onChange && onChange(copy);
+    setPageSetting(copy);
   };
   return (
     <Stack gap={1} direction={"row"} alignItems={"center"}>

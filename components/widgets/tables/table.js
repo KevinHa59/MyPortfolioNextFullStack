@@ -77,6 +77,14 @@ export default function Table({
     setRows(newRows);
   }
 
+  // handle page change
+  function handlePageChange(pageSetting) {
+    const fromIndex = (pageSetting.page - 1) * pageSetting.rows;
+    const toIndex = fromIndex + pageSetting.rows;
+    const newRows = data.slice(fromIndex, toIndex);
+    setRows(newRows);
+  }
+
   return (
     <Stack sx={{ width: "100%", position: "relative", ...sx }} gap={"1px"}>
       <Stack sx={{ borderRadius: 0, background: "transparent" }}>
@@ -100,7 +108,7 @@ export default function Table({
             {callback_extension_search_area}
           </Stack>
           <Stack direction={"row"}>
-            <Pagination quantity={rows.length} />
+            <Pagination quantity={rows.length} onChange={handlePageChange} />
           </Stack>
         </Stack>
         <Divider />
