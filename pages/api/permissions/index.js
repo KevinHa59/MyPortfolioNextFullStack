@@ -25,10 +25,10 @@ export default async function handler(req, res) {
 async function getPermissions(req, res) {
   try {
     const { userTypeID, pageID } = req.query;
-    // input validation
-    if (!userTypeID && !pageID) {
-      res.status(400).json({ error: "Incomplete data" });
-    }
+    // // input validation
+    // if (!userTypeID && !pageID) {
+    //   res.status(400).json({ error: "Incomplete data" });
+    // }
     let result = [];
     if (userTypeID) {
       const res = await prisma.userTypePageLinks.findMany({
@@ -52,8 +52,11 @@ async function getPermissions(req, res) {
       });
 
       result = res.map((item) => item.userType);
+    } else {
+      const res = await prisma.userTypePageLinks.findMany();
+      result = res;
     }
-    res.status(201).json(result);
+    res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ err: "Internal server error" });
   }

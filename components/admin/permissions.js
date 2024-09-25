@@ -26,67 +26,24 @@ import { getCookie, getCookies } from "cookies-next";
 import { AdminPanelSettings, Save } from "@mui/icons-material";
 import Table from "../widgets/tables/table";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
+import { adminContext } from "../../pages/admin";
 
 export default function Permissions() {
   const router = useRouter();
   const { addNote } = useContext(asyncNoteContext);
-  const [data, setData] = useState({
-    userTypes: [],
-    pages: [],
-  });
+  const { mainData, updateMainData } = useContext(adminContext);
+  const { pages, userTypes, permissions } = mainData;
+  const [currentPermissions, setCurrentPermissions] = useState([]);
   const [selectedUserType, setSelectedUserType] = useState(null);
-  const [isGettingData, setIsGettingData] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    initData();
-  }, []);
-
-  // get data
-  async function initData() {
-    const APIs = [
-      addNote("Get User Types", MyAPIs.User().getUserTypes(false, true)),
-      addNote("Get Pages", MyAPIs.Page().getPages()),
-    ];
-    const res = await axios.all(APIs);
-    if (router.query.user_type) {
-      const _type = res[0]?.data?.find(
-        (item) => item.id === router.query.user_type
-      );
-      if (_type) {
-        setSelectedUserType(_type);
-      } else {
-        handleRoute(null);
-      }
-    } else {
-      if (res[0]?.data?.length > 0) {
-        const _type = res[0]?.data[0];
-        setSelectedUserType(_type);
-        handleRoute(_type.id);
-      }
-    }
-    setIsGettingData(false);
-    handleUpdateData({
-      userTypes: res[0]?.data,
-      pages: res[1]?.data,
-    });
-  }
-
-  const handleUpdateData = (newValue) => {
-    setData((prev) => {
-      return {
-        ...prev,
-        ...newValue,
-      };
-    });
-  };
+    setCurrentPermissions(permissions);
+  }, [permissions]);
 
   const handleTypeSelect = (type) => {
-    setSelectedUserType(null);
-    setTimeout(() => {
-      setSelectedUserType(type);
-      handleRoute(type.id);
-    }, 0);
+    setSelectedUserType(type);
+    handleRoute(type.id);
   };
 
   const handleRoute = (id) => {
@@ -147,7 +104,6 @@ export default function Permissions() {
 
     try {
       const res = await axios.all(APIs);
-      initData();
       setIsSaving(false);
     } catch (error) {
       setIsSaving(false);
@@ -155,142 +111,151 @@ export default function Permissions() {
     }
   };
 
+  const handleUpdateMainData = (newLinks, removeLinks) => {
+    const copy = _.cloneDeep(mainData.permissions);
+  };
+
+  const handleUpdatePermissions = (permission, isChecked) => {
+    let copy = _.cloneDeep(currentPermissions);
+    if (isChecked) {
+      copy.push(permission);
+    } else {
+      const index = copy.findIndex(
+        (item) =>
+          item.userTypeID === permission.userTypeID &&
+          item.pageID === permission.pageID
+      );
+      copy.splice(index, 1);
+    }
+    setCurrentPermissions(copy);
+  };
+
   return (
     <Stack width={"100%"} height={"100%"} gap={"1px"}>
       <Header title={"Permissions"} icon={<AdminPanelSettings />}></Header>
-      {isGettingData && <LinearProgress />}
-      {!isGettingData && (
-        <Stack
-          sx={{
-            height: "100%",
-            overflow: "hidden",
-          }}
-        >
-          <Stack
-            alignItems={"flex-start"}
-            gap={2}
-            direction={"row"}
-            height={"100%"}
-          >
-            {/* user type */}
-            <Stack width={"300px"} height={"100%"}>
-              {/* <Divider /> */}
-              <Paper className="flat br0" sx={{ height: "100%" }}>
-                <Stack minHeight="30px" padding={1}>
-                  <Typography
-                    variant="body1"
-                    fontWeight={"bold"}
-                    textAlign={"left"}
-                    sx={{ color: "inherit" }}
-                  >
-                    User Types
-                  </Typography>
-                </Stack>
-
-                <Stack width={"100%"} paddingY={1} sx={{ overflowY: "auto" }}>
-                  {data.userTypes?.map((type, index) => {
-                    return (
-                      <Slide
-                        key={index}
-                        in={true}
-                        direction="right"
-                        style={{ transitionDelay: index * 50 }}
-                      >
-                        <Stack>
-                          <Button
-                            className={
-                              router.query.user_type === type.id
-                                ? "active"
-                                : "inactive"
-                            }
-                            color="inherit"
-                            sx={{
-                              display: "flex",
-                              gap: 1,
-                              justifyContent: "flex-start",
-                              transition: "ease 0.1s",
-                              borderRadius: 0,
-                              // width: "150px",
-                            }}
-                            fullWidth
-                            onClick={() => handleTypeSelect(type)}
-                          >
-                            {type.type}
-                          </Button>
-                        </Stack>
-                      </Slide>
-                    );
-                  })}
-                </Stack>
-              </Paper>
-            </Stack>
-            {/* pages list */}
-            <Stack width={"100%"} height={"100%"} gap={1}>
-              <Stack height={"100%"}>
-                <Stack
-                  width={"100%"}
-                  height={"calc(100% - 50px)"}
-                  // padding={1}
-                  sx={{ overflowY: "auto" }}
+      <Stack
+        sx={{
+          height: "100%",
+          overflow: "hidden",
+        }}
+      >
+        <Stack alignItems={"flex-start"} direction={"row"} height={"100%"}>
+          {/* user type */}
+          <Stack width={"300px"} height={"100%"}>
+            {/* <Divider /> */}
+            <Paper className="flat br0" sx={{ height: "100%" }}>
+              <Stack minHeight="30px" padding={1}>
+                <Typography
+                  variant="body1"
+                  fontWeight={"bold"}
+                  textAlign={"left"}
+                  sx={{ color: "inherit" }}
                 >
-                  <Paper className="flat br0">
-                    {selectedUserType ? (
-                      <Table
-                        isLoading={isGettingData}
-                        data={data.pages}
-                        headers={headers}
-                        callback_extension_search_area={
-                          <Stack
-                            minHeight="30px"
-                            direction={"row"}
-                            alignItems={"center"}
-                            gap={2}
-                            // className="reverse"
-                            // sx={{ background: styles.background.menu }}
+                  User Types
+                </Typography>
+              </Stack>
+
+              <Stack width={"100%"} paddingY={1} sx={{ overflowY: "auto" }}>
+                {userTypes?.map((type, index) => {
+                  return (
+                    <Slide
+                      key={index}
+                      in={true}
+                      direction="right"
+                      style={{ transitionDelay: index * 50 }}
+                    >
+                      <Stack>
+                        <Button
+                          className={
+                            router.query.user_type === type.id
+                              ? "active"
+                              : "inactive"
+                          }
+                          color="inherit"
+                          sx={{
+                            display: "flex",
+                            gap: 1,
+                            justifyContent: "flex-start",
+                            transition: "ease 0.1s",
+                            borderRadius: 0,
+                            // width: "150px",
+                          }}
+                          fullWidth
+                          onClick={() => handleTypeSelect(type)}
+                        >
+                          {type.type}
+                        </Button>
+                      </Stack>
+                    </Slide>
+                  );
+                })}
+              </Stack>
+            </Paper>
+          </Stack>
+          <Divider orientation="vertical" />
+          {/* pages list */}
+          <Stack width={"100%"} height={"100%"} gap={1}>
+            <Stack height={"100%"}>
+              <Stack
+                width={"100%"}
+                height={"calc(100% - 50px)"}
+                sx={{ overflowY: "auto" }}
+              >
+                <Paper className="flat br0">
+                  {selectedUserType ? (
+                    <Table
+                      data={pages}
+                      headers={headers}
+                      callback_extension_search_area={
+                        <Stack
+                          minHeight="30px"
+                          direction={"row"}
+                          alignItems={"center"}
+                          gap={2}
+                        >
+                          <ButtonLoading
+                            startIcon={<Save />}
+                            variant={"contained"}
+                            isLoading={isSaving}
+                            sx={{ width: "max-content", minWidth: 0 }}
+                            size="small"
+                            onClick={handleSave}
                           >
-                            <ButtonLoading
-                              startIcon={<Save />}
-                              variant={"contained"}
-                              // className={"br0"}
-                              isLoading={isSaving}
-                              sx={{ width: "max-content", minWidth: 0 }}
-                              size="small"
-                              onClick={handleSave}
-                            >
-                              Save
-                            </ButtonLoading>
-                          </Stack>
-                        }
-                        callback_cell={(row, key) => (
-                          <Cell
-                            row={row}
-                            header={key}
-                            pages={data.pages}
-                            selectedUserType={selectedUserType}
-                          />
-                        )}
-                      />
-                    ) : (
-                      <Typography textAlign={"center"}>
-                        No UserType Selected
-                      </Typography>
-                    )}
-                  </Paper>
-                </Stack>
+                            Save
+                          </ButtonLoading>
+                        </Stack>
+                      }
+                      callback_cell={(row, key) => (
+                        <Cell
+                          row={row}
+                          header={key}
+                          selectedUserType={selectedUserType}
+                          permissions={currentPermissions}
+                          onChange={handleUpdatePermissions}
+                        />
+                      )}
+                    />
+                  ) : (
+                    <Typography textAlign={"center"}>
+                      No UserType Selected
+                    </Typography>
+                  )}
+                </Paper>
               </Stack>
             </Stack>
           </Stack>
         </Stack>
-      )}
+      </Stack>
     </Stack>
   );
 }
-function Cell({ row, header, selectedUserType }) {
+function Cell({ row, header, selectedUserType, permissions, onChange }) {
   if (header === "path") {
-    const existPage = selectedUserType.pages.find(
-      (_page) => _page.id === row.id
+    const permission = permissions.find(
+      (item) =>
+        item.pageID === row.id && item.userTypeID === selectedUserType.id
     );
-    const isChecked = existPage !== undefined;
+    const isChecked = permission !== undefined;
     return (
       <Stack
         direction={"row"}
@@ -302,13 +267,19 @@ function Cell({ row, header, selectedUserType }) {
         <FormControlLabel
           control={
             <Checkbox
-              defaultChecked={isChecked}
+              checked={isChecked}
               className="pageItem"
-              data-page={JSON.stringify({
-                defaultChecked: isChecked,
-                id: row.id,
-                linkID: isChecked ? existPage.linkID : null,
-              })}
+              // data-page={JSON.stringify({
+              //   defaultChecked: isChecked,
+              //   id: row.id,
+              //   linkID: isChecked ? existPage.linkID : null,
+              // })}
+              onChange={(e) =>
+                onChange(
+                  { userTypeID: selectedUserType.id, pageID: row.id },
+                  e.target.checked
+                )
+              }
             />
           }
           label={row.path}

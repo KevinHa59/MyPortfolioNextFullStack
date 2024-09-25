@@ -7,31 +7,36 @@ import MyAPIs from "../../pages/api-functions/MyAPIs";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import SelectCustom from "../widgets/select/select-custom";
+import { adminContext } from "../../pages/admin";
+
+const status = [
+  { name: "Not Approve", value: false },
+  { name: "Approved", value: true },
+  { name: "All", value: "All" },
+];
 
 export default function Courses() {
   const { addNote } = useContext(asyncNoteContext);
+  const { mainData } = useContext(adminContext);
   const [courses, setCourses] = useState([]);
   const [isGettingData, setIsGettingData] = useState(true);
   const [filter, setFilter] = useState({
     approved: false,
   });
   useEffect(() => {
-    getAllCourses();
-  }, []);
+    if (mainData.courses) {
+      getAllCourses();
+    }
+  }, [mainData]);
 
   async function getAllCourses(_filter) {
     setIsGettingData(true);
     const isApproved = _filter ? _filter.approved : filter.approved;
-    const res = await addNote(
-      "Get Courses",
-      MyAPIs.Resume().getResumeCourse(
-        null,
-        null,
-        null,
-        isApproved === "All" ? null : isApproved
-      )
-    );
-    setCourses(res?.data);
+    const filterCourses =
+      isApproved === "All"
+        ? mainData.courses
+        : mainData.courses.filter((course) => course.approved === isApproved);
+    setCourses(filterCourses);
     setIsGettingData(false);
   }
 
@@ -82,8 +87,22 @@ export default function Courses() {
             data={courses}
             headers={headers}
             callback_extension_search_area={
-              <Stack>
-                <SelectCustom
+              <Stack direction={"row"} gap={1}>
+                {status.map((ss, index) => {
+                  return (
+                    <Button
+                      size="small"
+                      key={index}
+                      onClick={() => handleFilterChange({ approved: ss.value })}
+                      variant={
+                        filter.approved === ss.value ? "contained" : "outlined"
+                      }
+                    >
+                      {ss.name}
+                    </Button>
+                  );
+                })}
+                {/* <SelectCustom
                   label={""}
                   selected_value={filter.approved}
                   data={[
@@ -95,7 +114,7 @@ export default function Courses() {
                   value_field={"value"}
                   size="small"
                   onChange={(val) => handleFilterChange({ approved: val })}
-                />
+                /> */}
               </Stack>
             }
             callback_cell={(row, key) => (

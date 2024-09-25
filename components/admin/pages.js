@@ -38,43 +38,7 @@ export default function Pages() {
 
   return (
     <Stack width={"100%"} height={"100%"} gap={"1px"}>
-      <Header title={"Pages"} icon={<PagesRounded />}>
-        <Stack direction={"row"} gap={1}>
-          <ButtonDialog
-            open={isNewPageOpen}
-            isCloseOnClickOut={false}
-            onClick={() => setIsNewPageOpen(true)}
-            variant={"contained"}
-            button_label="Create New Pages"
-            size="small"
-            paperProps={{
-              style: { minWidth: "clamp(500px, calc(100vw - 50px), 1000px)" },
-            }}
-            title={editPage ? "Edit Page" : "New Pages"}
-            onClose={() => {
-              setIsNewPageOpen(false);
-              setTimeout(() => {
-                setEditPage(null);
-              }, 200);
-            }}
-          >
-            <NewPage
-              value={editPage}
-              pages={pages}
-              onClose={() => {
-                setIsNewPageOpen(false);
-                setTimeout(() => {
-                  setEditPage(null);
-                }, 200);
-              }}
-              onCreatePageSuccess={() => {
-                initData();
-                setIsNewPageOpen(false);
-              }}
-            />
-          </ButtonDialog>
-        </Stack>
-      </Header>
+      <Header title={"Pages"} icon={<PagesRounded />}></Header>
       <Stack
         // variant="outlined"
         sx={{
@@ -97,6 +61,45 @@ export default function Pages() {
                 onRefresh={initData}
               />
             )}
+            callback_extension_search_area={
+              <ButtonDialog
+                open={isNewPageOpen}
+                isCloseOnClickOut={false}
+                onClick={() => setIsNewPageOpen(true)}
+                button_label="New Pages"
+                isStartIcon={true}
+                icon={<Add />}
+                color={"secondary"}
+                size="small"
+                paperProps={{
+                  style: {
+                    minWidth: "clamp(500px, calc(100vw - 50px), 1000px)",
+                  },
+                }}
+                title={editPage ? "Edit Page" : "New Pages"}
+                onClose={() => {
+                  setIsNewPageOpen(false);
+                  setTimeout(() => {
+                    setEditPage(null);
+                  }, 200);
+                }}
+              >
+                <NewPage
+                  value={editPage}
+                  pages={pages}
+                  onClose={() => {
+                    setIsNewPageOpen(false);
+                    setTimeout(() => {
+                      setEditPage(null);
+                    }, 200);
+                  }}
+                  onCreatePageSuccess={() => {
+                    initData();
+                    setIsNewPageOpen(false);
+                  }}
+                />
+              </ButtonDialog>
+            }
           />
         </Paper>
       </Stack>
@@ -358,10 +361,9 @@ function EditButton({ data, pages, onRefresh }) {
 
   return (
     <ButtonDialog
-      isIconButton={true}
       size="small"
       color={"warning"}
-      icon={<Edit />}
+      button_label="Edit"
       open={isOpen}
       isCloseOnClickOut={false}
       onClick={() => {
@@ -434,11 +436,11 @@ function DeletePageButton({ id, onRefresh }) {
       dialog_title={"Remove Page"}
       dialog_message={"Are you sure?"}
       isLoading={isRemoving}
-      sx={{ padding: 0, minWidth: 0 }}
       onConfirm={handleRemove}
       color={"error"}
+      size={"small"}
     >
-      <DeleteForever color="error" />
+      Delete
     </ButtonDialogConfirm>
   );
 }

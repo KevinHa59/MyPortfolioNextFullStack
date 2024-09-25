@@ -18,6 +18,7 @@ import FormHeader from "../widgets/texts/form-header";
 import ErrorRenderer from "../widgets/texts/error-renderer";
 import LoadingComponent from "../widgets/loading/loading-component";
 import {
+  Add,
   Circle,
   Clear,
   Delete,
@@ -33,54 +34,18 @@ import Table from "../widgets/tables/table";
 import Input from "../widgets/input/Input";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
+import { adminContext } from "../../pages/admin";
 
 export default function UserTypes() {
   const { addNote } = useContext(asyncNoteContext);
-  const [userTypes, setUserTypes] = useState([]);
-  const [isGettingData, setIsGettingData] = useState(true);
+  const { mainData } = useContext(adminContext);
+  const { userTypes } = mainData;
   const [isNewUserTypeOpen, setIsNewUserTypeOpen] = useState(false);
   const [updateType, setUpdateType] = useState(null);
-  useEffect(() => {
-    initData();
-  }, []);
-
-  // get data
-  async function initData() {
-    const data = await addNote(
-      "Get User Types",
-      MyAPIs.User().getUserTypes(true)
-    );
-    setIsGettingData(false);
-    setUserTypes(data.data);
-  }
 
   return (
     <Stack width={"100%"} height={"100%"} gap={"1px"}>
-      <Header title={"User Types"} icon={<Hub />}>
-        <Stack direction={"row"} gap={1}>
-          <ButtonDialog
-            open={isNewUserTypeOpen}
-            isCloseOnClickOut={false}
-            onClick={() => setIsNewUserTypeOpen(true)}
-            variant={"contained"}
-            button_label="Create New type"
-            size="small"
-            title={updateType === null ? "New User Type" : "Update User Type"}
-            onClose={() => setIsNewUserTypeOpen(false)}
-          >
-            <NewUserType
-              types={userTypes}
-              updateType={updateType}
-              onCreateSuccess={() => {
-                initData();
-                setIsNewUserTypeOpen(false);
-                setUpdateType(null);
-              }}
-              onClose={() => setIsNewUserTypeOpen(false)}
-            />
-          </ButtonDialog>
-        </Stack>
-      </Header>
+      <Header title={"User Types"} icon={<Hub />}></Header>
       <Stack
         sx={{
           height: "100%",
@@ -89,8 +54,8 @@ export default function UserTypes() {
       >
         <Paper className="flat br0">
           <Table
-            isLoading={isGettingData}
-            data={userTypes}
+            // isLoading={isGettingData}
+            data={userTypes || []}
             headers={headers}
             callback_cell={(row, key) => (
               <Cell
@@ -102,6 +67,33 @@ export default function UserTypes() {
                 }}
               />
             )}
+            callback_extension_search_area={
+              <ButtonDialog
+                open={isNewUserTypeOpen}
+                isCloseOnClickOut={false}
+                onClick={() => setIsNewUserTypeOpen(true)}
+                button_label="New type"
+                icon={<Add />}
+                isStartIcon={true}
+                color={"secondary"}
+                size="small"
+                title={
+                  updateType === null ? "New User Type" : "Update User Type"
+                }
+                onClose={() => setIsNewUserTypeOpen(false)}
+              >
+                <NewUserType
+                  types={userTypes}
+                  updateType={updateType}
+                  onCreateSuccess={() => {
+                    initData();
+                    setIsNewUserTypeOpen(false);
+                    setUpdateType(null);
+                  }}
+                  onClose={() => setIsNewUserTypeOpen(false)}
+                />
+              </ButtonDialog>
+            }
           />
         </Paper>
       </Stack>
@@ -132,19 +124,18 @@ function Cell({ row, header, onEditClick }) {
         justifyContent={"flex-end"}
         gap={"1px"}
       >
-        <IconButton color="warning" onClick={onEditClick}>
-          <Edit />
-        </IconButton>
+        <Button color="warning" size="small" onClick={onEditClick}>
+          Edit
+        </Button>
         <ButtonDialogConfirm
           color={"error"}
           dialog_title={"Delete User Type"}
           dialog_message={"Are You Sure?"}
           dialog_color={"error"}
           size={"small"}
-          sx={{ padding: 0, minWidth: 0 }}
           onConfirm={handleRemoveUserType}
         >
-          <DeleteForever color="error" />
+          Delete
         </ButtonDialogConfirm>
       </Stack>
     );

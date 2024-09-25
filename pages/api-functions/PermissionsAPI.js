@@ -6,6 +6,11 @@ const API = {
 };
 
 class PermissionsAPI {
+  async getPermissions() {
+    return await axios.get(API.permissions, {
+      timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,
+    });
+  }
   async getPermissionsByUserType(userTypeID) {
     return await axios.get(API.permissions, {
       timeout: process.env.NEXT_PUBLIC_AXIOS_TIMEOUT,

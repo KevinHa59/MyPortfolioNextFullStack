@@ -1,6 +1,12 @@
 import PermissionsAPI from "../PermissionsAPI";
 
 export const Permission = {
+  getPermissions: async () => {
+    try {
+      const res = await PermissionsAPI.getPermissions();
+      return res;
+    } catch (error) {}
+  },
   getPermissionsByUserType: async (userTypeID) => {
     try {
       const res = await PermissionsAPI.getPermissionsByUserType(userTypeID);

@@ -8,6 +8,7 @@ export default function ButtonPopover({
   width = "100%",
   disabled = false,
   color,
+  className,
   openColor = null,
   sx_popover,
   sx_button,
@@ -64,6 +65,7 @@ export default function ButtonPopover({
             onClick={handleClick}
             size={size}
             variant={variant}
+            className={className}
             sx={{ width: "max-content", minWidth: "30px", ...sx_button }}
             startIcon={startIcon}
             endIcon={endIcon}

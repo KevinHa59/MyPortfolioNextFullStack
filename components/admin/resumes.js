@@ -1,58 +1,6 @@
-import {
-  Badge,
-  Clear,
-  Delete,
-  DeleteForever,
-  Diversity1,
-  Edit,
-  EmojiEvents,
-  FitnessCenter,
-  HistoryEdu,
-  Label,
-  Pool,
-  Remove,
-  RemoveCircle,
-  School,
-  SensorOccupied,
-  Work,
-  Language as LanguageIcon,
-  Article,
-  ArrowRight,
-  Add,
-  AddCircle,
-} from "@mui/icons-material";
-import {
-  Autocomplete,
-  Button,
-  Divider,
-  Fade,
-  IconButton,
-  LinearProgress,
-  Paper,
-  Slide,
-  Stack,
-  TextField,
-  Tooltip,
-  Typography,
-  useTheme,
-  Zoom,
-} from "@mui/material";
-import axios from "axios";
+import { Language as LanguageIcon, Article } from "@mui/icons-material";
+import { CircularProgress, MenuItem, Paper, Stack } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import ButtonDialog from "../widgets/buttons/button_dialog";
-import Summary from "./resumes/summary";
-import Education from "./resumes/education";
-import Certification from "./resumes/certification";
-import Skill from "./resumes/skill";
-import Project from "./resumes/project";
-import WorkExperience from "./resumes/work";
-import VolunteerExperience from "./resumes/volunteer";
-import Award from "./resumes/award";
-import Language from "./resumes/language";
-import Hobby from "./resumes/hobby";
-import Input from "../widgets/input/Input";
-import ResumesAPI from "../../pages/api-functions/ResumesAPI";
-import ButtonLoading from "../widgets/buttons/button-loading";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import Table from "../widgets/tables/table";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
@@ -61,6 +9,8 @@ import { ResumeIcon } from "../../icons/resume";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
 import { useRouter } from "next/router";
 import { adminContext } from "../../pages/admin";
+import ButtonPopover from "../widgets/buttons/button_popover";
+import { mainContext } from "../../pages/_app";
 
 const headers = [
   {
@@ -89,28 +39,41 @@ const headers = [
     xs: 2,
   },
   {
-    name: "",
-    key: "actions",
+    name: "Status",
+    key: "status",
     xs: 1,
-    align: "right",
+    align: "center",
   },
 ];
 
-export default function Resumes({ defaultUser }) {
+export default function Resumes() {
   const router = useRouter();
   const { addNote } = useContext(asyncNoteContext);
-  const { mainData } = useContext(adminContext);
+  const { mainData, updateMainData } = useContext(adminContext);
+  const { setNote } = useContext(mainContext);
+  const { resumes, status } = mainData;
   const [tableHeader, setTableHeader] = useState(headers);
 
-  const handleRouteEdit = (id) => {
-    router.push({
-      pathname: router.pathname,
-      query: {
-        // section: "edit",
-        ...router.query,
-        id: id,
-      },
-    });
+  const handleUpdateStatus = async (id, ss) => {
+    try {
+      const res = await MyAPIs.Resume().updateResume(id, { statusID: ss.id });
+      if (res) {
+        const copyResumes = _.cloneDeep(mainData.resumes);
+        const index = copyResumes.findIndex((r) => r.id === id);
+        copyResumes[index].statusID = ss.id;
+        copyResumes[index].status = ss;
+        console.log(copyResumes);
+        updateMainData({ ...mainData, resumes: copyResumes });
+        setNote.success("Update Status Success");
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+      setNote.error("Update Status Fail");
+      console.log(res);
+    }
   };
 
   return (
@@ -127,10 +90,18 @@ export default function Resumes({ defaultUser }) {
       >
         <Paper className="flat br0">
           <Table
-            data={mainData?.resumes}
+            data={resumes || []}
             headers={tableHeader}
             callback_cell={(row, key) => {
-              return <Cell row={row} header={key} onRemoveSuccess={() => {}} />;
+              return (
+                <Cell
+                  row={row}
+                  header={key}
+                  status={status}
+                  onRemoveSuccess={() => {}}
+                  onStatusUpdate={(ss) => handleUpdateStatus(row.id, ss)}
+                />
+              );
             }}
           />
         </Paper>
@@ -139,8 +110,8 @@ export default function Resumes({ defaultUser }) {
   );
 }
 
-function Cell({ row, header, onRemoveSuccess }) {
-  const [isRemoving, setIsRemoving] = useState(false);
+function Cell({ row, header, status, onStatusUpdate }) {
+  const [isUpdating, setIsUpdating] = useState(false);
   if (header === "userFirstName") {
     return row["user"].firstName;
   } else if (header === "userLastName") {
@@ -149,30 +120,46 @@ function Cell({ row, header, onRemoveSuccess }) {
     return row["user"].email;
   } else if (header === "createdAt") {
     return new Date(row[header]).toLocaleString();
-  } else if (header === "actions") {
-    const handleRemoveResume = async (setOpen) => {
-      setIsRemoving(true);
-      const res = await MyAPIs.Resume().deleteResumeByID(row["id"]);
-      if (res) {
-        onRemoveSuccess && onRemoveSuccess();
-        setOpen(false);
-      }
-      setIsRemoving(false);
-    };
+  } else if (header === "status") {
     return (
-      <Stack direction={"row"} gap={1} justifyContent={"flex-end"}>
-        <ButtonDialogConfirm
-          isLoading={isRemoving}
-          dialog_color={"error"}
-          dialog_title={"Delete Resume"}
-          dialog_message={"Are You Sure?"}
-          color="error"
-          size="small"
-          onConfirm={handleRemoveResume}
-        >
-          Block
-        </ButtonDialogConfirm>
-      </Stack>
+      <ButtonPopover
+        label={row[header] ? row[header].name : "N/A"}
+        size="small"
+        isIconButton={false}
+        variant="outlined"
+        className="br0"
+        sx_button={{ color: row[header] && row[header].color, paddingY: 0 }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        {isUpdating ? (
+          <Stack padding={1}>
+            <CircularProgress sx={{ fontSize: 10 }} />
+          </Stack>
+        ) : (
+          status.map((ss, index) => {
+            return (
+              <MenuItem
+                key={index}
+                sx={{ color: ss.color }}
+                onClick={async () => {
+                  setIsUpdating(true);
+                  const res = await onStatusUpdate(ss);
+                  setIsUpdating(false);
+                }}
+              >
+                {ss.name}
+              </MenuItem>
+            );
+          })
+        )}
+      </ButtonPopover>
     );
   } else {
     return row[header];

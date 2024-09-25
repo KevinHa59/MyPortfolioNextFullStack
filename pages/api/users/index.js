@@ -33,6 +33,7 @@ async function getUsers(req, res) {
           include: {
             resumes: true,
             userType: true,
+            status: true,
           },
         });
 

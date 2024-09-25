@@ -38,6 +38,7 @@ async function getResumes(req, res) {
             languages: true,
             hobbies: true,
             user: true,
+            status: true,
           },
         });
     res.status(200).json(resumes);
