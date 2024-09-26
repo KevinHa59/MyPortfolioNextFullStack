@@ -6,14 +6,14 @@ const prisma = new PrismaClient();
  * @param {import('next').NextApiResponse} res The HTTP response object.
  */
 
-// api/permissions
+// api/memberships
 // api handler
 export default async function handler(req, res) {
   const method = req.method;
   if (method === "GET") {
-    getPermissions(req, res);
+    getMemberships(req, res);
   } else if (method === "POST") {
-    createPermissions(req, res);
+    createMembership(req, res);
   } else if (method === "DELETE") {
     removePermissions(req, res);
   } else {
@@ -22,40 +22,9 @@ export default async function handler(req, res) {
 }
 
 // [GET] handle insert permission
-async function getPermissions(req, res) {
+async function getMemberships(req, res) {
   try {
-    const { userTypeID, pageID } = req.query;
-    // // input validation
-    // if (!userTypeID && !pageID) {
-    //   res.status(400).json({ error: "Incomplete data" });
-    // }
-    let result = [];
-    if (userTypeID) {
-      const res = await prisma.userTypePageLinks.findMany({
-        where: {
-          userTypeID: userTypeID,
-        },
-        include: {
-          page: true,
-        },
-      });
-
-      result = res.map((item) => item.page);
-    } else if (pageID) {
-      const res = await prisma.userTypePageLinks.findMany({
-        where: {
-          pageID: pageID,
-        },
-        include: {
-          userType: true,
-        },
-      });
-
-      result = res.map((item) => item.userType);
-    } else {
-      const res = await prisma.userTypePageLinks.findMany();
-      result = res;
-    }
+    const result = await prisma.membership.findMany();
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ err: "Internal server error" });
@@ -64,16 +33,20 @@ async function getPermissions(req, res) {
 
 // [POST] handle insert permission
 // input: array of objects with key path and description
-async function createPermissions(req, res) {
+async function createMembership(req, res) {
   try {
     const body = req.body;
+    const { portfolioQuantity, resumeSection, isResumeAccess, isAPIAccess } =
+      body;
     // input validation
-    if (!body.links) {
+    if (
+      [portfolioQuantity, resumeSection, isResumeAccess, isAPIAccess].includes(
+        undefined
+      )
+    ) {
       res.status(400).json({ error: "Incomplete data" });
     }
-    const result = await Promise.all(
-      body.links.map((data) => prisma.userTypePageLinks.create({ data }))
-    );
+    const result = await prisma.membership.create({});
     res.status(201).json(result);
   } catch (err) {
     res.status(500).json({ err: "Internal server error" });

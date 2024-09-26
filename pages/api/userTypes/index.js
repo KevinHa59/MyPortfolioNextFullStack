@@ -45,13 +45,13 @@ async function getUserTypes(req, res) {
     let userTypes = [];
     if (isUserIncluding || isPageIncluding) {
       if (isUserIncluding && !isPageIncluding) {
-        userTypes = await prisma.userTypes[method]({
+        userTypes = await prisma.userType[method]({
           include: {
             users: isUserIncluding,
           },
         });
       } else if (isPageIncluding && !isUserIncluding) {
-        userTypes = await prisma.userTypes[method]({
+        userTypes = await prisma.userType[method]({
           include: {
             pageLinks: {
               include: {
@@ -74,7 +74,7 @@ async function getUserTypes(req, res) {
           return types;
         });
       } else {
-        userTypes = await prisma.userTypes[method]({
+        userTypes = await prisma.userType[method]({
           include: {
             users: true,
             pageLinks: {
@@ -99,7 +99,7 @@ async function getUserTypes(req, res) {
         });
       }
     } else {
-      userTypes = await prisma.userTypes[method]();
+      userTypes = await prisma.userType[method]();
     }
     res.status(200).json(userTypes);
   } catch (error) {
@@ -118,7 +118,7 @@ async function createUserType(req, res) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const userType = await prisma.userTypes.create({
+    const userType = await prisma.userType.create({
       data: {
         type: body.type,
         description: body.description,
@@ -140,7 +140,7 @@ async function updateUserType(req, res) {
       res.status(400).json({ error: "Incomplete data" });
     }
 
-    const userType = await prisma.userTypes.update({
+    const userType = await prisma.userType.update({
       where: { id: body.id },
       data: {
         type: body.type,

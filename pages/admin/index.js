@@ -106,6 +106,7 @@ function Index() {
     courses: [],
     pages: [],
     permissions: [],
+    membershipTypes: [],
   });
 
   useEffect(() => {
@@ -153,6 +154,7 @@ function Index() {
       MyAPIs.Resume().getResumeCourse(),
       MyAPIs.Page().getPages(),
       MyAPIs.Permission().getPermissions(),
+      MyAPIs.MembershipType().getMembershipTypes(),
     ];
     try {
       const res = await axios.all(APIs);
@@ -164,6 +166,7 @@ function Index() {
       const _courses = res[4].data;
       const _pages = res[5].data;
       const _permissions = res[6].data;
+      const _membershipTypes = res[7].data;
       handleUpdateMainData({
         resumes: _resumes,
         users: _users,
@@ -172,6 +175,7 @@ function Index() {
         courses: _courses,
         pages: _pages,
         permissions: _permissions,
+        membershipTypes: _membershipTypes,
       });
     } catch (error) {
       console.log(error);

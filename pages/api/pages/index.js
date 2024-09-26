@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
  * @param {import('next').NextApiResponse} res The HTTP response object.
  */
 
-// api/userTypes
+// api/pages
 // api handler
 export default async function handler(req, res) {
   const method = req.method;

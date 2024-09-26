@@ -1,7 +1,9 @@
 import {
   AdminPanelSettings,
+  AllInbox,
   Article,
   BusinessCenter,
+  CardMembership,
   DashboardCustomize,
   Hub,
   Inventory,
@@ -19,6 +21,7 @@ import Permissions from "./admin/permissions";
 import Resumes from "./admin/resumes";
 import Courses from "./admin/courses";
 import Status from "./admin/status";
+import MembershipTypes from "./admin/membership-types";
 
 export const menu_admin = [
   {
@@ -61,6 +64,19 @@ export const menu_admin = [
         param: "permissions",
         Icon: AdminPanelSettings,
         Comp: <Permissions />,
+      },
+    ],
+  },
+  {
+    title: "Membership Control",
+    param: "membershipControl",
+    Icon: CardMembership,
+    sub: [
+      {
+        title: "Membership Types",
+        param: "membershipTypes",
+        Icon: AllInbox,
+        Comp: <MembershipTypes />,
       },
     ],
   },

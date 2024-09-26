@@ -74,7 +74,7 @@ async function getCourses(req, res) {
         },
       });
     }
-    return res.status(201).json(courses);
+    return res.status(200).json(courses);
   } catch (error) {
     console.log(error);
     res.status(500).json({ err: "Internal server error", error: error });

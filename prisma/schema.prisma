@@ -26,25 +26,26 @@ model Account {
   scope             String?
   id_token          String? @db.String
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
- 
+
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
   userId       String   @db.ObjectId
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@map("sessions")
 }
 
@@ -53,64 +54,123 @@ model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
 
 model Credential {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  apiKey          String    @unique
-  allowedOrigins  String[]
-  user            User?    
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime?  @default(now())
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  apiKey         String    @unique
+  allowedOrigins String[]
+  user           User?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime? @default(now())
+
   @@map("credentials")
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
+  email         String?     @unique
+  emailVerified DateTime?   @map("email_verified")
   image         String?
   accounts      Account[]
   sessions      Session[]
-  firstName    String?
-  lastName     String?
-  dob          DateTime?
-  address      String?
-  city         String?
-  state        String?
-  country      String?
-  zipCode      String?
-  cellPhone    String?
-  homePhone    String?
-  linkedIn     String?
-  github       String?
-  twitter      String?
-  facebook     String?
-  instagram    String?
-  portfolio    String?
-  password     String?
-  userTypeID   String?
-  userType     UserTypes? @relation(fields: [userTypeID], references: [id])
-  credentialID String?  @unique @db.ObjectId
-  credential   Credential? @relation(fields: [credentialID], references: [id])
-  refreshToken String?
-  resumes      Resume[]
-  course       Course[]
-  statusID     String?  @db.ObjectId
-  status       Status?   @relation(fields: [statusID], references: [id])
- 
+  firstName     String?
+  lastName      String?
+  dob           DateTime?
+  address       String?
+  city          String?
+  state         String?
+  country       String?
+  zipCode       String?
+  cellPhone     String?
+  homePhone     String?
+  linkedIn      String?
+  github        String?
+  twitter       String?
+  facebook      String?
+  instagram     String?
+  portfolio     String?
+  password      String?
+  userTypeID    String?
+  userType      UserType?   @relation(fields: [userTypeID], references: [id])
+  credentialID  String?     @unique @db.ObjectId
+  credential    Credential? @relation(fields: [credentialID], references: [id])
+  membershipID  String?     @db.ObjectId
+  membership    Membership? @relation(fields: [membershipID], references: [id])
+  refreshToken  String?
+  resumes       Resume[]
+  course        Course[]
+  statusID      String?     @db.ObjectId
+  status        Status?     @relation(fields: [statusID], references: [id])
+
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
- 
+
   @@map("users")
 }
 
+// user membership
+model Membership {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  startDate        DateTime
+  endDate          DateTime
+  users            User[]
+  membershipTypeID String         @db.ObjectId
+  membershipType   MembershipType @relation(fields: [membershipTypeID], references: [id])
 
-model UserTypes {
+  @@map("memberships")
+}
+
+// membership type associate with user membership
+model MembershipType {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  type        String
+  description String
+  cost        Float?            @default(0)
+  featureID   String            @unique @db.ObjectId
+  feature     MembershipFeature @relation(fields: [featureID], references: [id])
+  memberships Membership[]
+
+  @@map("membership_type")
+}
+
+// membership feature associate with membership type
+model MembershipFeature {
+  id                        String                  @id @default(auto()) @map("_id") @db.ObjectId
+  portfolioQuantity         Int @default(1)
+  isResumeAccess            Boolean @default(false)
+  isAPIAccess               Boolean @default(false)
+  membershipType            MembershipType?
+  membershipResumeSectionID String                  @unique @db.ObjectId
+  membershipResumeSection   MembershipResumeSection @relation(fields: [membershipResumeSectionID], references: [id])
+
+  @@map("membership_features")
+}
+
+model MembershipResumeSection {
+  id                      String  @id @default(auto()) @map("_id") @db.ObjectId
+  workExperience          Boolean @default(false)
+  education               Boolean @default(true)
+  skills                  Boolean @default(true)
+  certifications          Boolean @default(false)
+  projects                Boolean @default(true)
+  awards                  Boolean @default(false)
+  volunteerExperience     Boolean @default(false)
+  languages               Boolean @default(true)
+  publications            Boolean @default(false)
+  professionalMemberships Boolean @default(false)
+  hobbies                 Boolean @default(true)
+
+  membershipResume MembershipFeature?
+
+  @@map("membership_resume_sections")
+}
+
+model UserType {
   id          String              @id @default(auto()) @map("_id") @db.ObjectId
   type        String              @unique
   description String?             @default("")
@@ -118,8 +178,9 @@ model UserTypes {
   users       User[]
   pageLinks   UserTypePageLinks[]
 
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("user_types")
 }
 
@@ -129,17 +190,18 @@ model Pages {
   description   String?             @default("")
   userTypeLinks UserTypePageLinks[]
 
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("pages")
 }
 
 model UserTypePageLinks {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   userTypeID String
   pageID     String
-  userType   UserTypes @relation(fields: [userTypeID], references: [id])
-  page       Pages     @relation(fields: [pageID], references: [id])
+  userType   UserType @relation(fields: [userTypeID], references: [id])
+  page       Pages    @relation(fields: [pageID], references: [id])
 
   @@unique([userTypeID, pageID])
   @@map("user_type_page_links")
@@ -161,31 +223,32 @@ model Resume {
   publications            Publication[]
   professionalMemberships ProfessionalMembership[]
   hobbies                 Hobby[]
-  resumeSectionsID        String?                   @db.ObjectId
-  user                    User                      @relation(fields: [userID], references: [id])
+  resumeSectionsID        String?                  @db.ObjectId
+  user                    User                     @relation(fields: [userID], references: [id])
   resumeSections          ResumeSection?
-  statusID                String?                   @db.ObjectId
-  status                  Status?                   @relation(fields: [statusID], references: [id])
+  statusID                String?                  @db.ObjectId
+  status                  Status?                  @relation(fields: [statusID], references: [id])
 
-  createdAt               DateTime?                 @default(now())
-  updatedAt               DateTime?                 @updatedAt
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("resumes")
 }
 
-model Status{
-  id      String        @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  color   String?       
+model Status {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  color String?
 
-  resume  Resume[]
-  user    User[]      
+  resume Resume[]
+  user   User[]
 
   @@map("status")
 }
 
 model ResumeSection {
   id                              String  @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID                        String  @unique @db.ObjectId
+  resumeID                        String? @unique @db.ObjectId
   workExperience                  Boolean @default(false)
   workExperiencePriority          Int     @default(1)
   education                       Boolean @default(true)
@@ -209,10 +272,10 @@ model ResumeSection {
   hobbies                         Boolean @default(true)
   hobbiesPriority                 Int     @default(11)
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  resume    Resume?   @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
 
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
   @@map("resume_sections")
 }
 
@@ -226,39 +289,42 @@ model WorkExperience {
   endDate          DateTime?
   responsibilities String
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("work_experiences")
 }
 
 model Education {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  resumeID     String    @db.ObjectId
-  degree       String
-  schoolName   String
-  location     String
-  startDate    DateTime
-  endDate      DateTime?
-  fieldOfStudy String
-  gpa          Float?
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  resumeID            String    @db.ObjectId
+  degree              String
+  schoolName          String
+  location            String
+  startDate           DateTime
+  endDate             DateTime?
+  fieldOfStudy        String
+  gpa                 Float?
   relevantCourseworks String[]
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("educations")
 }
 
 model Course {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  name        String     @unique
-  approved    Boolean    @default(false)
-  createdBy   String?     @db.ObjectId
-  createdAt   DateTime   @default(now()) 
-  user        User?      @relation(fields: [createdBy], references: [id])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  approved  Boolean  @default(false)
+  createdBy String?  @db.ObjectId
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [createdBy], references: [id])
 
-  updatedAt            DateTime?                @updatedAt
+  updatedAt DateTime? @updatedAt
+
   @@map("courses")
 }
 
@@ -268,9 +334,10 @@ model Skill {
   name     String
   group    String?
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("skills")
 }
 
@@ -281,9 +348,10 @@ model Certification {
   issuingOrganization String
   dateObtained        DateTime
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("certifications")
 }
 
@@ -296,9 +364,10 @@ model Project {
   technologies String[]
   achievements String
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("projects")
 }
 
@@ -309,9 +378,10 @@ model Award {
   issuingOrganization String
   dateReceived        DateTime?
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("awards")
 }
 
@@ -325,9 +395,10 @@ model VolunteerExperience {
   endDate          DateTime?
   responsibilities String?
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("volunteer_experiences")
 }
 
@@ -337,9 +408,10 @@ model Language {
   language         String
   proficiencyLevel String
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("languages")
 }
 
@@ -350,9 +422,10 @@ model Publication {
   publicationName String
   datePublished   DateTime
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("publications")
 }
 
@@ -364,9 +437,10 @@ model ProfessionalMembership {
   startDate        DateTime
   endDate          DateTime?
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("professional_memberships")
 }
 
@@ -375,8 +449,9 @@ model Hobby {
   resumeID String @db.ObjectId
   name     String
 
-  resume Resume @relation(fields: [resumeID], references: [id], onDelete: Cascade)
-  createdAt               DateTime?                @default(now())
-  updatedAt               DateTime?                @updatedAt
+  resume    Resume    @relation(fields: [resumeID], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
   @@map("hobbies")
 }

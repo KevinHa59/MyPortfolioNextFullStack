@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
  * @param {import('next').NextApiResponse} res The HTTP response object.
  */
 
-// api/userTypes
+// api/status
 // api handler
 export default async function handler(req, res) {
   const method = req.method;
@@ -25,8 +25,7 @@ export default async function handler(req, res) {
   }
 }
 
-// [GET] handle get pages
-// input: userTypeIncluding: "1" or "true" to include userTypes in response, otherwise userTypes wont be including in response
+// [GET] handle get status
 async function getStatus(req, res) {
   try {
     const status = await prisma.status.findMany();

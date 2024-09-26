@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 async function InstallationVerification(req, res) {
   try {
     // find admin
-    const type = await prisma.userTypes.findUnique({
+    const type = await prisma.userType.findUnique({
       where: {
         type: "Admin", // Check for the existence of the UserType with type "User"
       },

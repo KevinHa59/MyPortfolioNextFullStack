@@ -1,6 +1,7 @@
 import { Auth } from "./MyAPI/Auth";
 import { Credential } from "./MyAPI/Credential";
 import { General } from "./MyAPI/General";
+import { MembershipType } from "./MyAPI/MembershipType";
 import { Page } from "./MyAPI/Page";
 import { Permission } from "./MyAPI/Permission";
 import { Resume } from "./MyAPI/Resume";
@@ -22,6 +23,9 @@ class MyAPIs {
   }
   User() {
     return User;
+  }
+  MembershipType() {
+    return MembershipType;
   }
   Page() {
     return Page;

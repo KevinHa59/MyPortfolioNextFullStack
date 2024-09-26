@@ -43,8 +43,17 @@ export function Ellipse({ str, limit }) {
     </Stack>
   );
 }
-
+export function camelToTitle(str) {
+  // find cap and add space before it
+  str = str.replace(/([A-Z]+)/g, " $1").trim();
+  // split by space
+  str = str.split(" ");
+  // cap first letter of each
+  str = str.map((word) => word.charAt(0).toUpperCase() + word.slice(1));
+  return str.join(" ");
+}
 export const stringUtil = {
   ellipsis: (str, limit) => _ellipsis(str, limit),
   Ellipses: (str, limit) => <Ellipse str={str} limit={limit} />,
+  camelToTitle: (str) => camelToTitle(str),
 };
