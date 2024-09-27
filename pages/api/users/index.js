@@ -34,6 +34,11 @@ async function getUsers(req, res) {
             resumes: true,
             userType: true,
             status: true,
+            membership: {
+              include: {
+                membershipType: true,
+              },
+            },
           },
         });
 
@@ -62,6 +67,19 @@ async function createUser(req, res) {
         firstName: body.firstName,
         lastName: body.lastName || "",
         userTypeID: "6682ce65add598fe72845318",
+        membership: {
+          create: {
+            startDate: new Date(),
+            membershipTypeID: "66f59507681a7e4424696958",
+          },
+        },
+      },
+      include: {
+        membership: {
+          include: {
+            membershipType: true,
+          },
+        },
       },
     });
     res.status(201).json(user);
@@ -86,9 +104,17 @@ async function updateUser(req, res) {
       data: {
         ...body,
       },
+      include: {
+        membership: {
+          include: {
+            membershipType: true,
+          },
+        },
+      },
     });
     res.status(201).json(user);
   } catch (err) {
+    console.log(err);
     res.status(500).json({ err: "Internal server error" });
   }
 }

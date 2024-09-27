@@ -31,6 +31,19 @@ async function getUserByEmail(req, res) {
       include: {
         userType: true,
         credential: true,
+        membership: {
+          include: {
+            membershipType: {
+              include: {
+                feature: {
+                  include: {
+                    membershipResumeSection: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
     if (user !== null) {

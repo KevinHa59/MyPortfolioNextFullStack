@@ -38,10 +38,22 @@ import { adminContext } from "../../pages/admin";
 
 export default function UserTypes() {
   const { addNote } = useContext(asyncNoteContext);
-  const { mainData } = useContext(adminContext);
+  const { mainData, updateMainData } = useContext(adminContext);
   const { userTypes } = mainData;
   const [isNewUserTypeOpen, setIsNewUserTypeOpen] = useState(false);
   const [updateType, setUpdateType] = useState(null);
+
+  const handleUpdateUserType = (type) => {
+    const copy = _.cloneDeep(mainData.userTypes);
+    const index = copy.findIndex((item) => item.id === type.id);
+
+    if (index === -1) {
+      copy.push(type);
+    } else {
+      copy[index] = type;
+    }
+    updateMainData({ userTypes: copy });
+  };
 
   return (
     <Stack width={"100%"} height={"100%"} gap={"1px"}>
@@ -85,8 +97,8 @@ export default function UserTypes() {
                 <NewUserType
                   types={userTypes}
                   updateType={updateType}
-                  onCreateSuccess={() => {
-                    initData();
+                  onCreateSuccess={(newData) => {
+                    handleUpdateUserType(newData);
                     setIsNewUserTypeOpen(false);
                     setUpdateType(null);
                   }}
@@ -102,8 +114,8 @@ export default function UserTypes() {
 }
 
 function Cell({ row, header, onEditClick }) {
-  if (header === "quantity") {
-    return row.users?.length || 0;
+  if (header === "_count") {
+    return row[header].users || 0;
   } else if (header === "color") {
     return (
       <Circle
@@ -154,8 +166,8 @@ const headers = [
     xs: 2,
   },
   {
-    name: "Quantity",
-    key: "quantity",
+    name: "User Qty",
+    key: "_count",
     xs: 2,
     align: "center",
   },
@@ -230,7 +242,7 @@ function UserTypeCard({ type, index, onEditClick, onDeleteClick }) {
 }
 
 // new user type component
-function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
+function NewUserType({ types, updateType = null, onCreateSuccess }) {
   const [input, setInput] = useState({
     type: "",
     description: "",
@@ -266,7 +278,7 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
         input.type,
         input.description
       );
-      onCreateSuccess && onCreateSuccess();
+      onCreateSuccess && onCreateSuccess(res.data);
       handleInputChange({ type: "", description: "" });
     }
     setIsUserCreating(false);
@@ -289,7 +301,7 @@ function NewUserType({ types, updateType = null, onCreateSuccess, onClose }) {
         input.description,
         input.color
       );
-      onCreateSuccess && onCreateSuccess();
+      onCreateSuccess && onCreateSuccess(res);
       handleInputChange({ type: "", description: "" });
     }
     setIsUserCreating(false);

@@ -99,7 +99,15 @@ async function getUserTypes(req, res) {
         });
       }
     } else {
-      userTypes = await prisma.userType[method]();
+      userTypes = await prisma.userType[method]({
+        include: {
+          _count: {
+            select: {
+              users: true,
+            },
+          },
+        },
+      });
     }
     res.status(200).json(userTypes);
   } catch (error) {

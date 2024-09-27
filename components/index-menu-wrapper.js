@@ -42,25 +42,23 @@ export default function IndexMenuWrapper({ children, page }) {
   });
 
   useEffect(() => {
-    if (isAuthDone === false) {
-      if (status === "authenticated") {
-        if (session.user) {
-          checkUser(session.user.email, session.user);
-        } else {
-          setIsAuthDone(true);
-        }
-      } else if (status === "unauthenticated") {
-        // check manually login session
-        let localSession = sessionStorage.getItem("user");
-        if (localSession) {
-          localSession = atob(localSession);
-          localSession = JSON.parse(localSession);
-          checkUser(localSession.email, localSession);
-        }
+    if (status === "authenticated") {
+      if (session.user) {
+        checkUser(session.user.email, session.user);
+      } else {
         setIsAuthDone(true);
       }
+    } else if (status === "unauthenticated") {
+      // check manually login session
+      let localSession = sessionStorage.getItem("user");
+      if (localSession) {
+        localSession = atob(localSession);
+        localSession = JSON.parse(localSession);
+        checkUser(localSession.email, localSession);
+      }
+      setIsAuthDone(true);
     }
-  }, [status, isAuthDone]);
+  }, [status]);
 
   async function checkUser(email, user) {
     try {

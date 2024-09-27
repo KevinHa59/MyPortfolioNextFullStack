@@ -63,7 +63,8 @@ model Credential {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   apiKey         String    @unique
   allowedOrigins String[]
-  user           User?
+  user           User?     @relation(fields: [userId], references: [id], onDelete: Cascade)  // Add the relation with cascade
+  userId         String?    @unique  @db.ObjectId  // Foreign key to the User model
   createdAt      DateTime  @default(now())
   updatedAt      DateTime? @default(now())
 
@@ -95,12 +96,11 @@ model User {
   instagram     String?
   portfolio     String?
   password      String?
-  userTypeID    String?
+  userTypeID    String?     @db.ObjectId
   userType      UserType?   @relation(fields: [userTypeID], references: [id])
-  credentialID  String?     @unique @db.ObjectId
-  credential    Credential? @relation(fields: [credentialID], references: [id])
-  membershipID  String?     @db.ObjectId
-  membership    Membership? @relation(fields: [membershipID], references: [id])
+  credentialID  String?      @db.ObjectId
+  credential    Credential?
+  membership    Membership?
   refreshToken  String?
   resumes       Resume[]
   course        Course[]
@@ -115,12 +115,13 @@ model User {
 
 // user membership
 model Membership {
-  id               String         @id @default(auto()) @map("_id") @db.ObjectId
-  startDate        DateTime
-  endDate          DateTime
-  users            User[]
-  membershipTypeID String         @db.ObjectId
-  membershipType   MembershipType @relation(fields: [membershipTypeID], references: [id])
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  startDate         DateTime
+  endDate           DateTime?
+  userID            String?           @unique @db.ObjectId
+  user              User?             @relation(fields: [userID], references: [id], onDelete: Cascade)    
+  membershipTypeID  String            @db.ObjectId
+  membershipType    MembershipType    @relation(fields: [membershipTypeID], references: [id])
 
   @@map("memberships")
 }

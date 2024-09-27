@@ -102,14 +102,18 @@ export default function MenuRenderer({ value }) {
 
   return (
     <Stack>
-      {value.map((item, index) => (
-        <MenuDetail
-          key={index}
-          menuItem={item}
-          onRoute={handleRoute}
-          activeRoute={router.query.section || ""}
-        />
-      ))}
+      {value.map((item, index) => {
+        if (item.visible === undefined || item.visible === true) {
+          return (
+            <MenuDetail
+              key={index}
+              menuItem={item}
+              onRoute={handleRoute}
+              activeRoute={router.query.section || ""}
+            />
+          );
+        }
+      })}
     </Stack>
   );
 }

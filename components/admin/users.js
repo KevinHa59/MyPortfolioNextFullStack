@@ -56,7 +56,6 @@ export default function Users() {
   const { setNote } = useContext(mainContext);
   const { mainData, updateMainData } = useContext(adminContext);
   const { users, userTypes, status } = mainData;
-
   const handleUpdateStatus = async (id, ss) => {
     try {
       const res = await MyAPIs.User().updateUserMaster(id, {
@@ -67,7 +66,7 @@ export default function Users() {
         const index = copy.findIndex((r) => r.id === id);
         copy[index].statusID = ss.id;
         copy[index].status = ss;
-        console.log(copy);
+
         updateMainData({ ...mainData, users: copy });
         setNote.success("Update Status Success");
       } else {
@@ -75,6 +74,24 @@ export default function Users() {
       }
     } catch (error) {
       setNote.error("Update Status Fail");
+      console.log(error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const res = await MyAPIs.User().removeUserByID(id);
+      if (res) {
+        const copy = _.cloneDeep(mainData.users);
+        const index = copy.findIndex((r) => r.id === id);
+        copy.splice(index, 1);
+        updateMainData({ ...mainData, users: copy });
+        setNote.success("Delete User Success");
+      } else {
+        setNote.error("Delete User Fail");
+      }
+    } catch (error) {
+      setNote.error("Delete User Fail");
       console.log(error);
     }
   };
@@ -97,7 +114,9 @@ export default function Users() {
                 row={row}
                 header={key}
                 status={status}
+                userTypes={userTypes}
                 onStatusUpdate={(ss) => handleUpdateStatus(row.id, ss)}
+                onDelete={() => handleDelete(row.id)}
               />
             )}
           />
@@ -106,14 +125,15 @@ export default function Users() {
     </Stack>
   );
 }
-function Cell({ row, header, status, onStatusUpdate }) {
+function Cell({ row, header, status, userTypes, onStatusUpdate, onDelete }) {
   const [isUpdating, setIsUpdating] = useState(false);
   if (header === "userType") {
+    const color = userTypes.find((type) => type.id === row[header]?.id).color;
     return (
       <Chip
         size="small"
-        label={`${row[header].type}`}
-        sx={{ background: row[header].color, fontWeight: "bold" }}
+        label={`${row[header]?.type}`}
+        sx={{ background: color, fontWeight: "bold", color: "#fff" }}
       />
     );
   } else if (header === "dob") {
@@ -126,6 +146,8 @@ function Cell({ row, header, status, onStatusUpdate }) {
           day: "numeric",
         })
       : "N/A";
+  } else if (header === "membership") {
+    return row[header]?.membershipType?.type || "N/A";
   } else if (header === "status") {
     return (
       <ButtonPopover
@@ -167,6 +189,27 @@ function Cell({ row, header, status, onStatusUpdate }) {
         )}
       </ButtonPopover>
     );
+  } else if (header === "action") {
+    return (
+      <Stack
+        direction={"row"}
+        gap={1}
+        width={"100%"}
+        justifyContent={"flex-end"}
+      >
+        <ButtonDialogConfirm
+          size="small"
+          color={"error"}
+          disabled={row["userType"]?.type === "Admin"}
+          dialog_color={"error"}
+          dialog_title={"Delete User"}
+          dialog_message={"Are you sure?"}
+          onConfirm={onDelete}
+        >
+          Delete
+        </ButtonDialogConfirm>
+      </Stack>
+    );
   } else return row[header];
 }
 
@@ -174,17 +217,17 @@ const headers = [
   {
     name: "First Name",
     key: "firstName",
-    xs: 2,
+    xs: 1.5,
   },
   {
     name: "Last Name",
     key: "lastName",
-    xs: 2,
+    xs: 1.5,
   },
   {
     name: "Email",
     key: "email",
-    xs: 3,
+    xs: 2,
   },
   {
     name: "Date of Birth",
@@ -198,9 +241,21 @@ const headers = [
     align: "center",
   },
   {
-    name: "Status",
-    key: "status",
+    name: "Membership",
+    key: "membership",
     xs: 2,
     align: "center",
+  },
+  {
+    name: "Status",
+    key: "status",
+    xs: 1,
+    align: "center",
+  },
+  {
+    name: "Action",
+    key: "action",
+    xs: 1,
+    align: "right",
   },
 ];

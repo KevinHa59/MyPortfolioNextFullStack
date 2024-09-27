@@ -112,6 +112,7 @@ function Index() {
       value={{
         router: router,
         mainData: mainData,
+        session: session,
         updateMainData: handleUpdateMainData,
       }}
     >
@@ -150,7 +151,7 @@ function Index() {
               className="br0"
               sx={{ zIndex: 2, height: "100%", paddingY: 4 }}
             >
-              <MenuRenderer value={menu_profile} />
+              <MenuRenderer value={menu_profile(session.membership)} />
             </Paper>
           </Stack>
 
@@ -167,7 +168,10 @@ function Index() {
                   scrollBehavior: "smooth",
                 }}
               >
-                {findComponentByParam(section, menu_profile)}
+                {findComponentByParam(
+                  section,
+                  menu_profile(session.membership)
+                )}
               </Stack>
             </Fade>
           </Stack>
