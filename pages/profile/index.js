@@ -31,6 +31,7 @@ function Index() {
   const [mainData, setMainData] = useState({
     user: null,
     resumes: [],
+    membershipTypes: [],
   });
 
   useEffect(() => {
@@ -79,11 +80,18 @@ function Index() {
   }, [status]);
 
   const initData = async (userID) => {
-    const APIs = [MyAPIs.Resume().getResumesByUser(userID)];
+    const APIs = [
+      MyAPIs.Resume().getResumesByUser(userID),
+      MyAPIs.MembershipType().getMembershipTypes(),
+    ];
     try {
       const res = await axios.all(APIs);
       const _resumes = res[0].data;
-      handleUpdateMainData({ resumes: _resumes });
+      const _membershipTypes = res[1].data;
+      handleUpdateMainData({
+        resumes: _resumes,
+        membershipTypes: _membershipTypes,
+      });
     } catch (error) {
       console.log(error);
     }

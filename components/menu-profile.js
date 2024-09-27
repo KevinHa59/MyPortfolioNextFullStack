@@ -2,6 +2,7 @@ import {
   ApiRounded,
   Apps,
   Article,
+  CardMembership,
   CodeRounded,
   KeyRounded,
   ManageAccounts,
@@ -16,6 +17,7 @@ import PortfolioCollection from "./profile/portfolio-collections";
 import PasswordChange from "../pages/authentication/password-change";
 import Credential from "./profile/for-dev/credential";
 import CORS from "./profile/for-dev/cors";
+import Membership from "./profile/membership";
 
 export const menu_profile = (membership) => {
   const feature = membership?.membershipType?.feature || null;
@@ -77,6 +79,12 @@ export const menu_profile = (membership) => {
           // Comp: <PasswordChange useLoggedInUser={true} />,
         },
       ],
+    },
+    {
+      Icon: CardMembership,
+      title: "Subscription",
+      param: "subscription",
+      Comp: <Membership />,
     },
   ];
 };

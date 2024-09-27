@@ -234,20 +234,20 @@ function Index() {
         <Stack
           zIndex={1}
           direction={"row"}
-          height={"calc(100% - 63px)"}
+          height={"calc(100vh - 63px)"}
           width={"100%"}
         >
           <Stack height={"100%"} width="300px">
             <Paper
               variant="outlined"
               className="br0"
-              sx={{ zIndex: 2, height: "100%", paddingY: 4 }}
+              sx={{ zIndex: 2, height: "100%", paddingY: 4, overflowY: "auto" }}
             >
               <MenuRenderer value={menu_admin} />
             </Paper>
           </Stack>
           <Divider orientation="vertical" />
-          <Stack height={"100%"} width={"100%"} sx={{ overflowY: "auto" }}>
+          <Stack height={"100%"} width={"100%"} sx={{ overflow: "auto" }}>
             {!isInitDone && (
               <Stack alignItems={"center"} width={"100%"}>
                 <CircularProgress />
@@ -255,7 +255,6 @@ function Index() {
             )}
             <Fade in={isInitDone}>
               <Stack
-                height={"100%"}
                 sx={{
                   scrollBehavior: "smooth",
                 }}
