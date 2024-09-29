@@ -30,10 +30,10 @@ function Index() {
   const { data: session, status } = useSession();
   const [mainData, setMainData] = useState({
     user: null,
-    resumes: [],
+    resumes: null,
     membershipTypes: [],
   });
-
+  // console.log(mainData?.user?.membership, session.membership);
   useEffect(() => {
     if (router.isReady === true) {
       const _section = router.query.section;
@@ -80,16 +80,12 @@ function Index() {
   }, [status]);
 
   const initData = async (userID) => {
-    const APIs = [
-      MyAPIs.Resume().getResumesByUser(userID),
-      MyAPIs.MembershipType().getMembershipTypes(),
-    ];
+    const APIs = [MyAPIs.MembershipType().getMembershipTypes()];
     try {
       const res = await axios.all(APIs);
-      const _resumes = res[0].data;
-      const _membershipTypes = res[1].data;
+      const _membershipTypes = res[0].data;
       handleUpdateMainData({
-        resumes: _resumes,
+        // resumes: _resumes,
         membershipTypes: _membershipTypes,
       });
     } catch (error) {
@@ -159,7 +155,11 @@ function Index() {
               className="br0"
               sx={{ zIndex: 2, height: "100%", paddingY: 4 }}
             >
-              <MenuRenderer value={menu_profile(session.membership)} />
+              <MenuRenderer
+                value={menu_profile(
+                  mainData?.user?.membership || session.membership
+                )}
+              />
             </Paper>
           </Stack>
 
@@ -178,7 +178,7 @@ function Index() {
               >
                 {findComponentByParam(
                   section,
-                  menu_profile(session.membership)
+                  menu_profile(mainData?.user?.membership || session.membership)
                 )}
               </Stack>
             </Fade>

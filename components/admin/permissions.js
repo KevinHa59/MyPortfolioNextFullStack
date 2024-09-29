@@ -216,7 +216,7 @@ export default function Permissions() {
             <Stack height={"100%"}>
               <Stack
                 width={"100%"}
-                height={"calc(100% - 50px)"}
+                // height={"calc(100% - 50px)"}
                 sx={{ overflowY: "auto" }}
               >
                 <Paper className="flat br0">

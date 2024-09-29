@@ -128,7 +128,7 @@ export default function Users() {
 function Cell({ row, header, status, userTypes, onStatusUpdate, onDelete }) {
   const [isUpdating, setIsUpdating] = useState(false);
   if (header === "userType") {
-    const color = userTypes.find((type) => type.id === row[header]?.id).color;
+    const color = userTypes.find((type) => type.id === row[header]?.id)?.color;
     return (
       <Chip
         size="small"

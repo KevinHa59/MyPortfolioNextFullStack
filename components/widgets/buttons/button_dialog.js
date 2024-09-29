@@ -62,9 +62,16 @@ export default function ButtonDialog({
           size={size}
           color={color}
           variant={variant}
-          onClick={(event) =>
-            !isCloseOnClickOut ? onClick(event) : handleOpen(true)
-          }
+          onClick={(event) => {
+            if (!isCloseOnClickOut) {
+              onClick(event);
+            } else if (open === undefined) {
+              onClick && onClick(event);
+              handleOpen(true);
+            } else {
+              handleOpen(true);
+            }
+          }}
         >
           {button_label}
         </Button>
@@ -73,7 +80,14 @@ export default function ButtonDialog({
         sx={sx_dialog}
         PaperProps={{ ...paperProps }}
         open={!isCloseOnClickOut ? open : isOpen}
-        onClose={() => (isCloseOnClickOut ? handleOpen(false) : null)}
+        onClose={() => {
+          if (isCloseOnClickOut) {
+            onClose && onClose();
+            handleOpen(false);
+          } else {
+            return null;
+          }
+        }}
       >
         <Stack
           direction={"row"}
@@ -84,7 +98,7 @@ export default function ButtonDialog({
           <Typography variant="body2" fontWeight={"bold"}>
             {title}
           </Typography>
-          {onClose && (
+          {open !== undefined && onClose && (
             <IconButton size="small" color="error" onClick={onClose}>
               <Clear />
             </IconButton>

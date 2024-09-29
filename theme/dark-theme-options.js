@@ -111,7 +111,12 @@ export const darkThemeOptions = {
           "&:hover": {
             color: "rgba(150,150,150,1)",
             background: `rgba(200,200,200,0.1)`,
+            "&.hoverLink": {
+              backgroundColor: "transparent !important",
+              textDecoration: "underline",
+            },
           },
+
           "&.MuiButton-containedPrimary": {
             color: text.black,
             boxShadow: `${background.button}cc`,

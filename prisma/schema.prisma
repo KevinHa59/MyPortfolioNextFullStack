@@ -100,7 +100,7 @@ model User {
   userType      UserType?   @relation(fields: [userTypeID], references: [id])
   credentialID  String?      @db.ObjectId
   credential    Credential?
-  membership    Membership?
+  membership    Membership[]
   refreshToken  String?
   resumes       Resume[]
   course        Course[]
@@ -116,13 +116,15 @@ model User {
 // user membership
 model Membership {
   id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  paid              Float?            @default(0.0)
   startDate         DateTime
   endDate           DateTime?
-  userID            String?           @unique @db.ObjectId
+  userID            String?           @db.ObjectId
   user              User?             @relation(fields: [userID], references: [id], onDelete: Cascade)    
   membershipTypeID  String            @db.ObjectId
   membershipType    MembershipType    @relation(fields: [membershipTypeID], references: [id])
-
+  statusID          String?           @db.ObjectId
+  status            Status?           @relation(fields: [statusID], references: [id])
   @@map("memberships")
 }
 
@@ -243,6 +245,7 @@ model Status {
 
   resume Resume[]
   user   User[]
+  membership Membership[]
 
   @@map("status")
 }

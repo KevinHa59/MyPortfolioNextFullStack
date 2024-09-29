@@ -53,6 +53,10 @@ export default NextAuth({
                 ? process.env.NEXT_PUBLIC_DEVELOPMENT_URL
                 : process.env.NEXT_PUBLIC_PRODUCTION_URL;
             try {
+              const _membership = await axios.post(`${url}/api/memberships`, {
+                userID: user.id,
+              });
+
               // update firstName, lastName, createdAt, updatedAt, and userTypeID
               const _user = await axios.put(`${url}/api/users`, {
                 id: user.id,
@@ -62,12 +66,6 @@ export default NextAuth({
                 updatedAt: new Date(),
                 userTypeID: "6682ce65add598fe72845318",
                 statusID: "66f36ee3758cd3ce7f207434",
-                membership: {
-                  create: {
-                    startDate: new Date(),
-                    membershipTypeID: "66f59507681a7e4424696958",
-                  },
-                },
               });
               return _user.data;
             } catch (error) {

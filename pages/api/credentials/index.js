@@ -92,7 +92,7 @@ async function deleteCredential(req, res) {
     if (!query.id) {
       res.status(400).json({ error: "Incomplete data" });
     }
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
         credentialID: query.id,
       },

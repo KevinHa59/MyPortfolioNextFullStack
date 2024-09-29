@@ -31,6 +31,9 @@ export const baseThemeOptions = {
           textTransform: "none",
           borderRadius: "25px",
           fontWeight: 400,
+          "&.hoverLink": {
+            background: "transparent",
+          },
           "&.active": {
             color: "#ff0f50",
             borderLeft: "5px solid #ff0f50",

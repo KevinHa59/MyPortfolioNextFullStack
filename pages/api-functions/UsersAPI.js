@@ -6,6 +6,7 @@ const API = {
   users_email: "/api/users/email",
   users_user_password: "/api/users/user/password",
   users_user_userType: "/api/users/user/userType",
+  users_user_membership: "/api/users/user/membership",
   users_user_token: "/api/users/user/token",
   users_user_token_refresh: "/api/users/user/token/refresh",
   userTypes: "/api/userTypes",
@@ -93,6 +94,18 @@ class UsersAPI {
       facebook,
       instagram,
       portfolio,
+    });
+  }
+  async getUserMembership(userID) {
+    return await axios.get(API.users_user_membership, {
+      params: { userID },
+    });
+  }
+  async createUserMembership(userID, membershipTypeID, paid) {
+    return await axios.post(API.users_user_membership, {
+      userID,
+      membershipTypeID,
+      paid,
     });
   }
   async getUserTypes(

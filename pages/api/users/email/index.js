@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { errorMapping } from "../../../../utils/errorCodeMapping";
+import { status } from "../../status/status";
 
 const prisma = new PrismaClient();
 /**
@@ -31,21 +32,36 @@ async function getUserByEmail(req, res) {
       include: {
         userType: true,
         credential: true,
-        membership: {
-          include: {
-            membershipType: {
-              include: {
-                feature: {
-                  include: {
-                    membershipResumeSection: true,
-                  },
+      },
+    });
+
+    // Step 2: Find the active membership for the found user
+    let activeMembership = null;
+
+    if (user) {
+      activeMembership = await prisma.membership.findFirst({
+        where: {
+          userID: user.id, // Use the user's ID to find their membership
+          statusID: status.Active,
+        },
+        include: {
+          status: true,
+          membershipType: {
+            include: {
+              feature: {
+                include: {
+                  membershipResumeSection: true,
                 },
               },
             },
           },
         },
-      },
-    });
+      });
+    }
+
+    if (user) {
+      user.membership = activeMembership || null; // Set membership key in the user object
+    }
     if (user !== null) {
       user["hasPassword"] = user.password !== null && user.password.length > 0;
       delete user.password;

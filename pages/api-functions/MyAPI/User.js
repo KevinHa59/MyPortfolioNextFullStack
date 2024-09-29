@@ -7,6 +7,26 @@ export const User = {
       return res;
     } catch (error) {}
   },
+  getUserMembership: async (userID) => {
+    try {
+      const res = await UsersAPI.getUserMembership(userID);
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  createUserMembership: async (userID, newMembershipTypeID, paid) => {
+    try {
+      const res = await UsersAPI.createUserMembership(
+        userID,
+        newMembershipTypeID,
+        paid
+      );
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  },
   getUserTypes: async (
     isUserIncluding = false,
     isPageIncluding = false,

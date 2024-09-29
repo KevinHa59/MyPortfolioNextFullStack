@@ -77,7 +77,16 @@ async function createUser(req, res) {
       include: {
         membership: {
           include: {
-            membershipType: true,
+            status: true,
+            membershipType: {
+              include: {
+                feature: {
+                  include: {
+                    membershipResumeSection: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -107,7 +116,16 @@ async function updateUser(req, res) {
       include: {
         membership: {
           include: {
-            membershipType: true,
+            status: true,
+            membershipType: {
+              include: {
+                feature: {
+                  include: {
+                    membershipResumeSection: true,
+                  },
+                },
+              },
+            },
           },
         },
       },

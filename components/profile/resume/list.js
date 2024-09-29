@@ -3,6 +3,7 @@ import { profileContext } from "../../../pages/profile";
 import {
   Button,
   Chip,
+  CircularProgress,
   Divider,
   Fade,
   Grid,
@@ -13,15 +14,30 @@ import {
 import { stringUtil } from "../../../utils/stringUtil";
 import { Add } from "@mui/icons-material";
 import ButtonDialogConfirm from "../../widgets/buttons/button_dialog_confirm";
+import MyAPIs from "../../../pages/api-functions/MyAPIs";
+import axios from "axios";
 
 export default function List() {
-  const { mainData, router } = useContext(profileContext);
-  const [resumes, setResumes] = useState([]);
+  const { mainData, router, updateMainData } = useContext(profileContext);
+  const { user, resumes } = mainData;
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    if (mainData.resumes) {
-      setResumes(mainData.resumes);
-    }
+    resumes === null && user && init();
   }, [mainData]);
+
+  const init = async () => {
+    setIsLoading(true);
+    try {
+      const APIs = [MyAPIs.Resume().getResumesByUser(user.id)];
+      const res = await axios.all(APIs);
+      const resumes = res[0].data;
+      updateMainData({ resumes: resumes });
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  };
 
   return (
     <Stack padding={4} gap={5}>
@@ -35,11 +51,19 @@ export default function List() {
           Create New Resume
         </Button>
       </Stack>
-      {resumes.length === 0 && (
-        <Typography textAlign={"center"}>You do not have any resume</Typography>
+      {isLoading ? (
+        <Typography textAlign={"center"}>
+          <CircularProgress />
+        </Typography>
+      ) : (
+        resumes?.length === 0 && (
+          <Typography textAlign={"center"}>
+            You do not have any resume
+          </Typography>
+        )
       )}
       <Grid container spacing={4}>
-        {resumes.map((resume, index) => {
+        {resumes?.map((resume, index) => {
           return (
             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
               <ResumeItem resume={resume} index={index} router={router} />
