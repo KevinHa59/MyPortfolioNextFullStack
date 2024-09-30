@@ -95,11 +95,7 @@ function ResumeItem({ resume, index, router }) {
 
   return (
     <Fade in={true} style={{ transitionDelay: index * 100 }}>
-      <Paper
-        className="outlined normal"
-        variant="outlined"
-        sx={{ width: "100%", height: "100%" }}
-      >
+      <Paper className="flat" sx={{ width: "100%", height: "100%" }}>
         <Stack justifyContent={"space-between"} height={"100%"}>
           <Stack padding={2} gap={2}>
             <Typography variant="body1" fontWeight={"bold"}>

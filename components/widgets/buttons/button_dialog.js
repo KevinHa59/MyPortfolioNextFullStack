@@ -104,7 +104,8 @@ export default function ButtonDialog({
             </IconButton>
           )}
         </Stack>
-        <Divider />
+        {onClose && <Divider />}
+
         {children}
       </Dialog>
     </Stack>

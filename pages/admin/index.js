@@ -98,6 +98,7 @@ function Index() {
   const [isInitDone, setIsInitDone] = useState(false);
   const { data: session, status } = useSession();
   const [mainData, setMainData] = useState({
+    dashboard: null,
     user: null,
     resumes: [],
     users: [],
@@ -209,7 +210,7 @@ function Index() {
       }}
     >
       <Stack height={"100vh"} width={"clamp(500px, 100%, 100%)"}>
-        <Paper variant="outlined">
+        <Paper>
           <Stack
             height={"60px"}
             direction={"row"}
@@ -230,7 +231,6 @@ function Index() {
             </Stack>
           </Stack>
         </Paper>
-        <Divider />
         <Stack
           zIndex={1}
           direction={"row"}
@@ -239,14 +239,12 @@ function Index() {
         >
           <Stack height={"100%"} width="300px">
             <Paper
-              variant="outlined"
               className="br0"
               sx={{ zIndex: 2, height: "100%", paddingY: 4, overflowY: "auto" }}
             >
               <MenuRenderer value={menu_admin} />
             </Paper>
           </Stack>
-          <Divider orientation="vertical" />
           <Stack height={"100%"} width={"100%"} sx={{ overflow: "auto" }}>
             {!isInitDone && (
               <Stack alignItems={"center"} width={"100%"}>

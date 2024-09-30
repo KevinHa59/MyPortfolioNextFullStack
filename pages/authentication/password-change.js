@@ -103,11 +103,7 @@ export default function PasswordChange({}) {
 
   return (
     <Stack alignItems={"center"} justifyContent={"center"} height={"100vh"}>
-      <Paper
-        variant="outlined"
-        className="normal"
-        sx={{ padding: 4, minWidth: "300px" }}
-      >
+      <Paper className="normal" sx={{ padding: 4, minWidth: "300px" }}>
         <Stack gap={4}>
           <Typography fontWeight={"bold"}>
             {user?.hasPassword ? "Change" : "Create a"} Password

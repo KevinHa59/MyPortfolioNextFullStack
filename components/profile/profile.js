@@ -222,7 +222,6 @@ export default function Profile() {
         <Stack width={"clamp(400px, 50vw, 500px)"} gap={5}>
           <Paper
             className="normal"
-            variant="outlined"
             sx={{
               minWidth: "clamp(300px, 30vw, 400px)",
               height: "max-content",
@@ -237,7 +236,6 @@ export default function Profile() {
                   sx={{ aspectRatio: "1/1" }}
                 >
                   <Paper
-                    variant="outlined"
                     className="brMAX"
                     sx={{ height: "100%", aspectRatio: "1/1" }}
                   ></Paper>
@@ -282,11 +280,7 @@ export default function Profile() {
               </Stack>
             </Stack>
           </Paper>
-          <Paper
-            className="normal"
-            variant="outlined"
-            sx={{ padding: 3, width: "100%" }}
-          >
+          <Paper className="normal" sx={{ padding: 3, width: "100%" }}>
             <Stack gap={4}>
               <Typography variant="body2" fontWeight={"bold"}>
                 Address
@@ -308,7 +302,6 @@ export default function Profile() {
                 />
                 {addresses?.length > 0 && (
                   <Paper
-                    variant="outlined"
                     sx={{
                       position: "absolute",
                       top: "100%",
@@ -390,11 +383,7 @@ export default function Profile() {
               </Stack>
             </Stack>
           </Paper>
-          <Paper
-            className="normal"
-            variant="outlined"
-            sx={{ padding: 3, width: "100%" }}
-          >
+          <Paper className="normal" sx={{ padding: 3, width: "100%" }}>
             <Stack gap={4}>
               <Typography variant="body2" fontWeight={"bold"}>
                 Social

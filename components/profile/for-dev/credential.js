@@ -90,7 +90,7 @@ export default function Credential() {
       >
         <Typography variant="h5">Credential</Typography>
       </Stack>
-      <Paper className="normal" variant="outlined">
+      <Paper>
         <Typography
           variant="body2"
           fontStyle={"italic"}
@@ -115,7 +115,7 @@ export default function Credential() {
         </Stack>
       ) : (
         <>
-          <Paper className="normal" variant="outlined">
+          <Paper>
             <Grid container spacing={2} padding={2}>
               <Grid item xs={2}>
                 Header
@@ -143,7 +143,7 @@ export default function Credential() {
               </Grid>
             </Grid>
           </Paper>
-          <Paper className="normal" variant="outlined" sx={{ padding: 2 }}>
+          <Paper sx={{ padding: 2 }}>
             <Stack gap={2}>
               <Stack
                 direction={"row"}

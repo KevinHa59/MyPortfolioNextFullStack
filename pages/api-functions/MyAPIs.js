@@ -1,5 +1,6 @@
 import { Auth } from "./MyAPI/Auth";
 import { Credential } from "./MyAPI/Credential";
+import { Dashboard } from "./MyAPI/Dashboard";
 import { General } from "./MyAPI/General";
 import { MembershipType } from "./MyAPI/MembershipType";
 import { Page } from "./MyAPI/Page";
@@ -11,6 +12,9 @@ import { User } from "./MyAPI/User";
 class MyAPIs {
   Auth() {
     return Auth;
+  }
+  Dashboard() {
+    return Dashboard;
   }
   Status() {
     return Status;

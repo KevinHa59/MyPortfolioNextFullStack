@@ -24,6 +24,7 @@ import LabelText from "../../pages/profile/portfolio-collection/components/label
 import { mainContext } from "../../pages/_app";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import axios from "axios";
+import { styles } from "../../styles/useStyle";
 
 export default function Membership() {
   const theme = useTheme();
@@ -104,7 +105,7 @@ export default function Membership() {
           <Typography variant="h5">Subscription</Typography>
         </Stack>
         <Stack gap={2} direction={"row"} justifyContent={"center"}>
-          <Paper variant="outlined" sx={{ width: "100%" }}>
+          <Paper sx={{ width: "100%" }}>
             <Grid container padding={2} spacing={2}>
               <Grid item xs={6}>
                 <Stack gap={1} width={"100%"}>
@@ -147,8 +148,7 @@ export default function Membership() {
                           variant: "outlined",
                           style: {
                             maxWidth: "100%",
-
-                            // background: "transparent",
+                            background: theme.palette.background.default,
                             overflow: "visible",
                           },
                         }}
@@ -188,7 +188,7 @@ export default function Membership() {
         </Stack>
         <Divider />
         <Typography variant="h5">Details</Typography>
-        <Paper variant="outlined">
+        <Paper>
           <Stack padding={2} gap={2}>
             <Typography>Features</Typography>
             <Stack gap={1} paddingLeft={2}>
@@ -244,11 +244,8 @@ export default function Membership() {
           </Stack>
         </Paper>
       </Stack>
-      <Divider orientation="vertical" flexItem />
-      <Paper
-        variant="outlined"
-        sx={{ width: "400px", height: "100%", overflowY: "auto" }}
-      >
+
+      <Paper sx={{ width: "400px", height: "100%", overflowY: "auto" }}>
         <Stack
           direction={"row"}
           justifyContent={"space-between"}
@@ -314,7 +311,6 @@ function MembershipDetail({
   return (
     <Paper
       className="normal "
-      variant="outlined"
       sx={{
         transform: `scale(${
           selectedPlan && selectedPlan.id === type.id ? 1.2 : 1

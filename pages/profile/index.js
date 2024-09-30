@@ -1,4 +1,5 @@
 import {
+  Button,
   CircularProgress,
   Divider,
   Fade,
@@ -121,7 +122,7 @@ function Index() {
       }}
     >
       <Stack height={"100vh"} width={"clamp(500px, 100%, 100%)"}>
-        <Paper variant="outlined">
+        <Paper>
           <Stack
             height={"60px"}
             direction={"row"}
@@ -129,12 +130,14 @@ function Index() {
             alignItems={"center"}
           >
             <Stack height={"60px"}>
-              <LogoRow
-                sx={{
-                  width: "clamp(100px, 30vw, 200px)",
-                  height: "100%",
-                }}
-              />
+              <Button className="hoverLink" onClick={() => router.push("/")}>
+                <LogoRow
+                  sx={{
+                    width: "clamp(100px, 30vw, 200px)",
+                    height: "100%",
+                  }}
+                />
+              </Button>
             </Stack>
             <Stack direction={"row"} alignItems={"center"} gap={1}>
               <ThemeButton />
@@ -142,7 +145,7 @@ function Index() {
             </Stack>
           </Stack>
         </Paper>
-        <Divider />
+
         <Stack
           zIndex={1}
           direction={"row"}
@@ -151,7 +154,6 @@ function Index() {
         >
           <Stack height={"100%"} width="300px">
             <Paper
-              variant="outlined"
               className="br0"
               sx={{ zIndex: 2, height: "100%", paddingY: 4 }}
             >

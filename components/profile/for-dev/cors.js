@@ -85,7 +85,7 @@ export default function CORS() {
       >
         <Typography variant="h5">CORS</Typography>
       </Stack>
-      <Paper variant="outlined">
+      <Paper>
         <Typography
           variant="body2"
           fontStyle={"italic"}
@@ -93,7 +93,7 @@ export default function CORS() {
         >{`CORS lets JavaScript from external hosts interact with API. Specify allowed origins (e.g., http://example.com:12345). Use "*" to allow all and remove other entries. Slashes are not allowed after the TLD.`}</Typography>
       </Paper>
       {user?.credentialID && (
-        <Paper variant="outlined" sx={{ padding: 2 }}>
+        <Paper sx={{ padding: 2 }}>
           <Stack gap={1}>
             <Stack
               direction={"row"}

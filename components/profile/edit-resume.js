@@ -363,12 +363,13 @@ export default function EditResume() {
                     })}
                 </Stack>
               </Paper>
-              <Divider orientation="vertical" />
+
               <Stack width={"100%"} alignItems={"center"}>
                 <Stack
                   width={"100%"}
                   height={"calc(100%)"}
                   position={"relative"}
+                  gap={2}
                   sx={{
                     overflowY: "auto",
                     scrollBehavior: "smooth",
@@ -377,8 +378,7 @@ export default function EditResume() {
                 >
                   <Stack id={steps[0]?.title} width={"100%"} height={"100%"}>
                     <Paper
-                      variant="outlined"
-                      className="flat br0"
+                      className="br0"
                       width={"100%"}
                       sx={{
                         height: "100%",
