@@ -1,14 +1,5 @@
-import { ArrowDropDown, ArrowLeft } from "@mui/icons-material";
-import {
-  Button,
-  Collapse,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { ArrowDropDown } from "@mui/icons-material";
+import { Button, Collapse, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -35,7 +26,9 @@ const MenuDetail = ({ menuItem, onRoute, activeRoute, onOpen }) => {
           paddingY: 1.5,
         }}
         onClick={() =>
-          isSubMenu ? setOpen((prev) => !prev) : onRoute(menuItem.param)
+          isSubMenu
+            ? setOpen((prev) => !prev)
+            : onRoute(menuItem.param, menuItem.path)
         }
         endIcon={
           isSubMenu && (
@@ -91,13 +84,17 @@ const MenuDetail = ({ menuItem, onRoute, activeRoute, onOpen }) => {
 export default function MenuRenderer({ value }) {
   const router = useRouter();
 
-  const handleRoute = (section) => {
-    router.push({
-      pathname: router.pathname,
-      query: {
-        section: section,
-      },
-    });
+  const handleRoute = (section, path) => {
+    if (section) {
+      router.push({
+        pathname: router.pathname,
+        query: {
+          section: section,
+        },
+      });
+    } else if (path) {
+      router.push(path);
+    }
   };
 
   return (

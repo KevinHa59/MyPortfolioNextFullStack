@@ -104,7 +104,6 @@ export const menu_profile = (membership) => {
         {
           Icon: Palette,
           title: "Editor",
-          param: "editor",
           Comp: null,
           path: "/profile/editor",
         },
