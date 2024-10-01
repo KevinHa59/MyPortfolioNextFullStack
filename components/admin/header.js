@@ -14,11 +14,11 @@ export default function Header({
         direction={"row"}
         gap={3}
         width={"100%"}
+        height={"80px"}
+        alignItems={"center"}
         sx={{
           justifyContent: "space-between",
-          alignItems: "flex-end",
           paddingX: 2,
-          paddingY: 4,
           borderRadius: 0,
         }}
       >

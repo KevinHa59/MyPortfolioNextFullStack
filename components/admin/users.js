@@ -89,7 +89,7 @@ export default function Users() {
           overflow: "hidden",
         }}
       >
-        <Paper className="flat br0">
+        <Paper className="flat br0" sx={{ height: "100%" }}>
           <Table
             data={users || []}
             isLoading={users === null || userTypes === null}

@@ -11,7 +11,7 @@ export default function BackgroundPattern() {
           left: 100,
           width: "15vw",
           height: "100%",
-          background: "#ff0f501a",
+          background: "#0366d61a",
           zIndex: 1,
         }}
       />
@@ -22,7 +22,7 @@ export default function BackgroundPattern() {
           left: 0,
           width: "100%",
           height: "30vh",
-          background: "#ff0f501a",
+          background: "#0366d61a",
           zIndex: 1,
         }}
       />

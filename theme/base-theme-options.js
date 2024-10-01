@@ -35,15 +35,15 @@ export const baseThemeOptions = {
             background: "transparent",
           },
           "&.active": {
-            color: "#ff0f50",
-            borderLeft: "5px solid #ff0f50",
-            backgroundColor: "#ff0f501A !important",
+            color: "#0366d6",
+            borderLeft: "5px solid #0366d6",
+            backgroundColor: "#0366d61A !important",
             fontWeight: "bold",
           },
           "&.active-bottom": {
-            color: "#ff0f50",
-            borderBottom: "5px solid #ff0f50",
-            backgroundColor: "#ff0f501A !important",
+            color: "#0366d6",
+            borderBottom: "5px solid #0366d6",
+            backgroundColor: "#0366d61A !important",
             fontWeight: "bold",
           },
           "&.dark-active": {

@@ -92,7 +92,7 @@ export default function Status() {
           overflow: "hidden",
         }}
       >
-        <Paper className="flat br0">
+        <Paper className="flat br0" sx={{ height: "100%" }}>
           <Table
             data={status || []}
             headers={headers}
@@ -182,6 +182,7 @@ function Cell({ row, header, onEdit, onDelete }) {
         gap={1}
       >
         <Button
+          className="hoverLink"
           sx={{ padding: 0 }}
           size="small"
           color="warning"
@@ -190,6 +191,7 @@ function Cell({ row, header, onEdit, onDelete }) {
           Edit
         </Button>
         <ButtonDialogConfirm
+          className={"hoverLink"}
           dialog_color={"error"}
           dialog_title={"Delete Status"}
           dialog_message={"Are You Sure?"}

@@ -196,12 +196,14 @@ function Index() {
             alignItems={"center"}
           >
             <Stack height={"60px"}>
-              <LogoRow
-                sx={{
-                  width: "clamp(100px, 30vw, 200px)",
-                  height: "100%",
-                }}
-              />
+              <Button className="hoverLink" onClick={() => router.push("/")}>
+                <LogoRow
+                  sx={{
+                    width: "clamp(100px, 30vw, 200px)",
+                    height: "100%",
+                  }}
+                />
+              </Button>
             </Stack>
             <Stack direction={"row"} alignItems={"center"}>
               <ThemeButton />
@@ -214,10 +216,11 @@ function Index() {
           direction={"row"}
           height={"calc(100vh - 63px)"}
           width={"100%"}
+          gap={"1px"}
         >
           <Stack height={"100%"} width="300px">
             <Paper
-              className="br0"
+              className="br0 flat"
               sx={{ zIndex: 2, height: "100%", paddingY: 4, overflowY: "auto" }}
             >
               <MenuRenderer value={menu_admin} />
@@ -231,6 +234,7 @@ function Index() {
             )}
             <Fade in={isInitDone}>
               <Stack
+                height={"100%"}
                 sx={{
                   scrollBehavior: "smooth",
                 }}

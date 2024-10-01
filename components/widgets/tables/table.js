@@ -86,8 +86,21 @@ export default function Table({
   }
 
   return (
-    <Stack sx={{ width: "100%", position: "relative", ...sx }} gap={"1px"}>
-      <Stack sx={{ borderRadius: 0, background: "transparent" }}>
+    <Stack
+      sx={{
+        width: "100%",
+        position: "relative",
+
+        ...sx,
+      }}
+      gap={"1px"}
+    >
+      <Stack
+        sx={{
+          borderRadius: 0,
+          background: "transparent",
+        }}
+      >
         <Stack
           direction={"row"}
           padding={1}

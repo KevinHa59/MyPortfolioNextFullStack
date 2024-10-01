@@ -3,6 +3,7 @@ import UsersAPI from "../../pages/api-functions/UsersAPI";
 import {
   Button,
   Checkbox,
+  CircularProgress,
   Divider,
   Fade,
   FormControlLabel,
@@ -197,112 +198,118 @@ export default function Permissions() {
           overflow: "hidden",
         }}
       >
-        <Stack alignItems={"flex-start"} direction={"row"} height={"100%"}>
-          {/* user type */}
-          <Stack width={"300px"} height={"100%"}>
-            {/* <Divider /> */}
-            <Paper className="flat br0" sx={{ height: "100%" }}>
-              <Stack minHeight="30px" padding={1}>
-                <Typography
-                  variant="body1"
-                  fontWeight={"bold"}
-                  textAlign={"left"}
-                  sx={{ color: "inherit" }}
-                >
-                  User Types
-                </Typography>
-              </Stack>
-
-              <Stack width={"100%"} paddingY={1} sx={{ overflowY: "auto" }}>
-                {userTypes?.map((type, index) => {
-                  return (
-                    <Slide
-                      key={index}
-                      in={true}
-                      direction="right"
-                      style={{ transitionDelay: index * 50 }}
-                    >
-                      <Stack>
-                        <Button
-                          className={
-                            router.query.user_type === type.id
-                              ? "active"
-                              : "inactive"
-                          }
-                          color="inherit"
-                          sx={{
-                            display: "flex",
-                            gap: 1,
-                            justifyContent: "flex-start",
-                            transition: "ease 0.1s",
-                            borderRadius: 0,
-                            // width: "150px",
-                          }}
-                          fullWidth
-                          onClick={() => handleTypeSelect(type)}
-                        >
-                          {type.type}
-                        </Button>
-                      </Stack>
-                    </Slide>
-                  );
-                })}
-              </Stack>
-            </Paper>
+        {[pages, userTypes, permissions].includes(null) ? (
+          <Stack alignItems={"center"}>
+            <CircularProgress />
           </Stack>
-          <Divider orientation="vertical" />
-          {/* pages list */}
-          <Stack width={"100%"} height={"100%"} gap={1}>
-            <Stack height={"100%"}>
-              <Stack
-                width={"100%"}
-                // height={"calc(100% - 50px)"}
-                sx={{ overflowY: "auto" }}
-              >
-                <Paper className="flat br0">
-                  {selectedUserType ? (
-                    <Table
-                      data={pages}
-                      headers={headers}
-                      callback_extension_search_area={
-                        <Stack
-                          minHeight="30px"
-                          direction={"row"}
-                          alignItems={"center"}
-                          gap={2}
-                        >
-                          <ButtonLoading
-                            startIcon={<Save />}
-                            variant={"contained"}
-                            isLoading={isSaving}
-                            sx={{ width: "max-content", minWidth: 0 }}
-                            size="small"
-                            onClick={handleSave}
+        ) : (
+          <Stack
+            alignItems={"flex-start"}
+            direction={"row"}
+            height={"100%"}
+            gap={"1px"}
+          >
+            {/* user type */}
+            <Stack width={"300px"} height={"100%"}>
+              {/* <Divider /> */}
+              <Paper className="flat br0" sx={{ height: "100%" }}>
+                <Stack minHeight="30px" padding={1}>
+                  <Typography
+                    variant="body1"
+                    fontWeight={"bold"}
+                    textAlign={"left"}
+                    sx={{ color: "inherit" }}
+                  >
+                    User Types
+                  </Typography>
+                </Stack>
+
+                <Stack width={"100%"} paddingY={1} sx={{ overflowY: "auto" }}>
+                  {userTypes?.map((type, index) => {
+                    return (
+                      <Slide
+                        key={index}
+                        in={true}
+                        direction="right"
+                        style={{ transitionDelay: index * 50 }}
+                      >
+                        <Stack>
+                          <Button
+                            className={
+                              router.query.user_type === type.id
+                                ? "active"
+                                : "inactive"
+                            }
+                            color="inherit"
+                            sx={{
+                              display: "flex",
+                              gap: 1,
+                              justifyContent: "flex-start",
+                              transition: "ease 0.1s",
+                              borderRadius: 0,
+                              // width: "150px",
+                            }}
+                            fullWidth
+                            onClick={() => handleTypeSelect(type)}
                           >
-                            Save
-                          </ButtonLoading>
+                            {type.type}
+                          </Button>
                         </Stack>
-                      }
-                      callback_cell={(row, key) => (
-                        <Cell
-                          row={row}
-                          header={key}
-                          selectedUserType={selectedUserType}
-                          permissions={currentPermissions}
-                          onChange={handleUpdatePermissions}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <Typography textAlign={"center"}>
-                      No UserType Selected
-                    </Typography>
-                  )}
-                </Paper>
+                      </Slide>
+                    );
+                  })}
+                </Stack>
+              </Paper>
+            </Stack>
+            {/* pages list */}
+            <Stack width={"100%"} height={"100%"} gap={1}>
+              <Stack height={"100%"}>
+                <Stack width={"100%"} height="100%" sx={{ overflowY: "auto" }}>
+                  <Paper className="flat br0" sx={{ height: "100%" }}>
+                    {selectedUserType ? (
+                      <Table
+                        data={pages}
+                        headers={headers}
+                        callback_extension_search_area={
+                          <Stack
+                            minHeight="30px"
+                            direction={"row"}
+                            alignItems={"center"}
+                            gap={2}
+                          >
+                            <ButtonLoading
+                              startIcon={<Save />}
+                              variant={"contained"}
+                              isLoading={isSaving}
+                              sx={{ width: "max-content", minWidth: 0 }}
+                              size="small"
+                              onClick={handleSave}
+                            >
+                              Save
+                            </ButtonLoading>
+                          </Stack>
+                        }
+                        callback_cell={(row, key) => (
+                          <Cell
+                            row={row}
+                            header={key}
+                            selectedUserType={selectedUserType}
+                            permissions={currentPermissions}
+                            onChange={handleUpdatePermissions}
+                          />
+                        )}
+                      />
+                    ) : (
+                      <Typography textAlign={"center"}>
+                        No UserType Selected
+                      </Typography>
+                    )}
+                  </Paper>
+                </Stack>
               </Stack>
             </Stack>
           </Stack>
-        </Stack>
+        )}
       </Stack>
     </Stack>
   );

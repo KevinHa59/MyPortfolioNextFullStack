@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import MyAPIs from "../pages/api-functions/MyAPIs";
 import { CircularProgress, Stack } from "@mui/material";
 import { useSession } from "next-auth/react";
+import { Logo } from "../icons/logo";
 
 const withAuth = (WrappedComponent) => {
   const ComponentWithAuth = (props) => {
@@ -31,6 +32,7 @@ const withAuth = (WrappedComponent) => {
     if (isLoading) {
       return (
         <Stack alignItems={"center"} justifyContent={"center"} height={"100vh"}>
+          <Logo sx={{ fontSize: "150px" }} />
           <CircularProgress />
         </Stack>
       );

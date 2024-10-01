@@ -4,7 +4,7 @@ import { styles } from "../../../styles/useStyle";
 
 export default function Rows({ data, headers, callback_cell = null }) {
   return (
-    <Stack gap={"1px"}>
+    <Stack gap={"1px"} height={"100%"} sx={{ overflowY: "auto" }}>
       {data?.map((row, index) => {
         return (
           <Stack
@@ -12,7 +12,6 @@ export default function Rows({ data, headers, callback_cell = null }) {
             minHeight={"40px"}
             justifyContent={"center"}
             sx={{
-              borderRadius: "25px",
               ":hover": {
                 background: "rgba(150,150,150,0.1)",
               },

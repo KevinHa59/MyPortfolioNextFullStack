@@ -96,8 +96,9 @@ export default function Courses() {
           overflow: "hidden",
         }}
       >
-        <Paper className="flat br0">
+        <Paper className="flat br0" sx={{ height: "100%" }}>
           <Table
+            sx={{ height: "100%" }}
             isLoading={courses === null}
             data={coursesData || []}
             headers={headers}
