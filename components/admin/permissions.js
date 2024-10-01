@@ -38,27 +38,67 @@ export default function Permissions() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setCurrentPermissions(permissions);
-    if (userTypes.length > 0) {
-      const userTypeID = userTypes[0].id;
-      const { user_type } = router.query;
-      if (user_type === undefined) {
-        router.push({
-          pathname: router.pathname,
-          query: {
-            ...router.query,
-            user_type: userTypeID,
-          },
+    permissions === null && init();
+  }, []);
+
+  const init = async () => {
+    try {
+      const APIs = [
+        {
+          key: "permissions",
+          api: MyAPIs.Permission().getPermissions(),
+        },
+      ];
+
+      if (userTypes === null) {
+        APIs.push({
+          key: "userTypes",
+          api: MyAPIs.User().getUserTypes(),
         });
-        setSelectedUserType(userTypes[0]);
-      } else {
-        const _userType = userTypes.find((item) => item.id === user_type);
-        if (_userType) {
-          setSelectedUserType(_userType);
+      }
+      if (pages === null) {
+        APIs.push({
+          key: "pages",
+          api: MyAPIs.Page().getPages(),
+        });
+      }
+
+      const res = await axios.all(APIs.map((api) => api.api));
+      setCurrentPermissions(res[0].data);
+      const result = res.reduce((re, item, index) => {
+        re[APIs[index].key] = item.data;
+        return re;
+      }, {});
+
+      updateMainData({ ...result });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (permissions && userTypes && pages) {
+      setCurrentPermissions(permissions);
+      if (userTypes?.length > 0) {
+        const userTypeID = userTypes[0].id;
+        const { user_type } = router.query;
+        if (user_type === undefined) {
+          router.push({
+            pathname: router.pathname,
+            query: {
+              ...router.query,
+              user_type: userTypeID,
+            },
+          });
+          setSelectedUserType(userTypes[0]);
+        } else {
+          const _userType = userTypes.find((item) => item.id === user_type);
+          if (_userType) {
+            setSelectedUserType(_userType);
+          }
         }
       }
     }
-  }, [permissions]);
+  }, [mainData, router]);
 
   const handleTypeSelect = (type) => {
     setSelectedUserType(type);

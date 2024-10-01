@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { adminContext } from "../../pages/admin";
 import ButtonPopover from "../widgets/buttons/button_popover";
 import { mainContext } from "../../pages/_app";
+import axios from "axios";
 
 const headers = [
   {
@@ -54,6 +55,21 @@ export default function Resumes() {
   const { resumes, status } = mainData;
   const [tableHeader, setTableHeader] = useState(headers);
 
+  useEffect(() => {
+    resumes === null && init();
+  }, []);
+
+  const init = async () => {
+    try {
+      const APIs = [MyAPIs.Resume().getResumes()];
+      const res = await axios.all(APIs);
+      const _resumes = res[0].data;
+      updateMainData({ resumes: _resumes });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleUpdateStatus = async (id, ss) => {
     try {
       const res = await MyAPIs.Resume().updateResume(id, { statusID: ss.id });
@@ -70,9 +86,9 @@ export default function Resumes() {
         return false;
       }
     } catch (error) {
-      return false;
       setNote.error("Update Status Fail");
       console.log(res);
+      return false;
     }
   };
 
@@ -92,6 +108,7 @@ export default function Resumes() {
           <Table
             data={resumes || []}
             headers={tableHeader}
+            isLoading={resumes === null}
             callback_cell={(row, key) => {
               return (
                 <Cell

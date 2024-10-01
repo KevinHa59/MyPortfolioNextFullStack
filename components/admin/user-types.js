@@ -1,40 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import UsersAPI from "../../pages/api-functions/UsersAPI";
-import {
-  Button,
-  Divider,
-  Fade,
-  IconButton,
-  LinearProgress,
-  Paper,
-  Slide,
-  Stack,
-  TextField,
-  Typography,
-  Zoom,
-} from "@mui/material";
+import { Button, Divider, Paper, Stack, Typography } from "@mui/material";
 import ButtonDialog from "../widgets/buttons/button_dialog";
-import FormHeader from "../widgets/texts/form-header";
 import ErrorRenderer from "../widgets/texts/error-renderer";
-import LoadingComponent from "../widgets/loading/loading-component";
-import {
-  Add,
-  Circle,
-  Clear,
-  Delete,
-  DeleteForever,
-  Edit,
-  Hub,
-  Label,
-} from "@mui/icons-material";
+import { Add, Circle, Delete, Edit, Hub } from "@mui/icons-material";
 import Header from "./header";
-import PaperForm from "../widgets/paper/paper-form";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import Table from "../widgets/tables/table";
 import Input from "../widgets/input/Input";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
 import { adminContext } from "../../pages/admin";
+import axios from "axios";
 
 export default function UserTypes() {
   const { addNote } = useContext(asyncNoteContext);
@@ -42,6 +18,21 @@ export default function UserTypes() {
   const { userTypes } = mainData;
   const [isNewUserTypeOpen, setIsNewUserTypeOpen] = useState(false);
   const [updateType, setUpdateType] = useState(null);
+
+  useEffect(() => {
+    userTypes === null && init();
+  }, []);
+
+  const init = async () => {
+    try {
+      const APIs = [MyAPIs.User().getUserTypes()];
+      const res = await axios.all(APIs);
+      const _userTypes = res[0].data;
+      updateMainData({ userTypes: _userTypes });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleUpdateUserType = (type) => {
     const copy = _.cloneDeep(mainData.userTypes);
@@ -66,7 +57,7 @@ export default function UserTypes() {
       >
         <Paper className="flat br0">
           <Table
-            // isLoading={isGettingData}
+            isLoading={userTypes === null}
             data={userTypes || []}
             headers={headers}
             callback_cell={(row, key) => (

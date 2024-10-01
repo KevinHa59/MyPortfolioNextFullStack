@@ -1,61 +1,45 @@
-import {
-  Button,
-  Chip,
-  CircularProgress,
-  Divider,
-  Fade,
-  Grid,
-  IconButton,
-  LinearProgress,
-  MenuItem,
-  Paper,
-  Slide,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Chip, CircularProgress, MenuItem, Paper, Stack } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import ButtonDialog from "../widgets/buttons/button_dialog";
-import UsersAPI from "../../pages/api-functions/UsersAPI";
-import {
-  Clear,
-  CopyAll,
-  DateRange,
-  Delete,
-  DeleteForever,
-  Edit,
-  Email,
-  Label,
-  Password,
-  People,
-  Remove,
-  Token,
-} from "@mui/icons-material";
-import FormHeader from "../widgets/texts/form-header";
-import ErrorRenderer from "../widgets/texts/error-renderer";
-import LoadingComponent from "../widgets/loading/loading-component";
-import SelectCustom from "../widgets/select/select-custom";
+import { People } from "@mui/icons-material";
 import Table from "../widgets/tables/table";
-import Input from "../widgets/input/Input";
-import jwt from "../../utils/jwtUtil";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
-import { styles } from "../../styles/useStyle";
 import Header from "./header";
-import PaperForm from "../widgets/paper/paper-form";
-import ButtonLoading from "../widgets/buttons/button-loading";
-import LabelText from "../widgets/texts/label-text";
 import { mainContext } from "../../pages/_app";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
 import { adminContext } from "../../pages/admin";
 import ButtonPopover from "../widgets/buttons/button_popover";
+import axios from "axios";
 
 export default function Users() {
   const { addNote } = useContext(asyncNoteContext);
   const { setNote } = useContext(mainContext);
   const { mainData, updateMainData } = useContext(adminContext);
   const { users, userTypes, status } = mainData;
+
+  useEffect(() => {
+    users === null && init();
+  }, []);
+
+  const init = async () => {
+    try {
+      const APIs = [MyAPIs.User().getUsers()];
+      if (userTypes === null) {
+        APIs.push(MyAPIs.User().getUserTypes());
+      }
+      const res = await axios.all(APIs);
+      const newMainData = {
+        users: res[0].data,
+      };
+      if (userTypes === null) {
+        newMainData["userTypes"] = res[1].data;
+      }
+      updateMainData({ ...newMainData });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleUpdateStatus = async (id, ss) => {
     try {
       const res = await MyAPIs.User().updateUserMaster(id, {
@@ -108,6 +92,7 @@ export default function Users() {
         <Paper className="flat br0">
           <Table
             data={users || []}
+            isLoading={users === null || userTypes === null}
             headers={headers}
             callback_cell={(row, key) => (
               <Cell

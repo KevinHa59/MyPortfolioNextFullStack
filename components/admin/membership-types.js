@@ -30,6 +30,7 @@ import Input from "../widgets/input/Input";
 import ButtonLoading from "../widgets/buttons/button-loading";
 import { mainContext } from "../../pages/_app";
 import { stringUtil } from "../../utils/stringUtil";
+import axios from "axios";
 
 const input_template = {
   type: "",
@@ -61,6 +62,21 @@ export default function MembershipTypes() {
   const { mainData, updateMainData } = useContext(adminContext);
   const { membershipTypes } = mainData;
   const [selectedType, setSelectedType] = useState(null);
+
+  useEffect(() => {
+    membershipTypes === null && init();
+  }, []);
+
+  const init = async () => {
+    try {
+      const APIs = [MyAPIs.MembershipType().getMembershipTypes()];
+      const res = await axios.all(APIs);
+      const _membershipTypes = res[0].data;
+      updateMainData({ membershipTypes: _membershipTypes });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSuccess = (newData) => {
     const index = mainData.membershipTypes.findIndex(

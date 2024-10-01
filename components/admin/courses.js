@@ -8,6 +8,7 @@ import { asyncNoteContext } from "../widgets/notification/async-notification";
 import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import SelectCustom from "../widgets/select/select-custom";
 import { adminContext } from "../../pages/admin";
+import axios from "axios";
 
 const status = [
   { name: "Not Approve", value: false },
@@ -17,27 +18,41 @@ const status = [
 
 export default function Courses() {
   const { addNote } = useContext(asyncNoteContext);
-  const { mainData } = useContext(adminContext);
-  const [courses, setCourses] = useState([]);
+  const { mainData, updateMainData } = useContext(adminContext);
+  const { courses } = mainData;
+  const [coursesData, setCoursesData] = useState([]);
   const [isGettingData, setIsGettingData] = useState(true);
   const [filter, setFilter] = useState({
     approved: false,
   });
+
   useEffect(() => {
-    if (mainData.courses) {
+    courses === null && init();
+  }, []);
+
+  const init = async () => {
+    try {
+      const APIs = [MyAPIs.Resume().getResumeCourse()];
+      const res = await axios.all(APIs);
+      const _courses = res[0].data;
+      updateMainData({ courses: _courses });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (courses) {
       getAllCourses();
     }
-  }, [mainData]);
+  }, [courses]);
 
   async function getAllCourses(_filter) {
-    setIsGettingData(true);
     const isApproved = _filter ? _filter.approved : filter.approved;
     const filterCourses =
       isApproved === "All"
-        ? mainData.courses
-        : mainData.courses.filter((course) => course.approved === isApproved);
-    setCourses(filterCourses);
-    setIsGettingData(false);
+        ? courses
+        : courses.filter((course) => course.approved === isApproved);
+    setCoursesData(filterCourses);
   }
 
   async function handleDeleteCourse(id, setOpen) {
@@ -45,8 +60,8 @@ export default function Courses() {
       "Delete Course",
       MyAPIs.Resume().deleteResumeCourses([id])
     );
-    const newCourses = courses.filter((c) => c.id !== id);
-    setCourses(newCourses);
+    const newCourses = coursesData.filter((c) => c.id !== id);
+    setCoursesData(newCourses);
     setOpen(false);
   }
   async function handleApproveCourse(row) {
@@ -57,8 +72,8 @@ export default function Courses() {
         approved: true,
       })
     );
-    const newCourses = courses.filter((c) => c.id !== row.id);
-    setCourses(newCourses);
+    const newCourses = coursesData.filter((c) => c.id !== row.id);
+    setCoursesData(newCourses);
   }
 
   const handleFilterChange = (newFilter) => {
@@ -83,8 +98,8 @@ export default function Courses() {
       >
         <Paper className="flat br0">
           <Table
-            isLoading={isGettingData}
-            data={courses}
+            isLoading={courses === null}
+            data={coursesData || []}
             headers={headers}
             callback_extension_search_area={
               <Stack direction={"row"} gap={1}>

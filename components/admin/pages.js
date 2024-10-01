@@ -18,13 +18,29 @@ import ButtonDialogConfirm from "../widgets/buttons/button_dialog_confirm";
 import { mainContext } from "../../pages/_app";
 import { asyncNoteContext } from "../widgets/notification/async-notification";
 import { adminContext } from "../../pages/admin";
+import axios from "axios";
 
 export default function Pages() {
   const { addNote } = useContext(asyncNoteContext);
-  const { mainData } = useContext(adminContext);
+  const { mainData, updateMainData } = useContext(adminContext);
   const { pages } = mainData;
   const [isNewPageOpen, setIsNewPageOpen] = useState(false);
   const [editPage, setEditPage] = useState(null);
+
+  useEffect(() => {
+    pages === null && init();
+  }, []);
+
+  const init = async () => {
+    try {
+      const APIs = [MyAPIs.Page().getPages()];
+      const res = await axios.all(APIs);
+      const _pages = res[0].data;
+      updateMainData({ pages: _pages });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Stack width={"100%"} height={"100%"} gap={"1px"}>
@@ -38,6 +54,7 @@ export default function Pages() {
         <Paper className="flat br0">
           <Table
             data={pages || []}
+            isLoading={pages === null}
             headers={headers}
             callback_cell={(row, key) => (
               <Cell

@@ -1,11 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import {
-  Button,
-  ClickAwayListener,
   Divider,
   Grid,
-  Link,
-  ListItem,
   MenuItem,
   Paper,
   Stack,
@@ -17,7 +13,6 @@ import { adminContext } from "../../pages/admin";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import LabelText from "../../pages/profile/portfolio-collection/components/label-text";
 import ChartPie from "../charts/pie-chart";
-import { chartUtils } from "../charts/utils";
 import ChartColumn from "../charts/column-chart";
 
 export default function Dashboard() {
@@ -31,7 +26,6 @@ export default function Dashboard() {
     try {
       const res = await MyAPIs.Dashboard().getDashboard();
       updateMainData({ dashboard: res.data });
-      // console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -63,7 +57,6 @@ export default function Dashboard() {
               title={"Courses"}
               value={dashboard.courses || 0}
             />
-            {/* <StatsItem index={4} title={"Status"} value={status.length || 0} /> */}
           </Grid>
         </>
       )}

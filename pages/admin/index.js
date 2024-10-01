@@ -100,14 +100,14 @@ function Index() {
   const [mainData, setMainData] = useState({
     dashboard: null,
     user: null,
-    resumes: [],
-    users: [],
-    userTypes: [],
+    resumes: null,
+    users: null,
+    userTypes: null,
     status: [],
-    courses: [],
-    pages: [],
-    permissions: [],
-    membershipTypes: [],
+    courses: null,
+    pages: null,
+    permissions: null,
+    membershipTypes: null,
   });
 
   useEffect(() => {
@@ -147,36 +147,14 @@ function Index() {
   }, [status]);
 
   const initData = async () => {
-    const APIs = [
-      MyAPIs.Resume().getResumes(),
-      MyAPIs.User().getUsers(),
-      MyAPIs.User().getUserTypes(),
-      MyAPIs.Status().getStatus(),
-      MyAPIs.Resume().getResumeCourse(),
-      MyAPIs.Page().getPages(),
-      MyAPIs.Permission().getPermissions(),
-      MyAPIs.MembershipType().getMembershipTypes(),
-    ];
+    const APIs = [MyAPIs.Status().getStatus()];
     try {
       const res = await axios.all(APIs);
 
-      const _resumes = res[0].data;
-      const _users = res[1].data;
-      const _userTypes = res[2].data;
-      const _status = res[3].data;
-      const _courses = res[4].data;
-      const _pages = res[5].data;
-      const _permissions = res[6].data;
-      const _membershipTypes = res[7].data;
+      const _status = res[0].data;
+
       handleUpdateMainData({
-        resumes: _resumes,
-        users: _users,
-        userTypes: _userTypes,
         status: _status,
-        courses: _courses,
-        pages: _pages,
-        permissions: _permissions,
-        membershipTypes: _membershipTypes,
       });
     } catch (error) {
       console.log(error);
