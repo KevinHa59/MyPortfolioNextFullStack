@@ -1,8 +1,5 @@
 const { useRouter } = require("next/router");
-import { getCookie } from "cookies-next";
-import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import MyAPIs from "../pages/api-functions/MyAPIs";
 import { CircularProgress, Stack } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { Logo } from "../icons/logo";
@@ -15,8 +12,18 @@ const withAuth = (WrappedComponent) => {
     useEffect(() => {
       if (status === "authenticated") {
         if (session.user) {
+          // verify path permission
+          const pages = session.user.userType.pageLinks.map(
+            (page) => page.path
+          );
+          if (!pages.includes(router.pathname)) {
+            router.replace("/401");
+          } else {
+            setIsLoading(false);
+          }
+        } else {
+          setIsLoading(false);
         }
-        setIsLoading(false);
       } else if (status === "unauthenticated") {
         // check local session
         let localSession = sessionStorage.getItem("user");

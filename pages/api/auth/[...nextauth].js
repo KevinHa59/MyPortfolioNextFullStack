@@ -94,8 +94,14 @@ export default NextAuth({
           email: session.session.user.email,
         },
       });
+
       const membership = _user.data.membership;
       session.session["membership"] = membership;
+      session.session["user"] = {
+        ..._user.data,
+        ...session.session["user"],
+      };
+
       return session.session;
     },
   },

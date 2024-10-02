@@ -30,12 +30,21 @@ async function getUserByEmail(req, res) {
     const user = await prisma.user.findUnique({
       where: { email: email },
       include: {
-        userType: true,
+        userType: {
+          include: {
+            pageLinks: {
+              include: {
+                page: true,
+              },
+            },
+          },
+        },
         credential: true,
       },
     });
+    // get user access paths
+    user.userType.pageLinks = user.userType.pageLinks.map((link) => link.page);
 
-    // Step 2: Find the active membership for the found user
     let activeMembership = null;
 
     if (user) {

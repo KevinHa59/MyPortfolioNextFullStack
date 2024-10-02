@@ -41,11 +41,8 @@ export default function Index() {
             <BackHand sx={{ fontSize: "100px", color: Styles().error.main }} />
           </Stack>
           <Stack gap={1} direction={"row"} minWidth={"400px"} padding={2}>
-            <Button fullWidth variant="contained" onClick={handleHome}>
-              Home
-            </Button>
-            <Button fullWidth variant="contained" onClick={handleLogout}>
-              Logout
+            <Button fullWidth onClick={handleHome}>
+              Back to Home page
             </Button>
           </Stack>
         </Paper>
