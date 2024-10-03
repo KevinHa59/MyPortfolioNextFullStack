@@ -19,9 +19,9 @@ import { controllerTags, layoutTags, tags } from "./tags";
 import Stepper, { Step } from "../../../components/widgets/stepper/stepper";
 import SelectCustom from "../../../components/widgets/select/select-custom";
 import LabelText from "../portfolio-collection/components/label-text";
-import { PersonalVideo, PhoneAndroidSharp, Tv } from "@mui/icons-material";
+import { PhoneAndroidSharp, Tv } from "@mui/icons-material";
 import StyleComponent from "./style-component";
-
+import _ from "lodash";
 export const editorContext = createContext();
 
 export default function Index() {
@@ -32,10 +32,7 @@ export default function Index() {
     view: "Desktop",
   });
   const [HTMLData, setHTMLData] = useState(sections);
-  const HTMLDataRef = useRef(sections);
-  const selectedRef = useRef(null);
 
-  console.log(HTMLData, HTMLDataRef, selectedRef);
   const handleUpdateSetting = (newSetting) => {
     setSetting((prev) => {
       return {
@@ -45,18 +42,28 @@ export default function Index() {
     });
   };
 
+  const handleUpdateStyle = (newStyle) => {
+    const copy = _.cloneDeep(HTMLData);
+    const newSelected = updateStyle(copy, selectedComponent.id, newStyle);
+
+    if (newSelected) {
+      setSelectedComponent(newSelected);
+    }
+
+    setHTMLData(copy);
+  };
+
   return (
     <editorContext.Provider
       value={{
         hoveredID,
         setHoveredID,
-        HTMLDataRef,
         setHTMLData,
-        selectedRef,
         selectedComponent,
         setSelectedComponent,
         setting,
         updateSetting: handleUpdateSetting,
+        updateStyle: handleUpdateStyle,
       }}
     >
       <Stack minHeight={"100vh"} direction={"row"} width={"100%"} gap={2}>
@@ -67,6 +74,7 @@ export default function Index() {
             maxHeight: "100vh",
             overflowY: "auto",
           }}
+          onClick={(e) => e.stopPropagation()}
         >
           <Stepper>
             <Step title={"Sections"} step={0}>
@@ -99,7 +107,6 @@ export default function Index() {
               onClickAway={() => {
                 setHoveredID(null);
                 setSelectedComponent(null);
-                // selectedRef.current = null;
               }}
             >
               <Stack
@@ -115,14 +122,40 @@ export default function Index() {
           </Paper>
           <SettingComponent />
         </Stack>
-        <Paper sx={{ width: "350px", maxHeight: "100vh", padding: 1 }}>
-          {selectedRef.current && (
-            <StyleComponent component={selectedRef.current} />
-          )}
+        <Paper
+          sx={{
+            width: "350px",
+            maxHeight: "100vh",
+            overflowY: "auto",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {selectedComponent && <StyleComponent />}
         </Paper>
       </Stack>
     </editorContext.Provider>
   );
+}
+
+// recursion update style
+function updateStyle(sections, id, newStyle) {
+  let componentUpdated = null;
+  sections.forEach((section) => {
+    if (id === section.id) {
+      section.styles = {
+        ...section.styles,
+        ...newStyle,
+      };
+
+      componentUpdated = section;
+    } else {
+      if (section.children.length > 0) {
+        componentUpdated = updateStyle(section.children, id, newStyle);
+      }
+    }
+  });
+
+  return componentUpdated;
 }
 
 const screens = {
@@ -215,13 +248,8 @@ const sections = [
   },
 ];
 function SectionComponent({ sections }) {
-  const {
-    hoveredID,
-    setHoveredID,
-    selectedComponent,
-    setSelectedComponent,
-    selectedRef,
-  } = useContext(editorContext);
+  const { hoveredID, setHoveredID, selectedComponent, setSelectedComponent } =
+    useContext(editorContext);
 
   return (
     <Stack>
@@ -240,9 +268,13 @@ function SectionComponent({ sections }) {
                   setHoveredID(tag.id);
                 }
               }}
+              onMouseLeave={(e) => {
+                if (tag.id === "root") {
+                  setHoveredID(null);
+                }
+              }}
               onClick={(e) => {
                 e.stopPropagation();
-                selectedRef.current = tag;
                 setSelectedComponent(tag);
                 document
                   .getElementById(tag.id)
@@ -281,13 +313,8 @@ function SectionRenderer({ sections }) {
 }
 
 function Section({ section }) {
-  const {
-    hoveredID,
-    setHoveredID,
-    selectedComponent,
-    setSelectedComponent,
-    selectedRef,
-  } = useContext(editorContext);
+  const { hoveredID, setHoveredID, selectedComponent, setSelectedComponent } =
+    useContext(editorContext);
 
   const isHovered = hoveredID === section.id;
   const isSelected = selectedComponent?.id === section.id || false;
@@ -306,17 +333,7 @@ function Section({ section }) {
     : combineStyles;
   styles = isSelected ? { ...styles, background: "#0366d61a" } : styles;
   return (
-    <div style={{ position: "relative" }}>
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          opacity: isSelected || isHovered ? 1 : 0.6,
-        }}
-      >
-        #{section.id}
-      </div>
+    <div style={{ position: "relative", display: "contents" }}>
       {React.createElement(
         section.tagName,
         {
@@ -330,10 +347,14 @@ function Section({ section }) {
               setHoveredID(section.id);
             }
           },
+          onMouseLeave: (e) => {
+            if (section.id === "root") {
+              setHoveredID(null);
+            }
+          },
           onClick: (e) => {
             e.stopPropagation();
             setSelectedComponent(section);
-            selectedRef.current = section;
             document
               .getElementById(section.id)
               .scrollIntoView({ behavior: "smooth" });

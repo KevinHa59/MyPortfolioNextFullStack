@@ -21,7 +21,11 @@ export default function Toggle({
     >
       {options.map((option, index) => {
         return (
-          <ToggleButton key={index} value={option}>
+          <ToggleButton
+            key={index}
+            value={option}
+            sx={{ padding: 0, fontSize: "10px" }}
+          >
             {option}
           </ToggleButton>
         );
