@@ -10,36 +10,57 @@ export const layout = {
   clear: "none", // Clearing floats
 };
 
+export const block = {
+  textAlign: "start", // Aligns text to the start (dependent on text direction)
+  verticalAlign: "baseline", // Aligns baseline of element relative to its container
+  // Less commonly used flexbox properties
+  more: {
+    float: "none", // No floating
+    clear: "none", // No clearing (clear floats)
+  },
+};
+
 export const flexbox = {
+  // Commonly used flexbox properties
   flexDirection: "row", // Direction of flex items (row, column, etc.)
   justifyContent: "flex-start", // Horizontal alignment of flex items
   alignItems: "stretch", // Vertical alignment of flex items
   flexWrap: "nowrap", // Whether flex items wrap to the next line
-  alignContent: "stretch", // Aligning lines of flex containers when there is extra space
-  order: "0", // Order of the flex item
-  flexGrow: "0", // Ability to grow
-  flexShrink: "1", // Ability to shrink
-  flexBasis: "auto", // Default size of the flex item
+  gap: "0", // Space between flex items
+
+  // Less commonly used flexbox properties
+  more: {
+    alignContent: "stretch", // Aligning lines of flex containers when there is extra space
+    order: "0", // Order of the flex item
+    flexGrow: "0", // Ability to grow
+    flexShrink: "1", // Ability to shrink
+    flexBasis: "auto", // Default size of the flex item
+  },
 };
 
 export const gridbox = {
+  // Commonly used properties
   gridTemplateColumns: "none", // Defines the columns of the grid
   gridTemplateRows: "none", // Defines the rows of the grid
-  gridTemplateAreas: "none", // Defines named grid areas
-  gridAutoColumns: "auto", // Defines the size of auto-generated columns
-  gridAutoRows: "auto", // Defines the size of auto-generated rows
-  gridAutoFlow: "row", // Controls the flow of the grid items
   gap: "0", // Space between grid items (shorthand for row-gap and column-gap)
-  rowGap: "0", // Space between rows
-  columnGap: "0", // Space between columns
   justifyItems: "stretch", // Aligns grid items along the row axis
   alignItems: "stretch", // Aligns grid items along the column axis
   justifyContent: "start", // Aligns the grid along the row axis (main axis)
   alignContent: "start", // Aligns the grid along the column axis (cross axis)
-  gridRow: "auto", // Defines a grid item's position within the rows
-  gridColumn: "auto", // Defines a grid item's position within the columns
-  gridArea: "auto", // Defines a grid item's area in the grid
   overflow: "visible", // Determines how content is handled when overflowing the grid container
+
+  // Less commonly used properties
+  more: {
+    gridTemplateAreas: "none", // Defines named grid areas
+    gridAutoColumns: "auto", // Defines the size of auto-generated columns
+    gridAutoRows: "auto", // Defines the size of auto-generated rows
+    gridAutoFlow: "row", // Controls the flow of the grid items
+    rowGap: "0", // Space between rows
+    columnGap: "0", // Space between columns
+    gridRow: "auto", // Defines a grid item's position within the rows
+    gridColumn: "auto", // Defines a grid item's position within the columns
+    gridArea: "auto", // Defines a grid item's area in the grid
+  },
 };
 
 export const positioning = {

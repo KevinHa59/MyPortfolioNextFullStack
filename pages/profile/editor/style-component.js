@@ -14,73 +14,182 @@ import Toggle from "../../../components/widgets/toggle/toggle";
 import { editorContext } from ".";
 import LabelText from "../portfolio-collection/components/label-text";
 import InputSuggestion from "../../../components/widgets/input/input-suggestion";
-import { background, propOptions, typography } from "./css-styles";
+import {
+  background,
+  block,
+  flexbox,
+  gridbox,
+  propOptions,
+  typography,
+} from "./css-styles";
 import { stringUtil } from "../../../utils/stringUtil";
 import Stepper, { Step } from "../../../components/widgets/stepper/stepper";
+import { Palette } from "@mui/icons-material";
+import { Editor } from "@monaco-editor/react";
 const fontStyles = {
   fontSize: "12px",
 };
 export default function StyleComponent({}) {
   const { updateStyle, selectedComponent } = useContext(editorContext);
+  const [isEditor, setIsEditor] = useState(false);
   const theme = useTheme();
   const handleChange = (newStyle) => {
     updateStyle(newStyle);
   };
 
+  function createDependencyProposals(range) {
+    // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
+    // here you could do a server side lookup
+    return [
+      {
+        label: '"display"',
+        kind: monaco.languages.CompletionItemKind.Function,
+        documentation: "The Lodash library exported as Node.js modules.",
+        insertText: '"display": "${1:}"',
+        insertTextRules:
+          monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        range: range,
+      },
+    ];
+  }
+  function createDisplayValueProposals(range) {
+    return [
+      {
+        label: "block",
+        kind: monaco.languages.CompletionItemKind.Value,
+        documentation: "Displays an element as a block element.",
+        insertText: "block",
+        range: range,
+      },
+      {
+        label: "flex",
+        kind: monaco.languages.CompletionItemKind.Value,
+        documentation: "Displays an element as a flexible box.",
+        insertText: "flex",
+        range: range,
+      },
+      {
+        label: "grid",
+        kind: monaco.languages.CompletionItemKind.Value,
+        documentation: "Displays an element as a grid container.",
+        insertText: "grid",
+        range: range,
+      },
+      {
+        label: "inline",
+        kind: monaco.languages.CompletionItemKind.Value,
+        documentation: "Displays an element as an inline element.",
+        insertText: "inline",
+        range: range,
+      },
+    ];
+  }
+
+  function onMonacoMount(editor, monaco) {
+    monaco.languages.registerCompletionItemProvider("json", {
+      provideCompletionItems: (model, position) => {
+        var textUntilPosition = model
+          .getValueInRange({
+            startLineNumber: 1,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column,
+          })
+          .trim();
+        // Match to see if we are inside the "display" property's value context
+        const valueMatch = textUntilPosition.match(
+          /"display"\s*:\s*"([^"]*)?$/
+        );
+
+        if (valueMatch) {
+          return { suggestions: createDisplayValueProposals(range) };
+        }
+        var word = model.getWordUntilPosition(position);
+        var range = {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: word.startColumn,
+          endColumn: word.endColumn,
+        };
+        return {
+          suggestions: createDependencyProposals(range),
+        };
+      },
+    });
+  }
   return (
     <Stack height={"100%"} gap={1}>
-      <Typography># {selectedComponent?.id}</Typography>
-      <Stepper>
-        <Step title={"Layout"} step={0}>
-          <Display
-            theme={theme}
-            styles={selectedComponent.styles}
-            onChange={(newValue) => handleChange(newValue)}
-          />
-        </Step>
-        <Step title={"Position"} step={1}>
-          <Position
-            theme={theme}
-            styles={selectedComponent.styles}
-            onChange={(newValue) => handleChange(newValue)}
-          />
-        </Step>
-        <Step title={"Background"} step={2}>
-          <Background
-            theme={theme}
-            styles={selectedComponent.styles}
-            onChange={(newValue) => handleChange(newValue)}
-          />
-        </Step>
-        <Step title={"Font"} step={3}>
-          <Font
-            theme={theme}
-            styles={selectedComponent.styles}
-            onChange={(newValue) => handleChange(newValue)}
-          />
-        </Step>
-      </Stepper>
-
-      {/* <Display
-        theme={theme}
-        styles={selectedComponent.styles}
-        onChange={(newValue) => handleChange(newValue)}
-      />
-      <Position
-        theme={theme}
-        styles={selectedComponent.styles}
-        onChange={(newValue) => handleChange(newValue)}
-      />
-      <Background
-        theme={theme}
-        styles={selectedComponent.styles}
-        onChange={(newValue) => handleChange(newValue)}
-      />
-      <Font
-        theme={theme}
-        styles={selectedComponent.styles}
-        onChange={(newValue) => handleChange(newValue)}
-      /> */}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        paddingX={1}
+      >
+        <LabelText label={<Palette />}># {selectedComponent?.id}</LabelText>
+        {/* <Typography sx={{ verticalAlign: "center" }}>
+          
+        </Typography> */}
+        <Button
+          size="small"
+          color="info"
+          className="hoverLink"
+          sx={{ padding: 0 }}
+          onClick={() => setIsEditor((prev) => !prev)}
+        >
+          {`${isEditor ? "Visual" : "Editor"}`} View
+        </Button>
+      </Stack>
+      {isEditor ? (
+        <Editor
+          theme="vs-dark"
+          height="100%"
+          defaultLanguage="json"
+          value={JSON.stringify(selectedComponent.styles, null, 2)}
+          options={{
+            wordWrap: "on", // Enable word wrapping
+            lineNumbers: "off",
+            minimap: {
+              enabled: false, // Disable the mini map
+            },
+            scrollBeyondLastLine: false,
+          }}
+          onChange={(value) => {
+            // setParamInput(JSON.parse(value));
+          }}
+          onMount={onMonacoMount}
+        />
+      ) : (
+        <Stepper>
+          <Step title={"Layout"} step={0}>
+            <Display
+              theme={theme}
+              styles={selectedComponent.styles}
+              onChange={(newValue) => handleChange(newValue)}
+            />
+          </Step>
+          <Step title={"Position"} step={1}>
+            <Position
+              theme={theme}
+              styles={selectedComponent.styles}
+              onChange={(newValue) => handleChange(newValue)}
+            />
+          </Step>
+          <Step title={"Background"} step={2}>
+            <Background
+              theme={theme}
+              styles={selectedComponent.styles}
+              onChange={(newValue) => handleChange(newValue)}
+            />
+          </Step>
+          <Step title={"Font"} step={3}>
+            <Font
+              theme={theme}
+              styles={selectedComponent.styles}
+              onChange={(newValue) => handleChange(newValue)}
+            />
+          </Step>
+        </Stepper>
+      )}
     </Stack>
   );
 }
@@ -88,7 +197,7 @@ export default function StyleComponent({}) {
 function Display({ theme, styles, onChange }) {
   const isFlex = styles.display === "flex";
   const isGrid = styles.display === "grid";
-
+  const isBlock = styles.display === "block";
   return (
     <Stack height={"100%"} padding={1} gap={1}>
       <LabelText label={"Display"} label_sx={{ fontSize: fontStyles.fontSize }}>
@@ -99,109 +208,6 @@ function Display({ theme, styles, onChange }) {
           onChange={(value) => onChange && onChange({ display: value })}
         />
       </LabelText>
-
-      {isFlex && (
-        <>
-          <InputSuggestion
-            label={"Direction"}
-            value={styles.flexDirection || ""}
-            options={propOptions["flexDirection"]}
-            onSelect={(value) => onChange && onChange({ flexDirection: value })}
-            onChange={(e) =>
-              onChange && onChange({ flexDirection: e.target.value })
-            }
-          />
-          <InputSuggestion
-            label={"Justify Content"}
-            value={styles.justifyContent || ""}
-            options={propOptions["justifyContent"]}
-            onSelect={(value) =>
-              onChange && onChange({ justifyContent: value })
-            }
-            onChange={(e) =>
-              onChange && onChange({ justifyContent: e.target.value })
-            }
-          />
-          <InputSuggestion
-            label={"Align Items"}
-            value={styles.alignItems || ""}
-            options={propOptions["alignItems"]}
-            onSelect={(value) => onChange && onChange({ alignItems: value })}
-            onChange={(e) =>
-              onChange && onChange({ alignItems: e.target.value })
-            }
-          />
-          <InputSuggestion
-            label={"Align Content"}
-            value={styles.alignContent || ""}
-            options={propOptions["alignContent"]}
-            onSelect={(value) => onChange && onChange({ alignContent: value })}
-            onChange={(e) =>
-              onChange && onChange({ alignContent: e.target.value })
-            }
-          />
-          <InputSuggestion
-            label={"Gap"}
-            value={styles.gap || ""}
-            options={propOptions["gap"]}
-            onSelect={(value) => onChange && onChange({ gap: value })}
-            onChange={(e) => onChange && onChange({ gap: e.target.value })}
-          />
-        </>
-      )}
-
-      {isGrid && (
-        <>
-          <InputSuggestion
-            label={"Grid Template Columns"}
-            value={styles.gridTemplateColumns || ""}
-            options={propOptions["gridTemplateColumns"]}
-            onSelect={(value) =>
-              onChange && onChange({ gridTemplateColumns: value })
-            }
-            onChange={(e) =>
-              onChange && onChange({ gridTemplateColumns: e.target.value })
-            }
-          />
-          <InputSuggestion
-            label={"Grid Template Rows"}
-            value={styles.gridTemplateRows || ""}
-            options={propOptions["gridTemplateRows"]}
-            onSelect={(value) =>
-              onChange && onChange({ gridTemplateRows: value })
-            }
-            onChange={(e) =>
-              onChange && onChange({ gridTemplateRows: e.target.value })
-            }
-          />
-          <InputSuggestion
-            label={"Gap"}
-            value={styles.gap || ""}
-            options={propOptions["gap"]}
-            onSelect={(value) => onChange && onChange({ gap: value })}
-            onChange={(e) => onChange && onChange({ gap: e.target.value })}
-          />
-          <InputSuggestion
-            label={"Justify Items"}
-            value={styles.justifyItems || ""}
-            options={propOptions["justifyItems"]}
-            onSelect={(value) => onChange && onChange({ justifyItems: value })}
-            onChange={(e) =>
-              onChange && onChange({ justifyItems: e.target.value })
-            }
-          />
-          <InputSuggestion
-            label={"Align Items"}
-            value={styles.alignItems || ""}
-            options={propOptions["alignItems"]}
-            onSelect={(value) => onChange && onChange({ alignItems: value })}
-            onChange={(e) =>
-              onChange && onChange({ alignItems: e.target.value })
-            }
-          />
-        </>
-      )}
-
       <InputSuggestion
         label={"Flex Grow"}
         value={styles.flexGrow || ""}
@@ -230,7 +236,77 @@ function Display({ theme, styles, onChange }) {
         onSelect={(value) => onChange && onChange({ padding: value })}
         onChange={(e) => onChange && onChange({ padding: e.target.value })}
       />
+      {/* Block-specific props */}
+      {isBlock && (
+        <PropGroup props={block} styles={styles} onChange={onChange} />
+      )}
+      {isFlex && (
+        <PropGroup props={flexbox} styles={styles} onChange={onChange} />
+      )}
+
+      {isGrid && (
+        <PropGroup props={gridbox} styles={styles} onChange={onChange} />
+      )}
     </Stack>
+  );
+}
+
+function PropGroup({ props, styles, onChange }) {
+  const [isMore, setIsMore] = useState(false);
+  return (
+    <>
+      {Object.entries(props).map((prop, index) => {
+        const propName = prop[0];
+        const defaultValue = styles[propName] || prop[1];
+        if (propName !== "more") {
+          return (
+            <InputSuggestion
+              key={index}
+              label={stringUtil.camelToTitle(propName)}
+              value={defaultValue}
+              options={propOptions[propName]}
+              onSelect={(value) => onChange && onChange({ [propName]: value })}
+              onChange={(e) =>
+                onChange && onChange({ [propName]: e.target.value })
+              }
+            />
+          );
+        }
+      })}
+      {props.more && (
+        <>
+          {isMore &&
+            Object.entries(props.more).map((prop, index) => {
+              const propName = prop[0];
+              const defaultValue = styles[propName] || prop[1];
+              if (propName !== "more") {
+                return (
+                  <InputSuggestion
+                    key={index}
+                    label={stringUtil.camelToTitle(propName)}
+                    value={defaultValue}
+                    options={propOptions[propName]}
+                    onSelect={(value) =>
+                      onChange && onChange({ [propName]: value })
+                    }
+                    onChange={(e) =>
+                      onChange && onChange({ [propName]: e.target.value })
+                    }
+                  />
+                );
+              }
+            })}
+          <Button
+            size="small"
+            sx={{ padding: 0 }}
+            color="info"
+            onClick={() => setIsMore((prev) => !prev)}
+          >
+            {isMore ? "Show Less" : "Show More"}
+          </Button>
+        </>
+      )}
+    </>
   );
 }
 

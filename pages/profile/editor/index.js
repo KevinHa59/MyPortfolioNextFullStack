@@ -44,6 +44,7 @@ export default function Index() {
 
   const handleUpdateStyle = (newStyle) => {
     const copy = _.cloneDeep(HTMLData);
+
     const newSelected = updateStyle(copy, selectedComponent.id, newStyle);
 
     if (newSelected) {
@@ -126,7 +127,7 @@ export default function Index() {
           sx={{
             width: "350px",
             maxHeight: "100vh",
-            overflowY: "auto",
+            // overflowY: "auto",
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -140,13 +141,19 @@ export default function Index() {
 // recursion update style
 function updateStyle(sections, id, newStyle) {
   let componentUpdated = null;
+
   sections.forEach((section) => {
     if (id === section.id) {
       section.styles = {
         ...section.styles,
         ...newStyle,
       };
-
+      section.styles = Object.entries(section.styles).reduce((res, cur) => {
+        if ([null, undefined, ""].includes(cur[1]) === false) {
+          res[cur[0]] = cur[1];
+        }
+        return res;
+      }, {});
       componentUpdated = section;
     } else {
       if (section.children.length > 0) {
@@ -318,9 +325,10 @@ function Section({ section }) {
 
   const isHovered = hoveredID === section.id;
   const isSelected = selectedComponent?.id === section.id || false;
+
   const combineStyles = {
-    ...section.styles,
     padding: "20px",
+    ...section.styles,
     border: `1px dashed ${
       isHovered || isSelected ? "#0366d6" : "rgba(150,150,150,0.5)"
     }`,
