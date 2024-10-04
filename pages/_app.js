@@ -2,7 +2,7 @@
 import { CssBaseline, Stack, ThemeProvider } from "@mui/material";
 import "../styles/globals.css";
 import Head from "next/head";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { createTheme } from "../theme";
 import Notification from "../components/widgets/notification/notification";
 import { getCookie, getCookies, setCookie } from "cookies-next";
@@ -15,41 +15,59 @@ import { SessionProvider } from "next-auth/react";
 export const mainContext = createContext(null);
 
 function MyApp({ Component, pageProps }) {
-  const [settings, setSettings] = useState({
-    theme: "dark",
-  });
+  const [mode, setMode] = useState("dark"); // Initial theme mode
   const [note, setNote] = useState({
     message: null,
     type: "info",
     timeout: 3000,
   });
+  const [theme, setTheme] = useState(null);
 
+  // console.log("theme", theme);
   useEffect(() => {
     let settingCookies = getCookie("settings");
+    let _mode = "dark";
     if (settingCookies) {
       settingCookies = JSON.parse(settingCookies);
+
       if (settingCookies.mode) {
-        handleUpdateTheme(settingCookies.mode);
+        setMode(settingCookies.mode);
+        _mode = settingCookies.mode;
       } else {
         setCookie("settings", {
           ...settingCookies,
           mode: "dark",
         });
+        setMode("dark");
       }
     } else {
       setCookie("settings", {
         mode: "dark",
       });
     }
+    const _theme = createTheme({ mode: _mode });
+    setTheme(_theme);
   }, []);
 
-  const handleUpdateTheme = (mode = null) => {
-    setSettings((prev) => {
-      return {
-        ...prev,
-        theme: mode ? mode : prev.theme === "dark" ? "light" : "dark",
-      };
-    });
+  const handleUpdateTheme = () => {
+    setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+    let settings = getCookie("settings");
+    if (settings) {
+      settings = JSON.parse(settings);
+      const newMode = settings["mode"]
+        ? settings["mode"] === "dark"
+          ? "light"
+          : "dark"
+        : "light";
+      settings["mode"] = newMode;
+      setCookie("settings", settings);
+    } else {
+      setCookie("settings", {
+        mode: "dark",
+      });
+    }
+    const _theme = createTheme({ mode: mode === "light" ? "dark" : "light" });
+    setTheme(_theme);
   };
 
   const handleUpdateNote = {
@@ -77,46 +95,43 @@ function MyApp({ Component, pageProps }) {
   };
 
   return (
-    <Stack
-      alignItems={"center"}
-      className={settings.theme}
-      sx={StyleMode(
-        { background: darkStyles.background.default, color: "#abbce0" },
-        { background: lightStyles.background.default, color: "#000" },
-        settings.theme
-      )}
-    >
-      <Head>
-        <title>EZ-Folio</title>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-      </Head>
-      <mainContext.Provider
-        value={{
-          setNote: handleUpdateNote,
-          settings: settings,
-          themeToggle: handleUpdateTheme,
-        }}
+    theme && (
+      <Stack
+        alignItems={"center"}
+        className={mode}
+        sx={StyleMode(
+          { background: darkStyles.background.default, color: "#abbce0" },
+          { background: lightStyles.background.default, color: "#000" },
+          mode
+        )}
       >
-        <SessionProvider>
-          <ThemeProvider
-            theme={createTheme({
-              mode: settings.theme,
-            })}
-          >
-            <CssBaseline />
-            <AsyncNotification>
-              <Component {...pageProps} />
-            </AsyncNotification>
-            <Notification
-              note={note.message}
-              type={note.type}
-              timeout={note.timeout}
-            />
-          </ThemeProvider>
-        </SessionProvider>
-      </mainContext.Provider>
-    </Stack>
+        <Head>
+          <title>EZ-Folio</title>
+          <meta name="viewport" content="initial-scale=1, width=device-width" />
+          <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        </Head>
+        <mainContext.Provider
+          value={{
+            setNote: handleUpdateNote,
+            themeToggle: handleUpdateTheme,
+          }}
+        >
+          <SessionProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <AsyncNotification>
+                <Component {...pageProps} />
+              </AsyncNotification>
+              <Notification
+                note={note.message}
+                type={note.type}
+                timeout={note.timeout}
+              />
+            </ThemeProvider>
+          </SessionProvider>
+        </mainContext.Provider>
+      </Stack>
+    )
   );
 }
 

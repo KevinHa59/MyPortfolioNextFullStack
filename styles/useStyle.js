@@ -1,8 +1,7 @@
 import { getCookie } from "cookies-next";
-import { useContext } from "react";
-import { mainContext } from "../pages/_app";
 import { darkStyles } from "../theme/dark-theme-options";
 import { lightStyles } from "../theme/light-theme-options";
+import { useTheme } from "@mui/material";
 
 export default function useStyle() {
   return style;
@@ -24,12 +23,8 @@ const style_dark = {
 export const styles = style;
 export const styles_dark = style_dark;
 
-export function StyleMode(dark, light, mode = "dark") {
-  const context = useContext(mainContext);
+export function StyleMode(dark, light, mode) {
   let _mode = mode;
-  if (context) {
-    _mode = context.settings.theme;
-  }
   if (_mode === "dark" || _mode === undefined) {
     return dark;
   } else {
@@ -37,12 +32,8 @@ export function StyleMode(dark, light, mode = "dark") {
   }
 }
 export function Styles() {
-  const context = useContext(mainContext);
-  let _mode = "dark";
-  if (context) {
-    _mode = context.settings.theme;
-  }
-
+  const theme = useTheme();
+  let _mode = theme.palette.mode;
   if (_mode === "dark" || _mode === undefined) {
     return style_dark;
   } else {

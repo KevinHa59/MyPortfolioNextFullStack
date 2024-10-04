@@ -24,7 +24,6 @@ import LabelText from "../../pages/profile/portfolio-collection/components/label
 import { mainContext } from "../../pages/_app";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import axios from "axios";
-import { styles } from "../../styles/useStyle";
 
 export default function Membership() {
   const theme = useTheme();
