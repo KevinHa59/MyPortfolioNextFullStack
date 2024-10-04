@@ -1,5 +1,7 @@
 import { Editor } from "@monaco-editor/react";
-import React from "react";
+import { useTheme } from "@mui/material";
+import React, { useContext, useEffect, useRef } from "react";
+import { mainContext } from "../../../pages/_app";
 
 const sample_completion_provider = {
   display: ["flex", "block", "grid"],
@@ -9,19 +11,126 @@ const sample_completion_provider = {
 
 export default function MonacoEditor({
   value,
-  completionProvider = [],
+  completionProvider = {},
   defaultLanguage = "json",
+  onChange,
+  onCtrlS,
 }) {
-  const completionCreate = () => {
-    return {};
-  };
+  const theme = useTheme();
+  const providerRef = useRef(null); // Store the provider reference
+
+  // Cleanup the completion provider when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (providerRef.current) {
+        providerRef.current.dispose();
+      }
+    };
+  }, []);
+
+  function onMonacoMount(editor, monaco, completionData) {
+    // Add custom command for Tab key
+    editor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, // Ctrl + S
+      () => {
+        const currentValue = editor.getValue();
+        onCtrlS && onCtrlS(JSON.parse(currentValue).css);
+      }
+    );
+    // Set the base theme based on MUI theme mode
+    const baseTheme = theme.palette.mode === "dark" ? "vs-dark" : "vs";
+    monaco.editor.defineTheme("myCustomTheme", {
+      base: baseTheme, // Can also be 'vs-dark' or 'hc-black'
+      inherit: true, // Can inherit from another theme
+      rules: [
+        // You can add more rules here as needed
+        { token: "", background: theme.palette.background.default }, // Static background color
+      ],
+      colors: {
+        "editor.background": theme.palette.background.default, // Static background color
+      },
+    });
+
+    // Set the custom theme
+    monaco.editor.setTheme("myCustomTheme");
+    // Unregister the previous completion provider if it exists
+    if (providerRef.current) {
+      providerRef.current.dispose();
+    }
+
+    providerRef.current = monaco.languages.registerCompletionItemProvider(
+      "json",
+      {
+        provideCompletionItems: (model, position) => {
+          var textUntilPosition = model
+            .getValueInRange({
+              startLineNumber: 1,
+              startColumn: 1,
+              endLineNumber: position.lineNumber,
+              endColumn: position.column,
+            })
+            .trim();
+
+          const { general, ...others } = completionData;
+
+          let completion = [];
+          // Loop through each property in the completion data
+          Object.entries(others).forEach(([propName, options]) => {
+            const dynamicPropRegex = new RegExp(
+              `"${propName}"\\s*:\\s*"([^"]*)?$`
+            );
+            const isPropMatch = textUntilPosition.match(dynamicPropRegex);
+            if (isPropMatch) {
+              // Add the matching property suggestions to the completion list
+              completion = options;
+            }
+          });
+
+          // Define the range correctly for the current position
+          const word = model.getWordUntilPosition(position);
+          const range = {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: word.startColumn,
+            endColumn: word.endColumn,
+          };
+
+          // If no specific property matches, provide the general suggestions
+          if (completion.length === 0) {
+            completion = general.map((item) => ({
+              ...item,
+              range, // Ensure range is applied correctly
+            }));
+          } else {
+            completion = completion.map((item) => ({
+              ...item,
+              range, // Ensure range is applied to each suggestion
+            }));
+          }
+          return {
+            suggestions: completion,
+          };
+        },
+      }
+    );
+  }
+
+  // Add the command line to the value
+  const initialValue = JSON.stringify(
+    {
+      _instructions: "Press Ctrl + S to save",
+      css: value, // Your actual JSON data goes here
+    },
+    null,
+    2
+  );
 
   return (
     <Editor
-      theme="vs-dark"
+      theme={`vs-${theme.palette.mode}`}
       height="100%"
       defaultLanguage={defaultLanguage}
-      value={JSON.stringify(value, null, 2)}
+      value={initialValue}
       options={{
         wordWrap: "on", // Enable word wrapping
         lineNumbers: "off",
@@ -31,88 +140,43 @@ export default function MonacoEditor({
         scrollBeyondLastLine: false,
       }}
       onChange={(value) => {
-        // setParamInput(JSON.parse(value));
+        onChange && onChange(JSON.parse(value).css);
       }}
-      onMount={onMonacoMount}
+      onMount={(editor, monaco) => {
+        return onMonacoMount(
+          editor,
+          monaco,
+          completionCreate(completionProvider)
+        );
+      }}
     />
   );
 }
 
-function createDependencyProposals(range) {
-  // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
-  // here you could do a server side lookup
-  return [
-    {
-      label: '"display"',
+const completionCreate = (completionProvider) => {
+  const general = Object.keys(completionProvider).map((key) => {
+    return {
+      label: `"${key}"`,
       kind: monaco.languages.CompletionItemKind.Function,
-      documentation: "The Lodash library exported as Node.js modules.",
-      insertText: '"display": "${1:}"',
+      insertText: `"${key}": "\${1}"`,
       insertTextRules:
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-      range: range,
-    },
-  ];
-}
-function createDisplayValueProposals(range) {
-  return [
-    {
-      label: "block",
-      kind: monaco.languages.CompletionItemKind.Value,
-      documentation: "Displays an element as a block element.",
-      insertText: "block",
-      range: range,
-    },
-    {
-      label: "flex",
-      kind: monaco.languages.CompletionItemKind.Value,
-      documentation: "Displays an element as a flexible box.",
-      insertText: "flex",
-      range: range,
-    },
-    {
-      label: "grid",
-      kind: monaco.languages.CompletionItemKind.Value,
-      documentation: "Displays an element as a grid container.",
-      insertText: "grid",
-      range: range,
-    },
-    {
-      label: "inline",
-      kind: monaco.languages.CompletionItemKind.Value,
-      documentation: "Displays an element as an inline element.",
-      insertText: "inline",
-      range: range,
-    },
-  ];
-}
-
-function onMonacoMount(editor, monaco) {
-  monaco.languages.registerCompletionItemProvider("json", {
-    provideCompletionItems: (model, position) => {
-      var textUntilPosition = model
-        .getValueInRange({
-          startLineNumber: 1,
-          startColumn: 1,
-          endLineNumber: position.lineNumber,
-          endColumn: position.column,
-        })
-        .trim();
-      // Match to see if we are inside the "display" property's value context
-      const valueMatch = textUntilPosition.match(/"display"\s*:\s*"([^"]*)?$/);
-
-      if (valueMatch) {
-        return { suggestions: createDisplayValueProposals(range) };
-      }
-      var word = model.getWordUntilPosition(position);
-      var range = {
-        startLineNumber: position.lineNumber,
-        endLineNumber: position.lineNumber,
-        startColumn: word.startColumn,
-        endColumn: word.endColumn,
-      };
-      return {
-        suggestions: createDependencyProposals(range),
-      };
-    },
+    };
   });
-}
+  const props = Object.entries(completionProvider).reduce((res, cur) => {
+    const prop = cur[0];
+    const options = cur[1].map((option) => {
+      return {
+        label: option,
+        kind: monaco.languages.CompletionItemKind.Value,
+        insertText: option,
+      };
+    });
+    res[prop] = options;
+    return res;
+  }, {});
+  return {
+    general: general,
+    ...props,
+  };
+};

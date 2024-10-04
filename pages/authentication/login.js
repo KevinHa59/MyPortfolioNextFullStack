@@ -1,20 +1,25 @@
-import { Checkbox, Divider, FormControlLabel, Stack } from "@mui/material";
+import {
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  Stack,
+  useTheme,
+} from "@mui/material";
 import React, { useContext, useState } from "react";
 import PaperForm from "../../components/widgets/paper/paper-form";
 import Input from "../../components/widgets/input/input";
 import ButtonLoading from "../../components/widgets/buttons/button-loading";
 import MyAPIs from "../api-functions/MyAPIs";
 import { useRouter } from "next/router";
-import { mainContext } from "../_app";
 export default function Login() {
   const router = useRouter();
+  const theme = useTheme();
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
     rememberMe: false,
   });
   const [isLogin, setIsLogin] = useState(false);
-  const { settings } = useContext(mainContext);
 
   const handleInputChange = (newValue) => {
     setLoginInput((pre) => {
@@ -52,7 +57,7 @@ export default function Login() {
     >
       <PaperForm
         title={"Login"}
-        titleColor={settings.theme === "light" ? "#000" : "#fff"}
+        titleColor={theme.palette.mode === "light" ? "#000" : "#fff"}
       >
         <Stack gap={1} paddingY={1} alignItems={"center"}>
           <Stack gap={2} paddingX={2}>

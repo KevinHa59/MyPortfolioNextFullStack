@@ -1,32 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
-import UsersAPI from "../../pages/api-functions/UsersAPI";
+
 import {
   Button,
   Checkbox,
   CircularProgress,
-  Divider,
-  Fade,
   FormControlLabel,
-  IconButton,
-  LinearProgress,
   Paper,
   Slide,
   Stack,
-  TextField,
   Typography,
-  Zoom,
 } from "@mui/material";
 import Header from "./header";
 import MyAPIs from "../../pages/api-functions/MyAPIs";
 import axios from "axios";
-import { styles } from "../../styles/useStyle";
 import { useRouter } from "next/router";
 import ButtonLoading from "../widgets/buttons/button-loading";
 import { mainContext } from "../../pages/_app";
-import { getCookie, getCookies } from "cookies-next";
 import { AdminPanelSettings, Save } from "@mui/icons-material";
 import Table from "../widgets/tables/table";
-import { asyncNoteContext } from "../widgets/notification/async-notification";
 import { adminContext } from "../../pages/admin";
 
 export default function Permissions() {

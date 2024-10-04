@@ -1,41 +1,22 @@
 import React, { useContext, useEffect, useState } from "react";
 import { mainContext } from "../../pages/_app";
-import { Button, Slide, Stack } from "@mui/material";
+import { Button, Slide, Stack, useTheme } from "@mui/material";
 import { getCookie, setCookie } from "cookies-next";
 import { DarkMode, LightMode } from "@mui/icons-material";
-import { styles } from "../../styles/useStyle";
 
 export default function ThemeButton({ sx, size }) {
-  const { settings, themeToggle } = useContext(mainContext);
-  const [mode, setMode] = useState("dark");
+  const theme = useTheme();
+  const { themeToggle } = useContext(mainContext);
+
   useEffect(() => {
     let settings = getCookie("setting");
     if (settings) {
       settings = JSON.parse(settings);
-      setMode(settings.mode || "dark");
     }
   }, []);
 
   const handleToggleMode = () => {
     themeToggle();
-    let settings = getCookie("settings");
-    if (settings) {
-      settings = JSON.parse(settings);
-      const newMode = settings["mode"]
-        ? settings["mode"] === "dark"
-          ? "light"
-          : "dark"
-        : "light";
-      settings["mode"] = newMode;
-      setCookie("settings", settings);
-      setMode(newMode);
-    } else {
-      setCookie("settings", {
-        mode: "light",
-      });
-      setMode("light");
-    }
-    setMode((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
   return (
@@ -55,7 +36,7 @@ export default function ThemeButton({ sx, size }) {
       variant="contained"
       onClick={handleToggleMode}
     >
-      <Slide direction={"down"} in={settings.theme === "dark"}>
+      <Slide direction={"down"} in={theme.palette.mode === "dark"}>
         <Stack
           direction={"row"}
           gap={0.5}
@@ -68,7 +49,7 @@ export default function ThemeButton({ sx, size }) {
           Dark
         </Stack>
       </Slide>
-      <Slide direction={"up"} in={settings.theme === "light"}>
+      <Slide direction={"up"} in={theme.palette.mode === "light"}>
         <Stack
           direction={"row"}
           gap={0.5}

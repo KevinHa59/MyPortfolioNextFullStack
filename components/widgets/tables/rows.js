@@ -1,6 +1,5 @@
-import { Fade, Grid, Paper, Slide, Stack, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import React from "react";
-import { styles } from "../../../styles/useStyle";
 
 export default function Rows({ data, headers, callback_cell = null }) {
   return (

@@ -435,7 +435,7 @@ export const lightThemeOptions = {
     divider,
     error,
     info,
-    mode: "dark",
+    mode: "light",
     neutral,
     primary,
     secondary,

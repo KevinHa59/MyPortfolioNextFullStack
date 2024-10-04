@@ -1,22 +1,10 @@
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 import { Button, Grid, Stack, Typography } from "@mui/material";
 import React, { useContext } from "react";
-import { StyleMode, styles } from "../../../styles/useStyle";
-import { mainContext } from "../../../pages/_app";
-import { lightStyles } from "../../../theme/light-theme-options";
 
 export default function Header({ headers, sortSetting, onSortChange }) {
-  const { settings } = useContext(mainContext);
   return (
-    <Grid
-      container
-      // sx={{
-      //   background: StyleMode(
-      //     lightStyles.background.paper,
-      //     styles.background.menu
-      //   ),
-      // }}
-    >
+    <Grid container>
       {headers?.map((header, index) => {
         const justify = header.align
           ? header.align === "left"
@@ -33,10 +21,6 @@ export default function Header({ headers, sortSetting, onSortChange }) {
               alignItems={"center"}
               justifyContent={justify}
               width={"100%"}
-              // sx={{
-              //   color:
-              //     settings.theme === "light" ? "#fff" : styles.background.menu,
-              // }}
             >
               <Button
                 size="small"

@@ -7,6 +7,7 @@ import {
   MenuItem,
   Paper,
   Stack,
+  useTheme,
 } from "@mui/material";
 import React, {
   createContext,
@@ -25,6 +26,8 @@ import _ from "lodash";
 export const editorContext = createContext();
 
 export default function Index() {
+  const theme = useTheme();
+
   const [hoveredID, setHoveredID] = useState(null);
   const [selectedComponent, setSelectedComponent] = useState(null);
   const [setting, setSetting] = useState({
@@ -123,16 +126,18 @@ export default function Index() {
           </Paper>
           <SettingComponent />
         </Stack>
-        <Paper
-          sx={{
-            width: "350px",
-            maxHeight: "100vh",
-            // overflowY: "auto",
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {selectedComponent && <StyleComponent />}
-        </Paper>
+        {selectedComponent && (
+          <Paper
+            sx={{
+              width: "450px",
+              maxHeight: "100vh",
+              // overflowY: "auto",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <StyleComponent />
+          </Paper>
+        )}
       </Stack>
     </editorContext.Provider>
   );

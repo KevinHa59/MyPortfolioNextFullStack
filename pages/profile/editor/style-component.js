@@ -26,6 +26,7 @@ import { stringUtil } from "../../../utils/stringUtil";
 import Stepper, { Step } from "../../../components/widgets/stepper/stepper";
 import { Palette } from "@mui/icons-material";
 import { Editor } from "@monaco-editor/react";
+import MonacoEditor from "../../../components/widgets/monoca/moraco-editor";
 const fontStyles = {
   fontSize: "12px",
 };
@@ -37,86 +38,6 @@ export default function StyleComponent({}) {
     updateStyle(newStyle);
   };
 
-  function createDependencyProposals(range) {
-    // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
-    // here you could do a server side lookup
-    return [
-      {
-        label: '"display"',
-        kind: monaco.languages.CompletionItemKind.Function,
-        documentation: "The Lodash library exported as Node.js modules.",
-        insertText: '"display": "${1:}"',
-        insertTextRules:
-          monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-        range: range,
-      },
-    ];
-  }
-  function createDisplayValueProposals(range) {
-    return [
-      {
-        label: "block",
-        kind: monaco.languages.CompletionItemKind.Value,
-        documentation: "Displays an element as a block element.",
-        insertText: "block",
-        range: range,
-      },
-      {
-        label: "flex",
-        kind: monaco.languages.CompletionItemKind.Value,
-        documentation: "Displays an element as a flexible box.",
-        insertText: "flex",
-        range: range,
-      },
-      {
-        label: "grid",
-        kind: monaco.languages.CompletionItemKind.Value,
-        documentation: "Displays an element as a grid container.",
-        insertText: "grid",
-        range: range,
-      },
-      {
-        label: "inline",
-        kind: monaco.languages.CompletionItemKind.Value,
-        documentation: "Displays an element as an inline element.",
-        insertText: "inline",
-        range: range,
-      },
-    ];
-  }
-
-  function onMonacoMount(editor, monaco) {
-    monaco.languages.registerCompletionItemProvider("json", {
-      provideCompletionItems: (model, position) => {
-        var textUntilPosition = model
-          .getValueInRange({
-            startLineNumber: 1,
-            startColumn: 1,
-            endLineNumber: position.lineNumber,
-            endColumn: position.column,
-          })
-          .trim();
-        // Match to see if we are inside the "display" property's value context
-        const valueMatch = textUntilPosition.match(
-          /"display"\s*:\s*"([^"]*)?$/
-        );
-
-        if (valueMatch) {
-          return { suggestions: createDisplayValueProposals(range) };
-        }
-        var word = model.getWordUntilPosition(position);
-        var range = {
-          startLineNumber: position.lineNumber,
-          endLineNumber: position.lineNumber,
-          startColumn: word.startColumn,
-          endColumn: word.endColumn,
-        };
-        return {
-          suggestions: createDependencyProposals(range),
-        };
-      },
-    });
-  }
   return (
     <Stack height={"100%"} gap={1}>
       <Stack
@@ -140,24 +61,15 @@ export default function StyleComponent({}) {
         </Button>
       </Stack>
       {isEditor ? (
-        <Editor
-          theme="vs-dark"
-          height="100%"
-          defaultLanguage="json"
-          value={JSON.stringify(selectedComponent.styles, null, 2)}
-          options={{
-            wordWrap: "on", // Enable word wrapping
-            lineNumbers: "off",
-            minimap: {
-              enabled: false, // Disable the mini map
-            },
-            scrollBeyondLastLine: false,
-          }}
-          onChange={(value) => {
-            // setParamInput(JSON.parse(value));
-          }}
-          onMount={onMonacoMount}
-        />
+        <Stack padding={1} height={"100%"}>
+          <Paper sx={{ height: "100%", overflow: "hidden" }}>
+            <MonacoEditor
+              value={selectedComponent.styles}
+              completionProvider={propOptions}
+              onCtrlS={handleChange}
+            />
+          </Paper>
+        </Stack>
       ) : (
         <Stepper>
           <Step title={"Layout"} step={0}>
