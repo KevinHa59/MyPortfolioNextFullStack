@@ -1,30 +1,17 @@
-import {
-  ClickAwayListener,
-  Divider,
-  ListItemText,
-  MenuItem,
-  Paper,
-  Stack,
-} from "@mui/material";
-import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  ArrowRight,
-  ContentPaste,
-  CopyAll,
-  DeleteForever,
-  PhoneAndroidSharp,
-  Tv,
-} from "@mui/icons-material";
-import StyleComponent from "./style-component";
+import { ClickAwayListener, Paper, Stack } from "@mui/material";
+import React, { createContext, useEffect, useState } from "react";
+import { PhoneAndroidSharp, Tv } from "@mui/icons-material";
+import StyleComponent from "../../../components/profile/editor/style-component";
 import _ from "lodash";
 import Structure from "../../../components/profile/editor/structure";
 import Settings from "../../../components/profile/editor/settings";
 import { HTMLRender } from "../../../components/profile/editor/section-renderer";
 import ContextMenu, {
-  ContextContainer,
-  ContextItem,
+  ContextItemRenderer,
 } from "../../../components/widgets/context-menu/context-menu";
 import LabelText from "../portfolio-collection/components/label-text";
+import { menuData } from "../../../components/profile/editor/context-menu-details/templates";
+import { stringUtil } from "../../../utils/stringUtil";
 export const editorContext = createContext();
 
 export default function Index() {
@@ -80,6 +67,20 @@ export default function Index() {
     setSelectedComponent(component);
   };
 
+  const contextMenuEvents = {
+    Delete: (data) => {
+      handleDeleteComponent(selectedComponent.id);
+      setSelectedComponent(null);
+      setContextPosition(null);
+    },
+    Insert: (data) => {
+      const copy = _.cloneDeep(HTMLData);
+      const _data = createID(data);
+      insertComponent(copy, _data, selectedComponent.id);
+      setHTMLData(copy);
+    },
+  };
+
   return (
     <editorContext.Provider
       value={{
@@ -104,39 +105,7 @@ export default function Index() {
           setContextPosition(null);
         }}
       >
-        <Stack>
-          <ContextContainer
-            title={"Container"}
-            StartIcon={CopyAll}
-            EndIcon={ArrowRight}
-            onClick={() => {
-              handleDeleteComponent(selectedComponent.id);
-              setSelectedComponent(null);
-              setContextPosition(null);
-            }}
-          >
-            herllo
-          </ContextContainer>
-
-          <ContextItem
-            title={"Paste"}
-            StartIcon={ContentPaste}
-            onClick={() => {
-              handleDeleteComponent(selectedComponent.id);
-              setSelectedComponent(null);
-              setContextPosition(null);
-            }}
-          />
-          <ContextItem
-            title={"Delete"}
-            StartIcon={DeleteForever}
-            onClick={() => {
-              handleDeleteComponent(selectedComponent.id);
-              setSelectedComponent(null);
-              setContextPosition(null);
-            }}
-          />
-        </Stack>
+        <ContextItemRenderer value={menuData} onEvent={contextMenuEvents} />
       </ContextMenu>
       <Stack minHeight={"100vh"} direction={"row"} width={"100%"} gap={2}>
         <Structure sections={HTMLData} />
@@ -155,22 +124,15 @@ export default function Index() {
               padding: 1,
             }}
           >
-            <ClickAwayListener
-              onClickAway={() => {
-                // setHoveredID(null);
-                // setSelectedComponent(null);
+            <Stack
+              sx={{
+                zoom: setting.zoom,
+                width: screens[setting.screen].size,
+                transition: "ease 0.3s",
               }}
             >
-              <Stack
-                sx={{
-                  zoom: setting.zoom,
-                  width: screens[setting.screen].size,
-                  transition: "ease 0.3s",
-                }}
-              >
-                <HTMLRender sections={HTMLData} />
-              </Stack>
-            </ClickAwayListener>
+              <HTMLRender sections={HTMLData} />
+            </Stack>
           </Paper>
           <Settings />
         </Stack>
@@ -189,6 +151,12 @@ export default function Index() {
       </Stack>
     </editorContext.Provider>
   );
+}
+
+function createID(section) {
+  const copy = { ...section };
+  copy.id += `-${stringUtil.randomString(6)}`;
+  return copy;
 }
 
 // recursion update style
@@ -216,6 +184,18 @@ function updateStyle(sections, id, newStyle) {
   });
 
   return componentUpdated;
+}
+
+function insertComponent(sections, newSection, toID) {
+  sections?.forEach((section) => {
+    if (section.id === toID) {
+      section.children.push(newSection);
+    } else {
+      if (section.children.length > 0) {
+        insertComponent(section.children, newSection, toID);
+      }
+    }
+  });
 }
 
 function deleteComponent(sections, id) {

@@ -43,6 +43,20 @@ export function Ellipse({ str, limit }) {
     </Stack>
   );
 }
+
+export function randomString(length = 6) {
+  const allChars =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*-_+;:,.~";
+  const max = allChars.length - 1;
+
+  let result = "";
+  while (result.length < length) {
+    const randomIndex = Math.floor(max * Math.random());
+    result += allChars.charAt(randomIndex);
+  }
+
+  return result;
+}
 export function camelToTitle(str) {
   // find cap and add space before it
   str = str.replace(/([A-Z]+)/g, " $1").trim();
@@ -56,4 +70,5 @@ export const stringUtil = {
   ellipsis: (str, limit) => _ellipsis(str, limit),
   Ellipses: (str, limit) => <Ellipse str={str} limit={limit} />,
   camelToTitle: (str) => camelToTitle(str),
+  randomString: (length) => randomString(length),
 };

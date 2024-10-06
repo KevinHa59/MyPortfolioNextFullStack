@@ -9,11 +9,11 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import Toggle from "../../../components/widgets/toggle/toggle";
+import Toggle from "../../widgets/toggle/toggle";
 
-import { editorContext } from ".";
-import LabelText from "../portfolio-collection/components/label-text";
-import InputSuggestion from "../../../components/widgets/input/input-suggestion";
+import { editorContext } from "../../../pages/profile/editor";
+import LabelText from "../../../pages/profile/portfolio-collection/components/label-text";
+import InputSuggestion from "../../widgets/input/input-suggestion";
 import {
   background,
   block,
@@ -23,10 +23,9 @@ import {
   typography,
 } from "./css-styles";
 import { stringUtil } from "../../../utils/stringUtil";
-import Stepper, { Step } from "../../../components/widgets/stepper/stepper";
+import Stepper, { Step } from "../../widgets/stepper/stepper";
 import { Palette } from "@mui/icons-material";
-import { Editor } from "@monaco-editor/react";
-import MonacoEditor from "../../../components/widgets/monoca/moraco-editor";
+import MonacoEditor from "../../widgets/monoca/moraco-editor";
 const fontStyles = {
   fontSize: "12px",
 };

@@ -306,6 +306,18 @@ export const baseThemeOptions = {
           "&.br0": {
             borderRadius: 0,
           },
+          "&.br1": {
+            borderRadius: 1,
+          },
+          "&.br2": {
+            borderRadius: 2,
+          },
+          "&.br3": {
+            borderRadius: 3,
+          },
+          "&.br4": {
+            borderRadius: 4,
+          },
           "&.brMAX": {
             borderRadius: "100%",
           },
