@@ -1,5 +1,7 @@
 import { ContentPaste, DeleteForever } from "@mui/icons-material";
 import { Divider, Typography } from "@mui/material";
+import { flex } from "./group/flex";
+import { block } from "./group/block";
 
 const block_template = {
   tagName: "div",
@@ -8,7 +10,6 @@ const block_template = {
   styles: {
     display: "block",
     width: "100%",
-    height: "100vh",
   },
   children: [],
 };
@@ -21,7 +22,6 @@ const row_template = {
     display: "flex",
     flexDirection: "row",
     width: "100%",
-    height: "100vh",
   },
   children: [],
 };
@@ -33,7 +33,6 @@ const column_template = {
     display: "flex",
     flexDirection: "column",
     width: "100%",
-    height: "100vh",
   },
   children: [],
 };
@@ -78,6 +77,13 @@ export const menuData = [
         ],
       },
     ],
+  },
+  {
+    Component: <Divider />,
+  },
+  {
+    label: "Styles",
+    subMenu: [flex, block],
   },
   {
     Component: <Divider />,
