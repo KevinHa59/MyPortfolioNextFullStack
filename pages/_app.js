@@ -11,6 +11,7 @@ import { darkStyles } from "../theme/dark-theme-options";
 import { lightStyles } from "../theme/light-theme-options";
 import AsyncNotification from "../components/widgets/notification/async-notification";
 import { SessionProvider } from "next-auth/react";
+import TNoteProvider from "../components/packages/t-note/t-note-provider";
 
 export const mainContext = createContext(null);
 
@@ -119,9 +120,11 @@ function MyApp({ Component, pageProps }) {
           <SessionProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline />
-              <AsyncNotification>
-                <Component {...pageProps} />
-              </AsyncNotification>
+              <TNoteProvider mode={mode}>
+                <AsyncNotification>
+                  <Component {...pageProps} />
+                </AsyncNotification>
+              </TNoteProvider>
               <Notification
                 note={note.message}
                 type={note.type}

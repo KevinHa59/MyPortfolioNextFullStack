@@ -22,6 +22,7 @@ import {
 import React, { useState } from "react";
 import { useEffect } from "react";
 import ReactDOM from "react-dom/client";
+import { stringUtil } from "../../utils/stringUtil";
 /**
  * Description placeholder
  *
@@ -35,7 +36,7 @@ export default function Index() {
     placement: "bottom-right",
     padding: 0,
     timeout: 3000,
-    speed: 2000,
+    speed: 200,
   });
 
   const handleSettingChange = (newSetting) => {
@@ -181,72 +182,54 @@ let previousTimeoutClose = null; // Store the previous timeout reference
  *   speed: 200
  * });
  */
+// A global variable to store the React root
+let root = null;
+const rootContainerNoteID = "t-note";
+let notifications = [];
 export function setNote(
   title = "Notification Title",
   message = "Detail",
   config
 ) {
-  // Find the existing notification with ID "uniqueNote"
-  const previousNote = document.getElementById("uniqueNote");
+  let rootContainer = document.getElementById(rootContainerNoteID);
+  if (!rootContainer) {
+    rootContainer = document.createElement("div");
+    rootContainer.setAttribute("id", rootContainerNoteID);
+    Object.assign(rootContainer.style, {
+      position: "fixed",
+      zIndex: 2000,
+      height: "max-content",
+      transition: "ease 0.3s",
+      ...placementStyles(config.padding)[config.placement],
+    });
 
-  // Clear any existing timeout to prevent the previous notification from closing itself after being removed
-  if (previousTimeoutClose) {
-    clearTimeout(previousTimeoutClose);
-    previousTimeoutClose = null; // Reset timeout reference to ensure it's not reused
+    document.body.appendChild(rootContainer);
   }
 
-  // Remove the previous notification from the DOM if it exists and is still attached to the body
-  if (previousNote && document.body.contains(previousNote)) {
-    const previousRoot = ReactDOM.createRoot(previousNote);
-    previousRoot.unmount(); // Use the root's unmount method
-    document.body.removeChild(previousNote); // Remove the container from the body
+  // Check if a root already exists
+  if (!root) {
+    root = ReactDOM.createRoot(rootContainer); // Create root only once
   }
+  // Add new notification to the array
+  notifications.unshift({
+    id: stringUtil.randomString(5),
+    isOutlined: true,
+    color: colors[config.color],
+    title: title,
+    message: message,
+    speed: config.speed,
+    timeoutOnClose: config.timeout,
+  });
 
-  // Create a new container div for the new notification and attach it to the body
-  const container = document.createElement("div");
-  container.setAttribute("id", "uniqueNote");
-  document.body.appendChild(container);
-
-  // Check if a valid timeout value is provided in the config
-  const isTimeoutProvided = !isNaN(parseInt(config.timeout));
-
-  // Set up a timeout to automatically close the notification after the specified time
-  const timeoutClose = isTimeoutProvided
-    ? setTimeout(() => {
-        handleClose(); // Trigger the close action when the timeout ends
-      }, config.timeout + config.speed - 50) // Timeout includes config.speed and buffer for smooth close animation
-    : null;
-
-  // Function to close and clean up the notification
-  function handleClose() {
-    if (container) {
-      timeoutClose && clearTimeout(timeoutClose); // Clear the timeout if it still exists
-      const previousRoot = ReactDOM.createRoot(container);
-      previousRoot.unmount(); // Use the root's unmount method
-      document.body.removeChild(container); // Remove the container from the body
-    }
-  }
-
-  // Store the current timeout reference globally so it can be cleared if a new notification is created
-  previousTimeoutClose = timeoutClose;
-
-  // Render the new notification component into the container
-  const root = ReactDOM.createRoot(container);
-  root.render(
-    <Notification
-      isOutlined={true}
-      color={colors[config.color]} // Notification color from config
-      title={title} // Notification title
-      message={message} // Notification message
-      speed={config.speed} // Animation speed for the notification
-      onClose={handleClose} // Function to handle closing of the notification
-      timeoutOnClose={config.timeout} // Time before automatically closing the notification
-      padding={config.padding} // Padding for notification
-      placement={config.placement} // Placement of the notification on the screen
-    />,
-    container // Render into the newly created container div
-  );
+  // Render all notifications in the wrapper
+  root.render(<NotificationWrapper notifications={notifications} />);
 }
+
+const NotificationWrapper = ({ notifications }) => {
+  return notifications.map((notification) => (
+    <Notification key={notification.id} {...notification} />
+  ));
+};
 
 /**
  * Description Props
@@ -265,15 +248,13 @@ export function setNote(
  * @returns {*}
  */
 function Notification({
+  id,
   isOutlined,
   color,
   title,
   message,
-  onClose,
   speed,
   timeoutOnClose,
-  placement = "bottom-right",
-  padding = 0,
 }) {
   const [active, setActive] = useState(true);
   const [shadowSize, setShadowSize] = useState(30);
@@ -289,8 +270,9 @@ function Notification({
     // auto close if given timeoutOnClose
     timeoutOnClose &&
       setTimeout(() => {
-        setActive(false);
-        setShadowSize(30);
+        // setActive(false);
+        // setShadowSize(30);
+        handleRemoveItself(speed);
       }, timeoutOnClose);
   }, []);
 
@@ -298,14 +280,23 @@ function Notification({
   const handleClose = () => {
     setActive(false);
     setShadowSize(30);
-    onClose && onClose();
+    handleRemoveItself(speed);
+  };
+
+  // handle remove itself;
+  const handleRemoveItself = (timeout = 0) => {
+    setTimeout(() => {
+      const currentNote = document.getElementById(id);
+      const parent = document.getElementById(rootContainerNoteID);
+      parent.removeChild(currentNote);
+    }, timeout);
   };
 
   return (
     <Paper
+      id={id}
       variant={isOutlined ? "outlined" : "elevation"}
       sx={{
-        position: "fixed",
         zIndex: 2000,
         width: "max-content",
         minWidth: "300px",
@@ -320,7 +311,6 @@ function Notification({
         }80, ${shadowSize}px ${shadowSize}px 0px ${
           theme.palette[color.iconBackground].main
         }4D`,
-        ...placementStyles(padding)[placement],
       }}
     >
       <Stack
@@ -425,8 +415,16 @@ const placementStyles = (padding = 0) => {
     left: { top: "50%", left: padding, transform: "translateY(-50%)" },
     center: { top: "50%", left: "50%", transform: "translate(-50%, -50%)" },
     right: { top: "50%", right: padding, transform: "translateY(-50%)" },
-    "bottom-left": { bottom: padding, left: padding },
+    "bottom-left": {
+      bottom: padding,
+      left: padding,
+      transformOrigin: "bottom-left",
+    },
     bottom: { bottom: padding, left: "50%", transform: "translateX(-50%)" },
-    "bottom-right": { bottom: padding, right: padding },
+    "bottom-right": {
+      bottom: padding,
+      right: padding,
+      transformOrigin: "bottom-right",
+    },
   };
 };
