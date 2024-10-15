@@ -120,11 +120,9 @@ function MyApp({ Component, pageProps }) {
           <SessionProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline />
-              <TNoteProvider mode={mode}>
-                <AsyncNotification>
-                  <Component {...pageProps} />
-                </AsyncNotification>
-              </TNoteProvider>
+              <AsyncNotification>
+                <Component {...pageProps} />
+              </AsyncNotification>
               <Notification
                 note={note.message}
                 type={note.type}

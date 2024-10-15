@@ -1,6 +1,5 @@
 import { CopyAll, Visibility, VisibilityOff } from "@mui/icons-material";
 import { IconButton, Stack } from "@mui/material";
-import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { mainContext } from "../pages/_app";
 
@@ -57,6 +56,15 @@ export function randomString(length = 6) {
 
   return result;
 }
+
+export function randomItemOfArray(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return undefined;
+  }
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
+}
+
 export function camelToTitle(str) {
   // find cap and add space before it
   str = str.replace(/([A-Z]+)/g, " $1").trim();
@@ -71,4 +79,5 @@ export const stringUtil = {
   Ellipses: (str, limit) => <Ellipse str={str} limit={limit} />,
   camelToTitle: (str) => camelToTitle(str),
   randomString: (length) => randomString(length),
+  randomItemOfArray: (arr) => randomItemOfArray(arr),
 };

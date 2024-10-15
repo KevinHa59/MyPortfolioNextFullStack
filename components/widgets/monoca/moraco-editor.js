@@ -10,6 +10,8 @@ const sample_completion_provider = {
 };
 
 export default function MonacoEditor({
+  disableGuide = false,
+  readOnly = false,
   value,
   completionProvider = {},
   defaultLanguage = "json",
@@ -117,10 +119,12 @@ export default function MonacoEditor({
 
   // Add the command line to the value
   const initialValue = JSON.stringify(
-    {
-      _instructions: "Press Ctrl + S to save",
-      css: value, // Your actual JSON data goes here
-    },
+    disableGuide
+      ? value
+      : {
+          _instructions: "Press Ctrl + S to save",
+          css: value, // Your actual JSON data goes here
+        },
     null,
     2
   );
@@ -137,6 +141,7 @@ export default function MonacoEditor({
         minimap: {
           enabled: false, // Disable the mini map
         },
+        readOnly: readOnly,
         scrollBeyondLastLine: false,
       }}
       onChange={(value) => {
