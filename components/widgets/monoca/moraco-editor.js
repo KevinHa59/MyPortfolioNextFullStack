@@ -12,6 +12,7 @@ const sample_completion_provider = {
 export default function MonacoEditor({
   disableGuide = false,
   readOnly = false,
+  isRawValue = false,
   value,
   completionProvider = {},
   defaultLanguage = "json",
@@ -134,7 +135,7 @@ export default function MonacoEditor({
       theme={`vs-${theme.palette.mode}`}
       height="100%"
       defaultLanguage={defaultLanguage}
-      value={initialValue}
+      value={isRawValue ? value : initialValue}
       options={{
         wordWrap: "on", // Enable word wrapping
         lineNumbers: "off",
@@ -145,7 +146,8 @@ export default function MonacoEditor({
         scrollBeyondLastLine: false,
       }}
       onChange={(value) => {
-        onChange && onChange(JSON.parse(value).css);
+        onChange &&
+          onChange(disableGuide ? JSON.parse(value).css : JSON.parse(value));
       }}
       onMount={(editor, monaco) => {
         return onMonacoMount(

@@ -3,7 +3,7 @@ import ErrorIcon from "../icons/error";
 import InfoIcon from "../icons/info";
 import WarningIcon from "../icons/warning";
 
-export const theme = {
+export const themeColors = {
   primary: {
     Icon: CheckCircleIcon,
   },
